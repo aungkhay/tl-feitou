@@ -15,7 +15,7 @@ API.interceptors.response.use(
     response => {
         var res = response.data;
 
-        if(res.code == 1001) {
+        if(res.status == 403) {
             const userStore = useUserStore();
             // Unauthorized
             localStorage.removeItem('_token_');
@@ -35,7 +35,9 @@ API.interceptors.response.use(
 API.defaults.params = {};
 API.interceptors.request.use((config) => {
     const userStore = useUserStore();
-    config.headers.Authorization = userStore.token;
+    if (userStore.isLoggedIn) {
+        config.headers.token = userStore.token;
+    }
     return config;
 }, (error) => {
     return Promise.resolve(error.response);

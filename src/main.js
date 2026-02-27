@@ -9,6 +9,18 @@ const pinia = createPinia()
 
 const app = createApp(App);
 
+import moment from 'moment';
+app.config.globalProperties.$filters = {
+    formatFullDate(date) {
+        if (!date) return '-';
+        return moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss');
+    },
+    formatDate(date) {
+        if (!date) return '-';
+        return moment(new Date(date)).format('YYYY-MM-DD');
+    }
+}
+
 // Toast
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";

@@ -57,7 +57,7 @@ import { ref } from 'vue';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 import { useRoute } from 'vue-router';
 import { useToast } from "vue-toastification";
-import { LOGIN } from '../js/api'
+import { LOGIN } from '../js/api/auth';
 import router from '../router';
 
 const { mdAndUp, mdAndDown, xs, smAndDown } = useDisplay();

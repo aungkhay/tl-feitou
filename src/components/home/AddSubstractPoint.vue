@@ -74,15 +74,27 @@
                         <v-list-item v-bind="props" density="compact" />
                     </template>
                 </v-select>
-                <v-text-field
+                <v-select
                     v-model="obj.bank_card"
+                    :items="bankCards"
+                    item-title="card_code"
+                    item-value="card_code"
                     label="银行卡号"
                     variant="outlined"
                     density="comfortable"
+                    color="primary"
                     :error-messages="v$.bank_card.$errors.map(e => e.$message)"
                     @input="v$.bank_card.$touch"
                     @blur="v$.bank_card.$touch"
-                />
+                >
+                    <template #item="{ props, item }">
+                        <v-list-item v-bind="props" density="compact">
+                            <v-list-item-subtitle class="text-caption">
+                                {{ item.raw.card_name }}
+                            </v-list-item-subtitle>
+                        </v-list-item>
+                    </template>
+                </v-select>
                 <div class="d-flex justify-end">
                     <v-btn color="primary" variant="tonal" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
@@ -96,7 +108,7 @@ import { ref, watch, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { ADD_SCORE, GET_GROUP_PLAYERS, SUBSTRACT_SCORE } from '../../js/api/player_option';
+import { ADD_SCORE, GET_BANKCARD, GET_GROUP_PLAYERS, SUBSTRACT_SCORE } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
 
 const userStore = useUserStore();
@@ -122,6 +134,7 @@ const scoreOptionType = computed(() => userStore.operation_type);
 
 const isSaving = ref(false);
 const players = ref([]);
+const bankCards = ref([]);
 const obj = ref({
     group_nickname: '',
     player_name: '',
@@ -201,19 +214,31 @@ const getPlayers = async () => {
     }
 }
 
+const getBankCards = async () => {
+    const res = await GET_BANKCARD(obj.value.group_nickname);
+    if (res && res.code == 200) {
+        bankCards.value = res.data;
+    }
+}
+
 watch(() => props.groups, (newVal) => {
     if (newVal) {
         obj.value.group_nickname = props.groups.length > 0 ? props.groups[0].group_nickname : '';
+        getPlayers();
+        getBankCards();
     }
 });
 
 watch(() => obj.value.group_nickname, (newVal) => {
     if (newVal) {
         obj.value.player_name = '';
+        obj.value.bank_card = '';
         v$.value.$reset();
         players.value = [];
+        bankCards.value = [];
         if (props.modelValue) {
             getPlayers();
+            getBankCards();
         }
     }
 });

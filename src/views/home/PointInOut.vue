@@ -29,8 +29,7 @@
             </div>
             <div>
                 <v-btn color="success" :disabled="isExportingTable1" :loading="isExportingTable1" @click="exportTable1()"><v-icon>mdi-file-excel</v-icon> 导出表格1</v-btn>
-                <v-btn color="success" class="mx-2" :disabled="isExportingTable2" :loading="isExportingTable2" @click="exportTable2()"><v-icon>mdi-file-excel</v-icon> 导出表格2</v-btn>
-                <v-btn color="error"><v-icon>mdi-file-excel</v-icon> 获取银行卡</v-btn>
+                <v-btn color="success" class="ml-2" :disabled="isExportingTable2" :loading="isExportingTable2" @click="exportTable2()"><v-icon>mdi-file-excel</v-icon> 导出表格2</v-btn>
             </div>
         </div>
 
@@ -255,7 +254,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch, getCurrentInstance  } from 'vue';
-import { GET_BANKCARD, GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE, UNDO_OPTION_SCORE } from '../../js/api/player_option';
+import { GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE, UNDO_OPTION_SCORE } from '../../js/api/player_option';
 import { useUserStore } from '../../stores/user';
 import AddSubstractPoint from '../../components/home/AddSubstractPoint.vue';
 import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
@@ -416,7 +415,6 @@ watch(() => filters.value.group_nickname, (newVal) => {
         isReady2.value = true;
         getRecords1();
         getRecords2();
-        // GET_BANKCARD(newVal);
     }
 });
 

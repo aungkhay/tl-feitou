@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar :elevation="2">
+    <v-app-bar :elevation="2" density="comfortable">
         <v-app-bar-title class="font-weight-bold">Financial Account</v-app-bar-title>
         <template v-slot:append>
             <v-menu

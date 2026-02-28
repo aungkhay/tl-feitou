@@ -17,7 +17,11 @@
                         color="primary"
                         hide-details
                         class="mr-2"
-                    ></v-select>
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-select>
                 </div>
                 <v-btn color="primary" @click="addSubstractPointDialog = true; addOrSubstract = 'add'"><v-icon>mdi-arrow-up</v-icon> 上分</v-btn>
                 <v-btn color="primary" class="mx-2" @click="addSubstractPointDialog = true; addOrSubstract = 'substract'"><v-icon>mdi-arrow-down</v-icon> 下分</v-btn>
@@ -78,7 +82,18 @@
                         hide-details
                         class="ml-1"
                         color="primary"
-                    ></v-select>
+                        return-object
+                    >
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact">
+                                <template #append>
+                                    <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
+                                        {{ item.raw.is_hide ? '隐藏' : '显示' }}
+                                    </span>
+                                </template>
+                            </v-list-item>
+                        </template>
+                    </v-select>
                 </v-col>
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <v-select
@@ -92,7 +107,11 @@
                         hide-details
                         class="mr-1"
                         color="primary"
-                    ></v-select>
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-select>
                     <v-select
                         v-model="filters.is_virtual"
                         :items="[{Id: 0, name: '不包括虚拟'}, {Id: 1, name: '包括虚拟'}]"
@@ -477,3 +496,37 @@ onMounted(async () => {
     }
 });
 </script>
+
+<style scoped>
+.table1 :deep(.v-data-table__thead th) {
+    background-color: #d4d4d4 !important;
+}
+.table1 :deep(.v-data-table__thead th:first-child) {
+    border-radius: 5px 0 0 0 !important;
+}
+.table1 :deep(.v-data-table__thead th:last-child) {
+    border-radius: 0 5px 0 0 !important;
+}
+.table1 :deep(td:first-child) {
+    border-left: 1px solid #e0e0e0;
+}
+.table1 :deep(td:last-child) {
+    border-right: 1px solid #e0e0e0;
+}
+
+.table2 :deep(.v-data-table__thead th) {
+    background-color: #d4d4d4 !important;
+}
+.table2 :deep(.v-data-table__thead th:first-child) {
+    border-radius: 5px 0 0 0 !important;
+}
+.table2 :deep(.v-data-table__thead th:last-child) {
+    border-radius: 0 5px 0 0 !important;
+}
+.table2 :deep(td:first-child) {
+    border-left: 1px solid #e0e0e0;
+}
+.table2 :deep(td:last-child) {
+    border-right: 1px solid #e0e0e0;
+}
+</style>

@@ -22,7 +22,11 @@
                     :error-messages="v$.group_nickname.$errors.map(e => e.$message)"
                     @input="v$.group_nickname.$touch"
                     @blur="v$.group_nickname.$touch"
-                />
+                >
+                    <template #item="{ props }">
+                        <v-list-item v-bind="props" density="compact" />
+                    </template>
+                </v-select>
                 <v-select
                     v-model="obj.player_name"
                     :items="players"
@@ -35,7 +39,11 @@
                     :error-messages="v$.player_name.$errors.map(e => e.$message)"
                     @input="v$.player_name.$touch"
                     @blur="v$.player_name.$touch"
-                />
+                >
+                    <template #item="{ props }">
+                        <v-list-item v-bind="props" density="compact" />
+                    </template>
+                </v-select>
                 <div class="d-flex justify-end">
                     <v-btn color="primary" variant="tonal" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
@@ -135,7 +143,9 @@ watch(() => obj.value.group_nickname, (newVal) => {
         obj.value.player_name = '';
         v$.value.$reset();
         players.value = [];
-        getPlayers();
+        if (props.modelValue) {
+            getPlayers();
+        }
     }
 });
 </script>

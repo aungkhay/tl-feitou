@@ -4,6 +4,27 @@ import moment from "moment";
 
 const prefix = '/api/ht';
 
+export const GET_GROUP_NICKNAME = async () => {
+    const res = await API.post(`${prefix}/player_option/get_group_nickname`);
+    if (res.code == 200) {
+        const userStore = useUserStore();
+        userStore.setGroups(res.data);
+    }
+    return res;
+}
+
+/**
+ * 
+ * @param {string} group_nickname 台号(群昵称）
+ * @returns 
+ */
+export const GET_GROUP_PLAYERS = async (group_nickname) => {
+    const res = await API.post(`${prefix}/player_option/get_group_players`, {
+        group_nickname: group_nickname
+    });
+    return res; 
+}
+
 /**
  * 获取上下分操作类型列表 
  * @param {string} group_nickname 台号(群昵称）
@@ -22,15 +43,33 @@ export const GET_SCORE_OPTION_TYPE = async (group_nickname) => {
 }
 
 /**
- * 上分 | 下分
+ * 上分
  * @param {string} group_nickname 台号(群昵称）
  * @param {string} player_name 玩家昵称
  * @param {integer} option_score 操作分数
  * @param {string} option_type 操作类型
  * @param {string} bank_card 银行卡(可选）
  */
-export const ADD_SUBSTRACT_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card) => {
+export const ADD_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card) => {
     return await API.post(`${prefix}/player_option/add_score`, {
+        group_nickname: group_nickname,
+        player_name: player_name,
+        option_score: option_score,
+        option_type: option_type,
+        bank_card: bank_card
+    });
+}
+
+/**
+ * 下分
+ * @param {string} group_nickname 台号(群昵称）
+ * @param {string} player_name 玩家昵称
+ * @param {integer} option_score 操作分数
+ * @param {string} option_type 操作类型
+ * @param {string} bank_card 银行卡(可选）
+ */
+export const SUBSTRACT_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card) => {
+    return await API.post(`${prefix}/player_option/subtract_score`, {
         group_nickname: group_nickname,
         player_name: player_name,
         option_score: option_score,
@@ -80,14 +119,14 @@ export const GET_SCORE_OPTION_RECORD = async (group_nickname, option_type, optio
 
 /**
  * 积分全下
- * @param {string} player_name 选手昵称 
  * @param {string} group_nickname 群昵称(台号)
+ * @param {string} player_name 选手昵称 
  * @returns 
  */
-export const SCORE_ALL_DOWN = async (player_name, group_nickname) => {
+export const SCORE_ALL_DOWN = async (group_nickname, player_name) => {
     return await API.post(`${prefix}/player_option/score_all_down`, {
-        player_name: player_name,
-        group_nickname: group_nickname
+        group_nickname: group_nickname ,
+        player_name: player_name
     });
 }
 

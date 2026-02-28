@@ -4,10 +4,24 @@
         <div class="text-h5 font-weight-bold">上下分</div>
 
         <div class="d-flex align-center justify-space-between mt-3">
-            <div>
-                <v-btn color="primary"><v-icon>mdi-arrow-up</v-icon> 上分</v-btn>
-                <v-btn color="primary" class="mx-2"><v-icon>mdi-arrow-down</v-icon> 下分</v-btn>
-                <v-btn color="primary"><v-icon>mdi-arrow-collapse-down</v-icon> 积分全下</v-btn>
+            <div class="d-flex align-center">
+                <div class="d-flex align-center" style="width: 200px;">
+                    <v-select
+                        v-model="filters.group_nickname"
+                        :items="groups"
+                        label="群昵称"
+                        density="compact"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
+                        variant="outlined"
+                        color="primary"
+                        hide-details
+                        class="mr-2"
+                    ></v-select>
+                </div>
+                <v-btn color="primary" @click="addSubstractPointDialog = true; addOrSubstract = 'add'"><v-icon>mdi-arrow-up</v-icon> 上分</v-btn>
+                <v-btn color="primary" class="mx-2" @click="addSubstractPointDialog = true; addOrSubstract = 'substract'"><v-icon>mdi-arrow-down</v-icon> 下分</v-btn>
+                <v-btn color="primary" @click="substractAllPointDialog = true"><v-icon>mdi-arrow-collapse-down</v-icon> 积分全下</v-btn>
             </div>
             <div>
                 <v-btn color="error" class="mr-2"><v-icon>mdi-undo</v-icon> 撤销上下分</v-btn>
@@ -42,18 +56,7 @@
         </v-data-table-server>
         <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-10">
             <v-row dense>
-                <v-col cols="12" md="5" class="d-flex align-center">
-                    <v-select
-                        v-model="filters.group_nickname"
-                        :items="[]"
-                        label="群昵称"
-                        density="compact"
-                        item-title="name"
-                        item-value="Id"
-                        variant="outlined"
-                        hide-details
-                        class="mr-1"
-                    ></v-select>
+                <v-col cols="12" md="3" class="d-flex align-center">
                     <v-text-field
                         v-model="filters.optioner"
                         label="操作人"
@@ -65,12 +68,15 @@
                     ></v-text-field>
                     <v-select
                         v-model="filters.player_name"
-                        :items="[]"
+                        :items="players"
                         label="选手昵称"
                         density="compact"
+                        item-title="playername"
+                        item-value="playername"
                         variant="outlined"
                         hide-details
                         class="ml-1"
+                        color="primary"
                     ></v-select>
                 </v-col>
                 <v-col cols="12" md="3" class="d-flex align-center">
@@ -84,6 +90,7 @@
                         variant="outlined"
                         hide-details
                         class="mr-1"
+                        color="primary"
                     ></v-select>
                     <v-select
                         v-model="filters.is_virtual"
@@ -95,9 +102,10 @@
                         variant="outlined"
                         hide-details
                         class="ml-1"
+                        color="primary"
                     ></v-select>
                 </v-col>
-                <v-col cols="12" md="3" class="d-flex align-center">
+                <v-col cols="12" md="4" class="d-flex align-center">
                     <v-menu
                         v-model="startDateMenu"
                         :close-on-content-click="false"
@@ -149,7 +157,7 @@
                         />
                     </v-menu>
                 </v-col>
-                <v-col cols="12" md="1">
+                <v-col cols="12" md="2">
                     <v-btn color="primary" block @click="getRecords2"><v-icon>mdi-magnify</v-icon> 搜索</v-btn>
                 </v-col>
             </v-row>
@@ -175,19 +183,29 @@
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
+            <template #item.demo="{ item }">
+                {{ item.demo ?? '-' }}
+            </template>
         </v-data-table-server>
+
+        <AddSubstractPoint v-model="addSubstractPointDialog" :mode="addOrSubstract" :groups="groups" @complete="completeAddSubstract" />
+        <SubstractAllPoint v-model="substractAllPointDialog" :groups="groups" @complete="completeAddSubstract" />
     </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE } from '../../js/api/player_option';
+import { GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE } from '../../js/api/player_option';
 import { useUserStore } from '../../stores/user';
+import AddSubstractPoint from '../../components/home/AddSubstractPoint.vue';
+import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
 
 const userStore = useUserStore();
 const scoreOptionType = computed(() => userStore.operation_type);
+const groups = computed(() => userStore.groups);
+const players = ref([]);
 const filters = ref({
-    group_nickname: '彭涛',
+    group_nickname: groups.value.length > 0 ? groups.value[0].group_nickname : '',
     option_type: '',
     optioner: '',
     start_time: new Date(),
@@ -242,6 +260,10 @@ const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);
 
+const addSubstractPointDialog = ref(false);
+const addOrSubstract = ref('add');
+const substractAllPointDialog = ref(false);
+
 const formattedFilterDate = (date) => {
     if (!date) return ''
     return new Date(date).toLocaleDateString('zh-CN')
@@ -283,16 +305,51 @@ const getRecords2 = async () => {
     }
 }
 
-onMounted(async () => {
-    const res = await GET_SCORE_OPTION_TYPE('彭涛');
+const completeAddSubstract = () => {
+    getRecords1();
+    getRecords2();
+}
+
+const getOptionType = async () => {
+    const res = await GET_SCORE_OPTION_TYPE(filters.value.group_nickname);
     if (res.code == 200) {
         if (res.data.length > 0) {
             filters.value.option_type = res.data[0].name;
             isReady1.value = true;
             isReady2.value = true;
         }
+    }
+}
+
+const getPlayers = async () => {
+    const res = await GET_GROUP_PLAYERS(filters.value.group_nickname);
+    if (res.code == 200) {
+        players.value = res.data;
+    }
+}
+
+watch(groups, (newVal) => {
+    if (newVal.length > 0) {
+        filters.value.group_nickname = newVal[0].group_nickname;
+    }
+});
+
+watch(() => filters.value.group_nickname, (newVal) => {
+    if (newVal) {
+        getPlayers();
+        getOptionType();
+        filters.value.option_type = '';
+        filters.value.player_name = '';
+        isReady1.value = true;
+        isReady2.value = true;
         getRecords1();
         getRecords2();
+    }
+});
+
+onMounted(async () => {
+    if (groups.value.length == 0) {
+        await GET_GROUP_NICKNAME();
     }
 });
 </script>

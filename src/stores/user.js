@@ -7,7 +7,8 @@ export const useUserStore = defineStore('user', {
         isLoggedIn: localStorage.getItem('_token_') ? true : false,
         group_nickname: 'Group1',
         operation_type: [],
-        player_detail: []
+        player_detail: [],
+        groups: []
     }),
     actions: {
         setToken(token) {
@@ -34,6 +35,9 @@ export const useUserStore = defineStore('user', {
         },
         setPlayerDetail(player_detail) {
             this.player_detail = player_detail;
+        },
+        setGroups(groups) {
+            this.groups = groups;
         }
     },
     getters: {

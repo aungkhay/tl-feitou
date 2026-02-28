@@ -5,7 +5,7 @@ export const useUserStore = defineStore('user', {
         token: localStorage.getItem('_token_') ?? '',
         profile: localStorage.getItem('_profile_') ? JSON.parse(localStorage.getItem('_profile_')) : null,
         isLoggedIn: localStorage.getItem('_token_') ? true : false,
-        group_nickname: 'Group1',
+        group_nickname: '',
         operation_type: [],
         player_detail: [],
         groups: []
@@ -38,6 +38,9 @@ export const useUserStore = defineStore('user', {
         },
         setGroups(groups) {
             this.groups = groups;
+        },
+        setGroupNickname(group_nickname) {
+            this.group_nickname = group_nickname;
         }
     },
     getters: {

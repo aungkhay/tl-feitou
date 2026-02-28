@@ -18,6 +18,12 @@ app.config.globalProperties.$filters = {
     formatDate(date) {
         if (!date) return '-';
         return moment(new Date(date)).format('YYYY-MM-DD');
+    },
+    check10MinuteAgo(date) {
+        if (!date) return false;
+        const now = moment();
+        const target = moment(new Date(date));
+        return now.diff(target, 'minutes') <= 10;
     }
 }
 

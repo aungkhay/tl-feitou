@@ -24,7 +24,6 @@
                 <v-btn color="primary" @click="substractAllPointDialog = true"><v-icon>mdi-arrow-collapse-down</v-icon> 积分全下</v-btn>
             </div>
             <div>
-                <v-btn color="error" class="mr-2"><v-icon>mdi-undo</v-icon> 撤销上下分</v-btn>
                 <v-btn color="error"><v-icon>mdi-bank</v-icon> 获取银行卡</v-btn>
             </div>
         </div>
@@ -184,9 +183,49 @@
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
             <template #item.demo="{ item }">
-                {{ item.demo ?? '-' }}
+                {{ item.demo ? item.demo : '-' }}
+            </template>
+            <template #item.actions="{ item }">
+                <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="small" color="error" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
         </v-data-table-server>
+
+        <v-dialog
+            v-model="cancelAddSubstractDialog"
+            max-width="400px"
+            persistent
+        >
+            <v-card title="撤销操作">
+                <v-card-text>
+                    <v-table density="compact" class="bg-grey-lighten-2 rounded-lg">
+                        <tbody>
+                            <tr>
+                                <td>台号：</td>
+                                <td>{{ selectedRecord2?.group_nickname }}</td>
+                            </tr>
+                            <tr>
+                                <td>会员昵称:</td>
+                                <td>{{ selectedRecord2?.playername }}</td>
+                            </tr>
+                            <tr>
+                                <td>操作类型:</td>
+                                <td>{{ selectedRecord2?.option_type }}</td>
+                            </tr>
+                            <tr>
+                                <td>操作金额:</td>
+                                <td>{{ selectedRecord2?.score }}</td>
+                            </tr>
+                        </tbody>
+                    </v-table>
+                    <div class="mt-2">您确定要撤销这条操作记录吗？</div>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text="取消" variant="tonal" :disabled="isCanceling" @click="cancelAddSubstractDialog = false" color="red"></v-btn>
+                    <v-btn text="确定" variant="tonal" :disabled="isCanceling" :loading="isCanceling" @click="confirmCancelAddSubstract()" color="primary"></v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
 
         <AddSubstractPoint v-model="addSubstractPointDialog" :mode="addOrSubstract" :groups="groups" @complete="completeAddSubstract" />
         <SubstractAllPoint v-model="substractAllPointDialog" :groups="groups" @complete="completeAddSubstract" />
@@ -195,17 +234,19 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE } from '../../js/api/player_option';
+import { GET_BANKCARD, GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE, UNDO_OPTION_SCORE } from '../../js/api/player_option';
 import { useUserStore } from '../../stores/user';
 import AddSubstractPoint from '../../components/home/AddSubstractPoint.vue';
 import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
+import { useToast } from "vue-toastification";
 
 const userStore = useUserStore();
+const toast = useToast();
 const scoreOptionType = computed(() => userStore.operation_type);
 const groups = computed(() => userStore.groups);
 const players = ref([]);
 const filters = ref({
-    group_nickname: groups.value.length > 0 ? groups.value[0].group_nickname : '',
+    group_nickname: '',
     option_type: '',
     optioner: '',
     start_time: new Date(),
@@ -254,11 +295,15 @@ const headers2 = ref([
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
     { title: '操作员', key: 'optioner', sortable: false, minWidth: 100 },
     { title: '操作说明', key: 'demo', sortable: false, minWidth: 100 },
+    { title: '操作', key: 'actions', sortable: false, minWidth: 100 },
 ]);
 const itemsPerPage2 = ref(10);
 const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);
+const selectedRecord2 = ref(null);
+const cancelAddSubstractDialog = ref(false);
+const isCanceling = ref(false);
 
 const addSubstractPointDialog = ref(false);
 const addOrSubstract = ref('add');
@@ -331,11 +376,13 @@ const getPlayers = async () => {
 watch(groups, (newVal) => {
     if (newVal.length > 0) {
         filters.value.group_nickname = newVal[0].group_nickname;
+        userStore.setGroupNickname(newVal[0].group_nickname);
     }
 });
 
 watch(() => filters.value.group_nickname, (newVal) => {
     if (newVal) {
+        userStore.setGroupNickname(newVal);
         getPlayers();
         getOptionType();
         filters.value.option_type = '';
@@ -344,8 +391,34 @@ watch(() => filters.value.group_nickname, (newVal) => {
         isReady2.value = true;
         getRecords1();
         getRecords2();
+        // GET_BANKCARD(newVal);
     }
 });
+
+const cancelAddSubstract = (item) => {
+    selectedRecord2.value = item;
+    cancelAddSubstractDialog.value = true;
+}
+
+const confirmCancelAddSubstract = async () => {
+    if (!selectedRecord2.value || isCanceling.value) return;
+    cancelAddSubstractDialog.value = false;
+    isCanceling.value = true;
+    try {
+        const res = await UNDO_OPTION_SCORE(selectedRecord2.value.Id, selectedRecord2.value.playername, selectedRecord2.value.group_nickname);
+        if (res.code == 200) {
+            toast.success(res.msg);
+        } else {
+            toast.error(res.msg);
+        }
+    } catch (error) {
+        toast.error('操作失败，请稍后再试');
+    } finally {
+        await getRecords2();
+        isCanceling.value = false;
+        cancelAddSubstractDialog.value = false;
+    }
+}
 
 onMounted(async () => {
     if (groups.value.length == 0) {

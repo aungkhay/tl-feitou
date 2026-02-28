@@ -24,7 +24,9 @@
                 <v-btn color="primary" @click="substractAllPointDialog = true"><v-icon>mdi-arrow-collapse-down</v-icon> 积分全下</v-btn>
             </div>
             <div>
-                <v-btn color="error"><v-icon>mdi-bank</v-icon> 获取银行卡</v-btn>
+                <v-btn color="success" :disabled="isExportingTable1" :loading="isExportingTable1" @click="exportTable1()"><v-icon>mdi-file-excel</v-icon> 导出表格1</v-btn>
+                <v-btn color="success" class="mx-2" :disabled="isExportingTable2" :loading="isExportingTable2" @click="exportTable2()"><v-icon>mdi-file-excel</v-icon> 导出表格2</v-btn>
+                <v-btn color="error"><v-icon>mdi-file-excel</v-icon> 获取银行卡</v-btn>
             </div>
         </div>
 
@@ -233,13 +235,15 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, getCurrentInstance  } from 'vue';
 import { GET_BANKCARD, GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE, UNDO_OPTION_SCORE } from '../../js/api/player_option';
 import { useUserStore } from '../../stores/user';
 import AddSubstractPoint from '../../components/home/AddSubstractPoint.vue';
 import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
 import { useToast } from "vue-toastification";
+import { exportExcel } from '../../js/common';
 
+const { proxy } = getCurrentInstance();
 const userStore = useUserStore();
 const toast = useToast();
 const scoreOptionType = computed(() => userStore.operation_type);
@@ -308,6 +312,8 @@ const isCanceling = ref(false);
 const addSubstractPointDialog = ref(false);
 const addOrSubstract = ref('add');
 const substractAllPointDialog = ref(false);
+const isExportingTable1 = ref(false);
+const isExportingTable2 = ref(false);
 
 const formattedFilterDate = (date) => {
     if (!date) return ''
@@ -368,7 +374,7 @@ const getOptionType = async () => {
 
 const getPlayers = async () => {
     const res = await GET_GROUP_PLAYERS(filters.value.group_nickname);
-    if (res.code == 200) {
+    if (res && res.code == 200) {
         players.value = res.data;
     }
 }
@@ -418,6 +424,51 @@ const confirmCancelAddSubstract = async () => {
         isCanceling.value = false;
         cancelAddSubstractDialog.value = false;
     }
+}
+
+const exportTable1 = () => {
+    isExportingTable1.value = true;
+    const data = records1.value.map(item => ({
+            '台号': item.group_nickname,
+            '会员昵称': item.playername,
+            '剩余积分': item.score,
+            '冻结积分': item.freeze_score,
+            '初始积分': item.raw_score,
+            '庄闲洗码': item.total_xml_zx,
+            '三宝洗码': item.total_xml_sb,
+            '庄闲赢亏': item.total_xzyl,
+            '三宝赢亏': item.total_sbyl,
+            '有效流水': item.total_yxxz,
+            '代理商': item.reference_name,
+            '日积分': item.daily_points,
+            '总积分': item.total_points,
+            '注册时间': proxy.$filters.formatFullDate(item.registTime),
+            '存款': item.deposit,
+            '欠积分': item.owe_points,
+            '状态': item.is_hide ? '隐藏' : '显示',
+            '操作时间': proxy.$filters.formatFullDate(item.option_time)
+        })
+    );
+    exportExcel(data, `${filters.value.group_nickname}_积分记录_${new Date().toLocaleDateString()}`);
+    isExportingTable1.value = false;
+}
+
+const exportTable2 = () => {
+    isExportingTable2.value = true;
+    const data = records2.value.map(item => ({
+            '台号': item.group_nickname,
+            '会员昵称': item.playername,
+            '操作金额': item.score,
+            '操作前金额': item.before_option_score,
+            '操作类型': item.option_type,
+            '工作日': proxy.$filters.formatDate(item.working_date),
+            '操作时间': proxy.$filters.formatFullDate(item.option_time),
+            '操作员': item.optioner,
+            '操作说明': item.demo ? item.demo : '-'
+        })
+    );
+    exportExcel(data, `${filters.value.group_nickname}_操作记录_${new Date().toLocaleDateString()}`);
+    isExportingTable2.value = false;
 }
 
 onMounted(async () => {

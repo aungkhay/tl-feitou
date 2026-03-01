@@ -209,7 +209,7 @@ const save = async () => {
 
 const getPlayers = async () => {
     const res = await GET_GROUP_PLAYERS(obj.value.group_nickname);
-    if (res.code == 200) {
+    if (res && res.code == 200) {
         players.value = res.data;
     }
 }

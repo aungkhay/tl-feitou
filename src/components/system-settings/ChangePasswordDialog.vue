@@ -11,7 +11,28 @@
                     label="账号" 
                     type="text"
                     readonly
+                    variant="outlined"
+                    density="compact"
+                    class="mb-1"
                 />
+                <v-select
+                    v-model="obj.group_nickname"
+                    :items="groups"
+                    item-title="group_nickname"
+                    item-value="group_nickname"
+                    label="群昵称" 
+                    type="text"
+                    variant="outlined"
+                    density="compact"
+                    class="mb-1"
+                    :error-messages="v$.group_nickname.$errors.map(e => e.$message)"
+                    @input="v$.group_nickname.$touch"
+                    @blur="v$.group_nickname.$touch"
+                >
+                    <template #item="{ props }">
+                        <v-list-item v-bind="props" density="compact" />
+                    </template>
+                </v-select>
                 <v-text-field 
                     v-model="obj.old_password"
                     label="旧密码" 
@@ -19,6 +40,9 @@
                     prepend-inner-icon="mdi-key"
                     :append-inner-icon="!viewOldPassword ? 'mdi-eye-off' : 'mdi-eye'"
                     @click:append-inner="viewOldPassword = !viewOldPassword"
+                    variant="outlined"
+                    density="compact"
+                    class="mb-1"
                     :error-messages="v$.old_password.$errors.map(e => e.$message)"
                     @input="v$.old_password.$touch"
                     @blur="v$.old_password.$touch"
@@ -29,6 +53,9 @@
                     :type="viewNewPassword ? 'text' : 'password'"
                     prepend-inner-icon="mdi-key"
                     :append-inner-icon="!viewNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    variant="outlined"
+                    density="compact"
+                    class="mb-1"
                     @click:append-inner="viewNewPassword = !viewNewPassword"
                     :error-messages="v$.new_password.$errors.map(e => e.$message)"
                     @input="v$.new_password.$touch"
@@ -40,27 +67,19 @@
                     :type="viewConfirmPassword ? 'text' : 'password'"
                     prepend-inner-icon="mdi-key"
                     :append-inner-icon="!viewConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    variant="outlined"
+                    density="compact"
+                    class="mb-1"
                     @click:append-inner="viewConfirmPassword = !viewConfirmPassword"
                     :error-messages="v$.confirm_password.$errors.map(e => e.$message)"
                     @input="v$.confirm_password.$touch"
                     @blur="v$.confirm_password.$touch"
                 />
+                <div class="d-flex justify-end">
+                    <v-btn text="取消" variant="tonal" :disabled="isLoading" @click="closeDialog" color="red" class="mr-2"></v-btn>
+                    <v-btn text="保存" variant="tonal" :disabled="isLoading" :loading="isLoading" @click="changePassword" color="primary"></v-btn>
+                </div>
             </v-card-text>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                    text="取消"
-                    variant="tonal"
-                    @click="dialog = false"
-                    color="red"
-                ></v-btn>
-                <v-btn
-                    text="保存"
-                    variant="tonal"
-                    @click="changePassword"
-                    color="primary"
-                ></v-btn>
-            </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
@@ -78,6 +97,7 @@ const userStore = useUserStore();
 const group_nickname = computed(() => userStore.group_nickname);
 const profile = computed(() => userStore.profile);
 const dialog = ref(false);
+const groups = computed(() => userStore.groups);
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -95,9 +115,14 @@ const obj = ref({
     confirm_password: '',
 });
 const rules = ref({
+    group_nickname: { required: helpers.withMessage('请输入群昵称', required)},
     old_password: { required: helpers.withMessage('请输入旧密码', required) },
     new_password: { required: helpers.withMessage('请输入新密码', required)},
-    confirm_password: { required: helpers.withMessage('请再次输入新密码', required) },
+    // check that confirm_password is the same as new_password
+    confirm_password: { 
+        required: helpers.withMessage('请再次输入新密码', required),
+        sameAsNewPassword: helpers.withMessage('两次输入的密码不一致', (value, vm) => value === vm.new_password)
+    },
 })
 const v$ = useVuelidate(rules.value, obj.value);
 const isLoading = ref(false);
@@ -113,16 +138,31 @@ watch(profile, () => {
     obj.value.account = profile.value.account;
 }, { immediate: true })
 
-const changePassword = async () => {  
-    isLoading.value = true;
-    const res = await EDIT_PASSWORD(profile.value.account, obj.value.old_password, obj.value.new_password, obj.value.confirm_password, group_nickname.value);
-    if (res.code == 200) {
-        toast.success(res.msg);
-        dialog.value = false;
-    } else {
-        toast.error(res.msg);
-    }
+const closeDialog = () => {
+    dialog.value = false;
+    obj.value.old_password = '';
+    obj.value.new_password = '';
+    obj.value.confirm_password = '';
+    v$.value.$reset();
+}
 
-    isLoading.value = false;
+const changePassword = async () => {
+    v$.value.$touch();
+    if (v$.value.$invalid) return;  
+    isLoading.value = true;
+    try {
+        const res = await EDIT_PASSWORD(profile.value.account, obj.value.old_password, obj.value.new_password, obj.value.confirm_password, group_nickname.value);
+        if (res.code == 200) {
+            toast.success(res.msg);
+            dialog.value = false;
+        } else {
+            toast.error(res.msg);
+        }
+    } catch (error) {
+        toast.error('操作失败，请稍后再试');
+    } finally {
+        isLoading.value = false;
+        closeDialog();
+    }
 }
 </script>

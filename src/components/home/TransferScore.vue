@@ -57,7 +57,7 @@
                     @blur="v$.target_player_name.$touch"
                 />
                 <div class="d-flex justify-end">
-                    <v-btn text="取消" variant="tonal" :disabled="isSaving" @click="dialog = false" color="red" class="mr-2"></v-btn>
+                    <v-btn text="取消" variant="tonal" :disabled="isSaving" @click="closeDialog" color="red" class="mr-2"></v-btn>
                     <v-btn text="确定" variant="tonal" :disabled="isSaving" :loading="isSaving" @click="save" color="primary"></v-btn>
                 </div>
             </v-card-text>
@@ -70,7 +70,9 @@ import { ref, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { TRANS_SCORE } from '../../js/api/desk_option';
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     modelValue: {
         type: Boolean,

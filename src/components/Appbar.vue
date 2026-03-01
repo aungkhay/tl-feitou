@@ -42,12 +42,13 @@
         <QuickBankcardShortcutDialog v-model="showQuickBankcardShortcutDialog" />
         <PlayerCopyDialog v-model="showPlayerCopyDialog" />
         <DeleteDataDialog v-model="showDeleteDataDialog" />
-
+        <TransferScore v-model="showTransferScoreDialog" />
     </v-app-bar>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import TransferScore from './home/TransferScore.vue';
 import LogoutDialog from './system-settings/LogoutDialog.vue';
 import ChangePasswordDialog from './system-settings/ChangePasswordDialog.vue';
 import TgToken from './system-settings/TgToken.vue';
@@ -171,6 +172,7 @@ const tabs = ref([
         ],
     },
 ])
+const showTransferScoreDialog = ref(false);
 const showLogoutDialog = ref(false);
 const showChangePasswordDialog = ref(false);
 const showTgTokenDialog = ref(false);
@@ -191,6 +193,9 @@ const makeChange = (item) => {
         
         case 'in-out-points':
             router.push({ name: 'PointInOut' });
+            break;
+        case 'multi-terminal-transfer':
+            showTransferScoreDialog.value = true;
             break;
         case 'change-password':
             showChangePasswordDialog.value = true;

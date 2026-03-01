@@ -24,6 +24,11 @@ const routes = [
                 component: () => import('../views/home/PointInOut.vue'),
             },
             {
+                path: 'multi-desk-transfer',
+                name: 'MultiDeskTransfer',
+                component: () => import('../views/home/MultiDeskTransfer.vue'),
+            },
+            {
                 path: 'bank-card-settings',
                 name: 'BankCardSettings',
                 component: () => import('../views/bank-operations/BankCardSettings.vue'),

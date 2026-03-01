@@ -487,12 +487,6 @@ const exportTable2 = () => {
     exportExcel(data, `${filters.value.group_nickname}_操作记录_${new Date().toLocaleDateString()}`);
     isExportingTable2.value = false;
 }
-
-onMounted(async () => {
-    if (groups.value.length == 0) {
-        await GET_GROUP_NICKNAME();
-    }
-});
 </script>
 
 <style scoped>

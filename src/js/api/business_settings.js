@@ -70,3 +70,31 @@ export const PERSONAL_EXCHANGE_RATIO = async (player_name, group_nickname, bp_pe
         start_exchange: start_exchange
     });
 }
+
+/**
+ * 
+ * @param {string} source_desk 源台
+ * @param {array} play_name_array 玩家昵称数组 
+ * @param {string} target_desk 目的台
+ * @returns {Promise<import("axios").AxiosResponse<any>>}
+ */
+export const PLAYER_COPY = async (source_desk, play_name_array, target_desk) => {
+    return await API.post(`${prefix}/business_settings/player_copy`, {
+        source_desk: source_desk,
+        array_player_name: play_name_array,
+        target_desk: target_desk
+    });
+}
+
+/**
+ * 
+ * @param {string} group_nickname 群昵称
+ * @param {string} last_time 最后时间
+ * @returns {Promise<import("axios").AxiosResponse<any>>}
+ */
+export const DELETE_DATA = async (group_nickname, last_time) => {
+    return await API.post(`${prefix}/business_settings/delete_data`, {
+        group_nickname: group_nickname,
+        last_time: last_time
+    });
+}

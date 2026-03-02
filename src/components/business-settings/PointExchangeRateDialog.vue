@@ -14,13 +14,19 @@
                     <v-col cols="12" sm="3">
                         <v-select
                             v-model="selectedDesk"
-                            :items="desks"
+                            :items="groups"
+                            item-title="group_nickname"
+                            item-value="group_nickname"
                             label="选择操作台"
                             density="compact"
                             hide-details
                             variant="outlined"
                             color="primary"
-                        />
+                        >
+                            <template #item="{ props }">
+                                <v-list-item v-bind="props" density="compact" />
+                            </template>
+                        </v-select>
                     </v-col>
                     <v-col cols="12" sm="3">
                         <v-text-field
@@ -71,7 +77,11 @@
 </template>
 
 <script setup>
-import { ref,watch } from 'vue';
+import { computed, onMounted, ref,watch } from 'vue';
+import { useUserStore } from '../../stores/user';
+import { DELETE_DATA, GET_PERSONAL_EXCHANGE_RATIO, GET_POINTS_EXCHANGE_RATIO, PERSONAL_EXCHANGE_RATIO, PLAYER_COPY, POINTS_EXCHANGE_RATIO } from '../../js/api/business_settings';
+
+const userStore = useUserStore();
 const dialog = ref(false);
 const props = defineProps({
     modelValue: {
@@ -83,6 +93,7 @@ const props = defineProps({
 const desks = ref([
     { title: '辉煌一台' }
 ]);
+const groups = computed(() => userStore.groups);
 const selectedDesk = ref(null);
 
 const emit = defineEmits(['update:modelValue']);
@@ -92,4 +103,13 @@ watch(() => props.modelValue, (newVal) => {
 watch(dialog, (newVal) => {
     emit('update:modelValue', newVal);
 });
+
+onMounted(() => {
+    // GET_POINTS_EXCHANGE_RATIO();
+    // POINTS_EXCHANGE_RATIO();
+    // GET_PERSONAL_EXCHANGE_RATIO();
+    // PERSONAL_EXCHANGE_RATIO(); 200
+    // PLAYER_COPY();
+    // DELETE_DATA();
+})
 </script>

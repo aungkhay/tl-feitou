@@ -4,6 +4,7 @@
 
         <div class="mt-3">
             <v-btn color="primary" @click="dialog = true"><v-icon>mdi-swap-horizontal</v-icon> 转分</v-btn>
+            <v-btn color="primary" class="mx-2"><v-icon>mdi-swap-horizontal</v-icon> 积分全转</v-btn>
         </div>
 
         <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-3">
@@ -229,6 +230,7 @@ const headers = ref([
     { title: '工作日', key: 'working_date', sortable: false, minWidth: 140 },
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
     { title: '操作员', key: 'operator', sortable: false, minWidth: 120 },
+    { title: '操作', key: 'actions', sortable: false, minWidth: 100 },
 ]);
 const records = ref([]);
 const totalItems = ref(0);

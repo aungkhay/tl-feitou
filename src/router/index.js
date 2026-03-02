@@ -9,7 +9,7 @@ const routes = [
     },
     {
         path: '/',
-        redirect: '/home',
+        redirect: '/in-out-points',
         component: () => import('../layouts/MainLayout.vue'),
         meta: { requiresAuth: true },
         children: [

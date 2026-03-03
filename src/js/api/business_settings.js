@@ -1,4 +1,6 @@
 import API from "../http";
+import moment from "moment";
+
 const prefix = '/api/ht';
 
 /**
@@ -33,7 +35,7 @@ export const POINTS_EXCHANGE_RATIO = async (group_nickname, points_reached, poin
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname) => {
-    return await API.post(`${prefix}/bussioness_setup/get_persional_exchange_ratio`, {
+    return await API.post(`${prefix}/bussioness_setup/get_persional_echange_ratio`, {
         group_nickname: group_nickname
     });
 }
@@ -41,17 +43,17 @@ export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname) => {
 /**
  * 个人兑换比例
  * @param {string} player_name 
- * @param {string} group_nickname 
- * @param {number} bp_personal_share 
- * @param {number} bp_personal_share_upperlimit 
- * @param {number} sb_personal_share 
- * @param {string} redemption_type 
- * @param {number} rebate_ratio 
- * @param {number} personal_points_redemption_ratio 
- * @param {string} redemption_start_time 
- * @param {string} rebate_type 
- * @param {string} rebate_pair_start_time 
- * @param {number} start_exchange 
+ * @param {string} group_nickname 操作台
+ * @param {number} bp_personal_share 庄闲个人占成比例
+ * @param {number} bp_personal_share_upperlimit 庄闲个人占成上限
+ * @param {number} sb_personal_share 三宝个人占成比例
+ * @param {string} redemption_type 兑换类型
+ * @param {number} rebate_ratio 返水比例
+ * @param {number} personal_points_redemption_ratio 个人积分兑换比例
+ * @param {string} redemption_start_time 兑换开始时间
+ * @param {string} rebate_type 返水类型
+ * @param {string} rebate_pair_start_time 返水开始计算时间
+ * @param {number} start_exchange 是否启动兑换
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const PERSONAL_EXCHANGE_RATIO = async (player_name, group_nickname, bp_personal_share, bp_personal_share_upperlimit, sb_personal_share, redemption_type, rebate_ratio, personal_points_redemption_ratio, redemption_start_time, rebate_type, rebate_pair_start_time, start_exchange) => {
@@ -64,9 +66,9 @@ export const PERSONAL_EXCHANGE_RATIO = async (player_name, group_nickname, bp_pe
         redemption_type: redemption_type,
         rebate_ratio: rebate_ratio,
         personal_points_redemption_ratio: personal_points_redemption_ratio,
-        redemption_start_time: redemption_start_time,
+        redemption_start_time: moment(redemption_start_time).format('YYYY-MM-DD HH:mm:ss'),
         rebate_type: rebate_type,
-        rebate_pair_start_time: rebate_pair_start_time,
+        rebate_pair_start_time: moment(rebate_pair_start_time).format('YYYY-MM-DD HH:mm:ss'),
         start_exchange: start_exchange
     });
 }

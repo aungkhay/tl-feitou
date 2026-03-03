@@ -34,9 +34,10 @@ export const POINTS_EXCHANGE_RATIO = async (group_nickname, points_reached, poin
  * @param {string} group_nickname 群昵称(台号)
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
-export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname) => {
+export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname, player_name) => {
     return await API.post(`${prefix}/bussioness_setup/get_persional_echange_ratio`, {
-        group_nickname: group_nickname
+        group_nickname: group_nickname,
+        player_name: player_name
     });
 }
 

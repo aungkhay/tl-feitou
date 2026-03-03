@@ -301,24 +301,8 @@ const getPlayers = async () => {
 
 const getPersonalExchangeRatio = async () => {
     try {
-        const res = await GET_PERSONAL_EXCHANGE_RATIO(obj.value.group_nickname);
+        const res = await GET_PERSONAL_EXCHANGE_RATIO(obj.value.group_nickname, obj.value.player_name);
         if (res && res.code === 200) {
-            // Id : 6
-            // bp_personal_share :  1
-            // bp_personal_share_upperlimit :  500
-            // create_time: "2026-03-03T07:23:51.000Z"
-            // group_nickname: "Testing"
-            // personal_points_redemption_ratio: 1
-            // player_name: "LM"
-            // rebate_pair_start_time: "2026-03-03T07:24:02.000Z"
-            // rebate_ratio: 1
-            // rebate_type: "庄闲输赢"
-            // redemption_start_time: "2026-03-03T07:24:02.000Z"
-            // redemption_type: "庄闲洗码"
-            // sb_personal_share: 1
-            // start_exchange: 0
-            // update_time: "2026-03-03T07:23:51.000Z"
-            // userId: 2
             obj.value.bp_personal_share = res.data.bp_personal_share;
             obj.value.bp_personal_share_upperlimit = res.data.bp_personal_share_upperlimit;
             obj.value.sb_personal_share = res.data.sb_personal_share;

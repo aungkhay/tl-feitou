@@ -7,7 +7,7 @@ const prefix = '/api/ht';
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const GET_POINTS_EXCHANGE_RATIO = async (group_nickname) => {
-    return await API.post(`${prefix}/business_settings/get_points_exchange_ratio`, {
+    return await API.post(`${prefix}/bussioness_setup/get_points_exchange_ratio`, {
         group_nickname: group_nickname
     });
 }
@@ -20,7 +20,7 @@ export const GET_POINTS_EXCHANGE_RATIO = async (group_nickname) => {
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const POINTS_EXCHANGE_RATIO = async (group_nickname, points_reached, points_exchange) => {
-    return await API.post(`${prefix}/business_settings/points_echange_ratio`, {
+    return await API.post(`${prefix}/bussioness_setup/points_echange_ratio`, {
         group_nickname: group_nickname,
         points_reached: points_reached,
         points_exchange: points_exchange
@@ -79,7 +79,7 @@ export const PERSONAL_EXCHANGE_RATIO = async (player_name, group_nickname, bp_pe
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const PLAYER_COPY = async (source_desk, play_name_array, target_desk) => {
-    return await API.post(`${prefix}/business_settings/player_copy`, {
+    return await API.post(`${prefix}/bussioness_setup/player_copy`, {
         source_desk: source_desk,
         array_player_name: play_name_array,
         target_desk: target_desk
@@ -93,7 +93,7 @@ export const PLAYER_COPY = async (source_desk, play_name_array, target_desk) => 
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const DELETE_DATA = async (group_nickname, last_time) => {
-    return await API.post(`${prefix}/business_settings/delete_data`, {
+    return await API.post(`${prefix}/bussioness_setup/delete_data`, {
         group_nickname: group_nickname,
         last_time: last_time
     });

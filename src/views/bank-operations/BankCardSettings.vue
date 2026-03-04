@@ -146,13 +146,13 @@
                             @blur="v$.card_code.$touch"
                         ></v-text-field>
                         <v-text-field
-                            v-model="obj.Initial_amount"
+                            v-model="obj.initial_amount"
                             label="初始金额"
                             density="compact"
                             variant="outlined"
-                            :error-messages="v$.Initial_amount.$errors.map(e => e.$message)"
-                            @input="v$.Initial_amount.$touch"
-                            @blur="v$.Initial_amount.$touch"
+                            :error-messages="v$.initial_amount.$errors.map(e => e.$message)"
+                            @input="v$.initial_amount.$touch"
+                            @blur="v$.initial_amount.$touch"
                         ></v-text-field>
                         <v-select
                             v-model="obj.card_status"
@@ -228,14 +228,14 @@ const obj = ref({
     card_type: null,
     card_name: null,
     card_code: null,
-    Initial_amount: null,
+    initial_amount: null,
     card_status: null,
 });
 const rules = ref({
     card_type: { required: helpers.withMessage('卡类型不能为空', required) },
     card_name: { required: helpers.withMessage('姓名不能为空', required) },
     card_code: { required: helpers.withMessage('卡号不能为空', required) },
-    Initial_amount: { required: helpers.withMessage('初始金额不能为空', required) },
+    initial_amount: { required: helpers.withMessage('初始金额不能为空', required) },
     card_status: { required: helpers.withMessage('卡状态不能为空', required) },
 })
 const v$ = useVuelidate(rules.value, obj.value);
@@ -254,7 +254,7 @@ const getCards = async () => {
             perPage.value
         );
         if (res.code === 200) {
-            cards.value = res.data.rows;
+            cards.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.count;
         }
     } finally {
@@ -267,7 +267,7 @@ const closeDialog = () => {
     obj.value.card_type = null;
     obj.value.card_name = null;
     obj.value.card_code = null;
-    obj.value.Initial_amount = null;
+    obj.value.initial_amount = null;
     obj.value.card_status = null;
     v$.value.$reset();
 }
@@ -282,7 +282,7 @@ const saveCard = async () => {
             obj.value.card_type,
             obj.value.card_name,
             obj.value.card_code,
-            obj.value.Initial_amount,
+            obj.value.initial_amount,
             obj.value.card_status
         );
         if (res.code === 200) {

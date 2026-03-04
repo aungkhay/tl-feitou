@@ -30,16 +30,16 @@ export const GET_BANK_CARD = async (card_type, card_status, optioner, card_name,
  * @param {string} card_type 卡类型
  * @param {string} card_name 姓名
  * @param {string} card_code 卡号
- * @param {integer} Initial_amount 初始金额
+ * @param {integer} initial_amount 初始金额
  * @param {integer} card_status 卡状态（1正常 2冻结 3隐藏）
  * @returns 
  */
-export const ADD_BANK_CARD = async (card_type, card_name, card_code, Initial_amount, card_status) => {
+export const ADD_BANK_CARD = async (card_type, card_name, card_code, initial_amount, card_status) => {
     return await API.post(`${prefix}/bank_business/add_bank_card`, {
         card_type: card_type,
         card_name: card_name,
         card_code: card_code,
-        Initial_amount: Initial_amount,
+        initial_amount: initial_amount,
         card_status: card_status
     });
 }

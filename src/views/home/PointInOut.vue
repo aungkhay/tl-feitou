@@ -69,6 +69,7 @@
                         hide-details
                         class="mx-1"
                         clearable
+                        @click:clear="filters.optioner = null"
                     ></v-text-field>
                     <v-select
                         v-model="filters.player_name"
@@ -82,6 +83,8 @@
                         class="ml-1"
                         color="primary"
                         return-object
+                        clearable
+                        @click:clear="filters.player_name = null"
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact">
@@ -97,15 +100,15 @@
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <v-select
                         v-model="filters.option_type"
-                        :items="scoreOptionType"
+                        :items="options"
                         label="选择操作类型"
                         density="compact"
-                        item-title="name"
-                        item-value="name"
                         variant="outlined"
                         hide-details
                         class="mr-1"
                         color="primary"
+                        clearable
+                        @click:clear="filters.option_type = null"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="compact" />
@@ -182,6 +185,7 @@
             </v-row>
         </v-card>
         <v-data-table-server
+            v-model:page="currentPage2"
             v-model:items-per-page="itemsPerPage2"
             :headers="headers2"
             :items="records2"
@@ -260,20 +264,22 @@ import AddSubstractPoint from '../../components/home/AddSubstractPoint.vue';
 import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
 import { useToast } from "vue-toastification";
 import { exportExcel } from '../../js/common';
+import moment from 'moment';
 
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore();
 const toast = useToast();
 const scoreOptionType = computed(() => userStore.operation_type);
+const options = computed(() => userStore.option1);
 const groups = computed(() => userStore.groups);
 const players = ref([]);
 const filters = ref({
     group_nickname: '',
-    option_type: '',
-    optioner: '',
-    start_time: new Date(),
-    end_time: new Date(),
-    player_name: '',
+    option_type: null,
+    optioner: null,
+    start_time: moment().format('YYYY-MM-DD') + ' 00:00:00',
+    end_time: moment().format('YYYY-MM-DD') + ' 23:59:59',
+    player_name: null,
     is_virtual: 1,
 })
 const startDateMenu = ref(false);
@@ -319,6 +325,7 @@ const headers2 = ref([
     { title: '操作说明', key: 'demo', sortable: false, minWidth: 100 },
     { title: '操作', key: 'actions', sortable: false, minWidth: 100 },
 ]);
+const currentPage2 = ref(1);
 const itemsPerPage2 = ref(10);
 const totalItems2 = ref(0);
 const loading2 = ref(false);
@@ -363,11 +370,14 @@ const getRecords2 = async () => {
             filters.value.start_time,
             filters.value.end_time,
             filters.value.player_name,
-            filters.value.is_virtual
+            filters.value.is_virtual,
+            currentPage2.value,
+            itemsPerPage2.value,
         );
         if (res.code == 200) {
-            records2.value = res.data.map((item, index) => ({ ...item, index: index + 1 }));
-            totalItems2.value = res.data.length;
+            records2.value = res.data.record.map((item, index) => ({ ...item, index: index + 1 }));
+            totalItems2.value = res.data.count;
+            // currentPage2.value = Math.ceil(totalItems2.value / itemsPerPage2.value);
         }
     } finally {
         loading2.value = false;
@@ -404,16 +414,15 @@ watch(groups, (newVal) => {
     }
 });
 
-watch(() => filters.value.group_nickname, (newVal) => {
+watch(() => filters.value.group_nickname, async (newVal) => {
     if (newVal) {
         userStore.setGroupNickname(newVal);
-        getPlayers();
-        getOptionType();
-        filters.value.option_type = '';
         filters.value.player_name = '';
+        getPlayers();
         isReady1.value = true;
         isReady2.value = true;
         getRecords1();
+        currentPage2.value = 1;
         getRecords2();
     }
 });

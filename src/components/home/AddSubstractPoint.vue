@@ -58,9 +58,7 @@
                 />
                 <v-select
                     v-model="obj.option_type"
-                    :items="scoreOptionType"
-                    item-title="name"
-                    item-value="name"
+                    :items="options"
                     label="操作类型"
                     variant="outlined"
                     density="comfortable"
@@ -130,7 +128,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'complete']);
 const dialog = ref(props.modelValue);
 const toast = useToast();
-const scoreOptionType = computed(() => userStore.operation_type);
+const options = computed(() => userStore.option1);
 
 const isSaving = ref(false);
 const players = ref([]);

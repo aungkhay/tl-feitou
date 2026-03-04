@@ -81,6 +81,7 @@
             :loading="loading"
             density="compact"
             class="table1"
+            :items-per-page-options="pageSizeOptions"
             @update:options="getCards"
             hover
         >
@@ -176,19 +177,22 @@
 </template>
 
 <script setup>
-import { ref,watch } from 'vue';
+import { computed, ref,watch } from 'vue';
 import { GET_BANK_CARD, ADD_BANK_CARD } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
 import { exportExcel } from '../../js/common';
+import { useUserStore } from '../../stores/user';
 
+const userStore = useUserStore();
 const toast = useToast();
 const dialog = ref(false);
 const cardTypes = ref(['上分卡', '下分卡', '存储卡', '中转卡', '财务卡', '第三方']);
 const cardStatuses = ref(['正常', '冻结', '隐藏']);
 const page = ref(1);
 const perPage = ref(10);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
 const total = ref(0);
 const loading = ref(false);
 const cards = ref([]);

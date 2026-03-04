@@ -41,6 +41,7 @@
             :loading="loading1"
             density="compact"
             class="mt-2 table1"
+            :items-per-page-options="pageSizeOptions"
             @update:options="getRecords1"
             hover
         >
@@ -195,6 +196,7 @@
             class="mt-2 table2"
             fixed-header
             hover
+            :items-per-page-options="pageSizeOptions"
             @update:options="getRecords2"
         >
             <template #loading>
@@ -269,6 +271,7 @@ import moment from 'moment';
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore();
 const toast = useToast();
+const pageSizeOptions = computed(() => userStore.tablePageSize);
 const scoreOptionType = computed(() => userStore.operation_type);
 const options = computed(() => userStore.option1);
 const groups = computed(() => userStore.groups);
@@ -326,7 +329,7 @@ const headers2 = ref([
     { title: '操作', key: 'actions', sortable: false, minWidth: 100 },
 ]);
 const currentPage2 = ref(1);
-const itemsPerPage2 = ref(10);
+const itemsPerPage2 = ref(5);
 const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);

@@ -93,9 +93,9 @@
             </template>
             <template #item.card_status="{ item }">
                 <!-- 卡状态（1正常 2冻结 3隐藏） -->
-                <v-chip v-if="item.card_status == 1" color="primary">正常</v-chip>
-                <v-chip v-else-if="item.card_status == 2" color="orange">冻结</v-chip>
-                <v-chip v-else-if="item.card_status == 3" color="grey">隐藏</v-chip>
+                <v-chip v-if="item.card_status == '正常'" color="primary">{{ item.card_status }}</v-chip>
+                <v-chip v-else-if="item.card_status == '冻结'" color="orange">{{ item.card_status }}</v-chip>
+                <v-chip v-else-if="item.card_status == '隐藏'" color="grey">{{ item.card_status }}</v-chip>
                 <span v-else>-</span>
             </template>
             <template #item.actions="{ item }">
@@ -111,7 +111,7 @@
             <v-card>
                 <v-card-title class="text-h6 d-flex justify-space-between bg-grey-lighten-3 pa-3">
                     <div>添加银行卡</div>
-                    <v-btn icon="mdi-close" @click="closeDialog" variant="text" density="compact"></v-btn>
+                    <v-btn icon="mdi-close" :disabled="isSaving" @click="closeDialog" variant="text" density="compact"></v-btn>
                 </v-card-title>
                 <v-card-text>
                     <v-form>
@@ -278,7 +278,13 @@ const saveCard = async () => {
 
     isSaving.value = true;
     try {
-        const res = await ADD_BANK_CARD(obj.value);
+        const res = await ADD_BANK_CARD(
+            obj.value.card_type,
+            obj.value.card_name,
+            obj.value.card_code,
+            obj.value.Initial_amount,
+            obj.value.card_status
+        );
         if (res.code === 200) {
             await getCards();
             toast.success('银行卡添加成功');
@@ -305,7 +311,7 @@ const exportTable = () => {
         '手续费': item.handling_fee,
         '剩余金额': item.remaining_amount,
         '办公金额': item.office_amount,
-        '卡状态': item.card_status == 1 ? '正常' : item.card_status == 2 ? '冻结' : item.card_status == 3 ? '隐藏' : '-',
+        '卡状态': item.card_status,
         '操作人': item.optioner ? item.optioner : '-',
         })
     );

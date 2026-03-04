@@ -41,36 +41,33 @@
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-text-field
-                        v-model="obj.card_name"
+                        v-model="filters.card_name"
                         label="银行卡姓名"
                         density="compact"
                         variant="outlined"
                         clearable
                         hide-details
-                        @click:clear="obj.card_name = null"
+                        @click:clear="filters.card_name = null"
                     ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-text-field
-                        v-model="obj.sort_name"
+                        v-model="filters.sort_name"
                         label="排序字段"
                         density="compact"
                         variant="outlined"
                         clearable
                         hide-details
-                        @click:clear="obj.sort_name = null"
+                        @click:clear="filters.sort_name = null"
                     ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <div class="d-flex">
-                        <v-btn class="mr-2" color="primary"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
-                        <v-btn color="primary"><v-icon>mdi-refresh</v-icon> 重置</v-btn>
-                    </div>
+                    <v-btn class="mr-2" color="primary" block @click="getCards"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>
 
-        <div class="d-flex align-center justify-space-between mb-4">
+        <div class="d-flex align-center justify-space-between mb-2">
             <v-btn color="primary" @click="dialog = true"><v-icon>mdi-plus</v-icon> 添加</v-btn>
             <v-btn color="success" :loading="isExporting" :disabled="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
         </div>
@@ -83,12 +80,25 @@
             :items-length="total"
             :loading="loading"
             density="compact"
-            class="mt-2 table1"
+            class="table1"
             @update:options="getCards"
             hover
         >
             <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
+            </template>
+            <template #item.optioner="{ item }">
+                {{ item.optioner ? item.optioner : '-' }}
+            </template>
+            <template #item.card_status="{ item }">
+                <!-- 卡状态（1正常 2冻结 3隐藏） -->
+                <v-chip v-if="item.card_status == 1" color="primary">正常</v-chip>
+                <v-chip v-else-if="item.card_status == 2" color="orange">冻结</v-chip>
+                <v-chip v-else-if="item.card_status == 3" color="grey">隐藏</v-chip>
+                <span v-else>-</span>
+            </template>
+            <template #item.actions="{ item }">
+                <v-btn size="small" color="primary" @click="{}"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
             </template>
         </v-data-table-server>
 
@@ -184,19 +194,19 @@ const loading = ref(false);
 const cards = ref([]);
 const headers = ref([
     { title: '列', value: 'index', fixed: 'start', width: 60 },
-    { title: '卡类型', value: 'type', fixed: 'start', width: 100 },
-    { title: '姓名', value: 'holder', fixed: 'start', minWidth: 100 },
-    { title: '卡号', value: 'number', minWidth: 150 },
-    { title: '初始金额', value: 'initialAmount', minWidth: 120 },
-    { title: '上分金额', value: 'topUpAmount', minWidth: 120 },
-    { title: '下分金额', value: 'withdrawalAmount', minWidth: 120 },
-    { title: '转入金额', value: 'transferInAmount', minWidth: 120 },
-    { title: '转出金额', value: 'transferOutAmount', minWidth: 120 },
-    { title: '手续费', value: 'fee', minWidth: 120 },
-    { title: '剩余金额', value: 'remainingAmount', minWidth: 120 },
-    { title: '办公金额', value: 'officeAmount', minWidth: 120 },
-    { title: '卡状态', value: 'status', minWidth: 100 },
-    { title: '操作人', value: 'operator', minWidth: 100 },
+    { title: '卡类型', value: 'card_type', fixed: 'start', width: 100 },
+    { title: '姓名', value: 'card_name', fixed: 'start', minWidth: 100 },
+    { title: '卡号', value: 'card_code', minWidth: 150 },
+    { title: '初始金额', value: 'initial_amount', minWidth: 120 },
+    { title: '上分金额', value: 'bonus_amount', minWidth: 120 },
+    { title: '下分金额', value: 'deduction_amount', minWidth: 120 },
+    { title: '转入金额', value: 'transfer_in_amount', minWidth: 120 },
+    { title: '转出金额', value: 'transfer_out_amount', minWidth: 120 },
+    { title: '手续费', value: 'handling_fee', minWidth: 120 },
+    { title: '剩余金额', value: 'remaining_amount', minWidth: 120 },
+    { title: '办公金额', value: 'office_amount', minWidth: 120 },
+    { title: '卡状态', value: 'card_status', minWidth: 100 },
+    { title: '操作人', value: 'optioner', minWidth: 100 },
     { title: '操作', value: 'actions', sortable: false, minWidth: 100 },
 ]);
 
@@ -240,7 +250,7 @@ const getCards = async () => {
             perPage.value
         );
         if (res.code === 200) {
-            cards.value = res.data.records;
+            cards.value = res.data.rows;
             total.value = res.data.count;
         }
     } finally {
@@ -280,22 +290,40 @@ const saveCard = async () => {
 const exportTable = () => {
     isExporting.value = true;
     const data = cards.value.map(item => ({
-        '卡类型': item.type,
-        '姓名': item.holder,
-        '卡号': item.number,
-        '初始金额': item.initialAmount,
-        '上分金额': item.topUpAmount,
-        '下分金额': item.withdrawalAmount,
-        '转入金额': item.transferInAmount,
-        '转出金额': item.transferOutAmount,
-        '手续费': item.fee,
-        '剩余金额': item.remainingAmount,
-        '办公金额': item.officeAmount,
-        '卡状态': item.status,
-        '操作人': item.operator,
+        '卡类型': item.card_type,
+        '姓名': item.card_name,
+        '卡号': item.card_code,
+        '初始金额': item.initial_amount,
+        '上分金额': item.bonus_amount,
+        '下分金额': item.deduction_amount,
+        '转入金额': item.transfer_in_amount,
+        '转出金额': item.transfer_out_amount,
+        '手续费': item.handling_fee,
+        '剩余金额': item.remaining_amount,
+        '办公金额': item.office_amount,
+        '卡状态': item.card_status == 1 ? '正常' : item.card_status == 2 ? '冻结' : item.card_status == 3 ? '隐藏' : '-',
+        '操作人': item.optioner ? item.optioner : '-',
         })
     );
     exportExcel(data, `${filters.value.group_nickname}_操作记录_${new Date().toLocaleDateString()}`);
     isExporting.value = false;
 }
 </script>
+
+<style scoped>
+.table1 :deep(.v-data-table__thead th) {
+    background-color: #d4d4d4 !important;
+}
+.table1 :deep(.v-data-table__thead th:first-child) {
+    border-radius: 5px 0 0 0 !important;
+}
+.table1 :deep(.v-data-table__thead th:last-child) {
+    border-radius: 0 5px 0 0 !important;
+}
+.table1 :deep(td:first-child) {
+    border-left: 1px solid #e0e0e0;
+}
+.table1 :deep(td:last-child) {
+    border-right: 1px solid #e0e0e0;
+}
+</style>

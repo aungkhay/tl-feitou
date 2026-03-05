@@ -212,7 +212,7 @@
                 {{ item.demo ? item.demo : '-' }}
             </template>
             <template #item.actions="{ item }">
-                <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="small" color="error" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
+                <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
         </v-data-table-server>
 
@@ -326,7 +326,7 @@ const headers2 = ref([
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
     { title: '操作员', key: 'optioner', sortable: false, minWidth: 100 },
     { title: '操作说明', key: 'demo', sortable: false, minWidth: 100 },
-    { title: '操作', key: 'actions', sortable: false, minWidth: 100 },
+    { title: '操作', key: 'actions', sortable: false, fixed: 'end', minWidth: 100 },
 ]);
 const currentPage2 = ref(1);
 const itemsPerPage2 = ref(5);

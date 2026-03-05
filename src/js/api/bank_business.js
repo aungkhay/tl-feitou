@@ -43,3 +43,24 @@ export const ADD_BANK_CARD = async (card_type, card_name, card_code, initial_amo
         card_status: card_status
     });
 }
+ 
+/**
+ * 
+ * @param {integer} id 
+ * @param {string} card_type 卡类型
+ * @param {string} card_name 姓名
+ * @param {string} card_code 卡号
+ * @param {string} initial_amount 初始金额
+ * @param {string } card_status 正常 | 冻结 | 隐藏
+ * @returns 
+ */
+export const EDIT_BANK_CARD = async (id, card_type, card_name, card_code, initial_amount, card_status) => {
+    return await API.post(`${prefix}/bank_business/edit_bank_card`, {
+        id: id,
+        card_type: card_type,
+        card_name: card_name,
+        card_code: card_code,
+        initial_amount: initial_amount,
+        card_status: card_status
+    });
+}

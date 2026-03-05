@@ -51,15 +51,16 @@
                     ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-text-field
+                    <v-select
                         v-model="filters.sort_name"
+                        :items="sortOptions"
                         label="排序字段"
                         density="compact"
                         variant="outlined"
                         clearable
                         hide-details
                         @click:clear="filters.sort_name = null"
-                    ></v-text-field>
+                    ></v-select>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-btn class="mr-2" color="primary" block @click="getCards"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
@@ -93,13 +94,13 @@
             </template>
             <template #item.card_status="{ item }">
                 <!-- 卡状态（1正常 2冻结 3隐藏） -->
-                <v-chip v-if="item.card_status == '正常'" color="primary">{{ item.card_status }}</v-chip>
-                <v-chip v-else-if="item.card_status == '冻结'" color="orange">{{ item.card_status }}</v-chip>
-                <v-chip v-else-if="item.card_status == '隐藏'" color="grey">{{ item.card_status }}</v-chip>
+                <v-chip v-if="item.card_status == '正常'" color="primary" size="small">{{ item.card_status }}</v-chip>
+                <v-chip v-else-if="item.card_status == '冻结'" color="orange" size="small">{{ item.card_status }}</v-chip>
+                <v-chip v-else-if="item.card_status == '隐藏'" color="grey" size="small">{{ item.card_status }}</v-chip>
                 <span v-else>-</span>
             </template>
             <template #item.actions="{ item }">
-                <v-btn size="small" color="primary" @click="{}"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
+                <v-btn size="small" color="success" variant="tonal" @click="editCard(item)"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
             </template>
         </v-data-table-server>
 
@@ -110,7 +111,7 @@
         >
             <v-card>
                 <v-card-title class="text-h6 d-flex justify-space-between bg-grey-lighten-3 pa-3">
-                    <div>添加银行卡</div>
+                    <div><span>{{ selectedCardId ? '编辑' : '添加' }}</span>银行卡</div>
                     <v-btn icon="mdi-close" :disabled="isSaving" @click="closeDialog" variant="text" density="compact"></v-btn>
                 </v-card-title>
                 <v-card-text>
@@ -178,7 +179,7 @@
 
 <script setup>
 import { computed, ref,watch } from 'vue';
-import { GET_BANK_CARD, ADD_BANK_CARD } from '../../js/api/bank_business';
+import { GET_BANK_CARD, ADD_BANK_CARD, EDIT_BANK_CARD } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
@@ -190,12 +191,14 @@ const toast = useToast();
 const dialog = ref(false);
 const cardTypes = ref(['上分卡', '下分卡', '存储卡', '中转卡', '财务卡', '第三方']);
 const cardStatuses = ref(['正常', '冻结', '隐藏']);
+const sortOptions = ref(['姓名', '类型', '状态']);
 const page = ref(1);
 const perPage = ref(10);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const total = ref(0);
 const loading = ref(false);
 const cards = ref([]);
+const selectedCardId = ref(0);
 const headers = ref([
     { title: '列', value: 'index', fixed: 'start', width: 60 },
     { title: '卡类型', value: 'card_type', fixed: 'start', width: 100 },
@@ -211,7 +214,7 @@ const headers = ref([
     { title: '办公金额', value: 'office_amount', minWidth: 120 },
     { title: '卡状态', value: 'card_status', minWidth: 100 },
     { title: '操作人', value: 'optioner', minWidth: 100 },
-    { title: '操作', value: 'actions', sortable: false, minWidth: 100 },
+    { title: '操作', value: 'actions', fixed: 'end', minWidth: 100 },
 ]);
 
 const filters = ref({
@@ -263,6 +266,7 @@ const getCards = async () => {
 }
 
 const closeDialog = () => {
+    selectedCardId.value = 0;
     dialog.value = false;
     obj.value.card_type = null;
     obj.value.card_name = null;
@@ -278,19 +282,33 @@ const saveCard = async () => {
 
     isSaving.value = true;
     try {
-        const res = await ADD_BANK_CARD(
-            obj.value.card_type,
-            obj.value.card_name,
-            obj.value.card_code,
-            obj.value.initial_amount,
-            obj.value.card_status
-        );
+        let res;
+        if (selectedCardId.value) {
+            res = await EDIT_BANK_CARD(
+                selectedCardId.value,
+                obj.value.card_type,
+                obj.value.card_name,
+                obj.value.card_code,
+                obj.value.initial_amount,
+                obj.value.card_status
+            );
+        } else {
+            res = await ADD_BANK_CARD(
+                obj.value.card_type,
+                obj.value.card_name,
+                obj.value.card_code,
+                obj.value.initial_amount,
+                obj.value.card_status
+            );
+        }
         if (res.code === 200) {
             await getCards();
-            toast.success('银行卡添加成功');
+            toast.success(res.msg);
         } else {
-            toast.error(res.message || '银行卡添加失败');
+            toast.error(res.msg || (selectedCardId.value ? '银行卡编辑失败' : '银行卡添加失败'));
         }
+    } catch (error) {
+        toast.error(error.message || (selectedCardId.value ? '银行卡编辑失败' : '银行卡添加失败'));
     } finally {
         isSaving.value = false;
         closeDialog();
@@ -317,6 +335,16 @@ const exportTable = () => {
     );
     exportExcel(data, `${filters.value.group_nickname}_操作记录_${new Date().toLocaleDateString()}`);
     isExporting.value = false;
+}
+
+const editCard = async (card) => {
+    selectedCardId.value = card.Id;
+    obj.value.card_type = card.card_type;
+    obj.value.card_name = card.card_name;
+    obj.value.card_code = card.card_code;
+    obj.value.initial_amount = card.initial_amount;
+    obj.value.card_status = card.card_status;
+    dialog.value = true;
 }
 </script>
 

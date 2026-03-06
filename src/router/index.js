@@ -210,9 +210,9 @@ router.beforeEach((to, from, next) => {
         }
 
     } else {
-        if(to.name ===  'login' && userStore.isLoggedIn) {
+        if(to.name === 'login' && userStore.isLoggedIn) {
             return next({
-                name: 'Home',
+                name: 'login',
                 replace: true,
             });
         }

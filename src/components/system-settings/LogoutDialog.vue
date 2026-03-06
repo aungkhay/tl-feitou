@@ -27,6 +27,10 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import router from '../../router';
+import { useUserStore } from '../../stores/user';
+
+const userStore = useUserStore();
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -45,7 +49,8 @@ watch(dialog, (newVal) => {
 });
 
 const logout = () => {
-    console.log('用户已退出');
+    userStore.logout();
+    router.push('/login');
     dialog.value = false;
 };
 </script>

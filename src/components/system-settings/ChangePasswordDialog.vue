@@ -134,8 +134,8 @@ watch(() => props.modelValue, (newVal) => {
 watch(dialog, (newVal) => {
     emit('update:modelValue', newVal);
 });
-watch(profile, () => {
-    obj.value.account = profile.value.account;
+watch(profile, (newVal) => {
+    obj.value.account = newVal?.account;
 }, { immediate: true })
 
 const closeDialog = () => {

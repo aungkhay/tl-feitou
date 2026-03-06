@@ -43,6 +43,11 @@ export const useUserStore = defineStore('user', {
         },
         setGroupNickname(group_nickname) {
             this.group_nickname = group_nickname;
+        },
+        logout() {
+            this.setToken('');
+            this.setIsLoggedIn(false);
+            this.setProfile(null);
         }
     },
     getters: {

@@ -3,7 +3,7 @@
         <div class="text-h5 font-weight-bold">银行卡转账登记</div>
 
         <div class="my-2 border px-2 pt-3 pb-2 rounded">
-            <v-row>
+            <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-text-field
                         v-model="filters.optioner"
@@ -122,7 +122,7 @@
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
             <template #item.working_day="{ item }">
-                {{ $filters.formatFullDate(item.working_day) }}
+                {{ $filters.formatDate(item.working_day) }}
             </template>
             <template #item.actions="{ item }">
                 <v-btn size="small" color="success" variant="tonal" @click="editRecord(item)" class="mr-2"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
@@ -291,7 +291,7 @@ const headers = ref([
     { title: '转入卡类型', value: 'transfer_in_card_type', minWidth: 120 },
     { title: '转入前金额', value: 'transfer_in_amount', minWidth: 120 },
     { title: '转入卡当前金额', value: 'transfer_in_card_current_amount', minWidth: 150 },
-    { title: '工作日', value: 'working_day', minWidth: 170 },
+    { title: '工作日', value: 'working_day', minWidth: 120 },
     { title: '操作', value: 'actions', fixed: 'end', minWidth: 180 },
 ]);
 

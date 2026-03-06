@@ -3,7 +3,7 @@
         <div class="text-h5 font-weight-bold">银行卡设置</div>
 
         <div class="my-2 border px-2 pt-3 pb-2 rounded">
-            <v-row>
+            <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-text-field
                         v-model="filters.optioner"
@@ -347,21 +347,3 @@ const editCard = async (card) => {
     dialog.value = true;
 }
 </script>
-
-<style scoped>
-.table1 :deep(.v-data-table__thead th) {
-    background-color: #d4d4d4 !important;
-}
-.table1 :deep(.v-data-table__thead th:first-child) {
-    border-radius: 5px 0 0 0 !important;
-}
-.table1 :deep(.v-data-table__thead th:last-child) {
-    border-radius: 0 5px 0 0 !important;
-}
-.table1 :deep(td:first-child) {
-    border-left: 1px solid #e0e0e0;
-}
-.table1 :deep(td:last-child) {
-    border-right: 1px solid #e0e0e0;
-}
-</style>

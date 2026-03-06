@@ -135,3 +135,28 @@ export const DELETE_INTER_BANK_TRANSFER = async (id) => {
         id: id
     });
 }
+
+/**
+ * 银行卡明细查询
+ * @param {string} card_type 卡类型
+ * @param {string} optioner 操作员
+ * @param {string} card_name 卡姓名
+ * @param {string} option_type 操作类型
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {integer} currentPage 当前页
+ * @param {integer} pageSize 每页总条数
+ * @returns 
+ */
+export const CARD_DETAILS_INQUIRY = async (card_type, optioner, card_name, option_type, startTime, endTime, currentPage, pageSize) => {
+    return await API.post(`${prefix}/bank_business/card_details_inquiry`, {
+        card_type: card_type,
+        optioner: optioner,
+        card_name: card_name,
+        option_type: option_type,
+        startTime: startTime,
+        endTime: endTime,
+        currentPage: currentPage,
+        pageSize: pageSize,
+    });
+}

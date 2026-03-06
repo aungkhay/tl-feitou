@@ -500,22 +500,6 @@ const exportTable2 = () => {
 </script>
 
 <style scoped>
-.table1 :deep(.v-data-table__thead th) {
-    background-color: #d4d4d4 !important;
-}
-.table1 :deep(.v-data-table__thead th:first-child) {
-    border-radius: 5px 0 0 0 !important;
-}
-.table1 :deep(.v-data-table__thead th:last-child) {
-    border-radius: 0 5px 0 0 !important;
-}
-.table1 :deep(td:first-child) {
-    border-left: 1px solid #e0e0e0;
-}
-.table1 :deep(td:last-child) {
-    border-right: 1px solid #e0e0e0;
-}
-
 .table2 :deep(.v-data-table__thead th) {
     background-color: #d4d4d4 !important;
 }

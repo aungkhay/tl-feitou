@@ -1,9 +1,7 @@
 <template>
     <div class="pa-4">
 
-        <div class="text-h5 font-weight-bold">上下分</div>
-
-        <div class="d-flex align-center justify-space-between mt-3">
+        <div class="d-flex align-center justify-space-between">
             <div class="d-flex align-center">
                 <div class="d-flex align-center" style="width: 200px;">
                     <v-select
@@ -59,6 +57,7 @@
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
         </v-data-table-server>
+        
         <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-10">
             <v-row dense>
                 <v-col cols="12" md="3" class="d-flex align-center">
@@ -187,6 +186,7 @@
                 </v-col>
             </v-row>
         </v-card>
+        
         <v-data-table-server
             v-model:page="currentPage2"
             v-model:items-per-page="itemsPerPage2"

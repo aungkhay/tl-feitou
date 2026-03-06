@@ -1,8 +1,6 @@
 <template>
     <div class="pa-4">
-        <div class="text-h5 font-weight-bold">多台转分</div>
-
-        <div class="mt-3">
+        <div>
             <v-btn color="primary" @click="dialog = true"><v-icon>mdi-swap-horizontal</v-icon> 转分</v-btn>
             <v-btn color="primary" class="mx-2"><v-icon>mdi-swap-horizontal</v-icon> 积分全转</v-btn>
         </div>

@@ -1,8 +1,6 @@
 <template>
     <div class="pa-4">
-        <div class="text-h5 font-weight-bold">银行卡设置</div>
-
-        <div class="my-2 border px-2 pt-3 pb-2 rounded">
+        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-text-field

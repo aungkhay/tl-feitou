@@ -10,7 +10,12 @@ export const useUserStore = defineStore('user', {
         player_detail: [],
         groups: [],
         option1: ['现金', '红包', '活动', '返水', '借款', '还款', '纠错', '初始化', '存款', '取款'],
-        tablePageSize: [5, 10, 20, 50]
+        tablePageSize: [5, 10, 20, 50],
+        appTitle: {
+            parent: '首页',
+            child: '上下分',
+            key: ''
+        }
     }),
     actions: {
         setToken(token) {
@@ -31,6 +36,11 @@ export const useUserStore = defineStore('user', {
             } else {
                 localStorage.removeItem('_profile_');
             }
+        },
+        setAppTitle(parent, child, key) {
+            this.appTitle.parent = parent;
+            this.appTitle.child = child;
+            this.appTitle.key = key;
         },
         setOperationType(operation_type) {
             this.operation_type = operation_type;

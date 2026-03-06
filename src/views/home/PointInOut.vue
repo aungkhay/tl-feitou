@@ -141,7 +141,7 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedFilterDate(filters.start_time)"
+                                :model-value="formattedDate(filters.start_time)"
                                 hide-details
                                 clearable
                                 @click:clear="filters.start_time = null"
@@ -152,6 +152,7 @@
                         <v-date-picker
                             v-model="filters.start_time"
                             @update:model-value="startDateMenu = false"
+                            :max="filters.end_time"
                         />
                     </v-menu>
                     <v-menu
@@ -166,7 +167,7 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedFilterDate(filters.end_time)"
+                                :model-value="formattedDate(filters.end_time)"
                                 hide-details
                                 clearable
                                 @click:clear="filters.end_time = null"
@@ -177,6 +178,7 @@
                         <v-date-picker
                             v-model="filters.end_time"
                             @update:model-value="endDateMenu = false"
+                            :max="filters.start_time"
                         />
                     </v-menu>
                 </v-col>
@@ -267,6 +269,7 @@ import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
 import { useToast } from "vue-toastification";
 import { exportExcel } from '../../js/common';
 import moment from 'moment';
+import { formattedDate } from '../../js/common';
 
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore();
@@ -342,11 +345,6 @@ const addOrSubstract = ref('add');
 const substractAllPointDialog = ref(false);
 const isExportingTable1 = ref(false);
 const isExportingTable2 = ref(false);
-
-const formattedFilterDate = (date) => {
-    if (!date) return ''
-    return new Date(date).toLocaleDateString('zh-CN')
-}
 
 const getRecords1 = async () => {
     if (!isReady1.value) return;

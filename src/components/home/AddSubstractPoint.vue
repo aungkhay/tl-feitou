@@ -72,11 +72,11 @@
                         <v-list-item v-bind="props" density="compact" />
                     </template>
                 </v-select>
-                <v-select
+                <v-autocomplete
                     v-model="obj.bank_card"
                     :items="bankCards"
-                    item-title="card_code"
-                    item-value="card_code"
+                    item-title="card_name"
+                    item-value="card_name"
                     label="银行卡号"
                     variant="outlined"
                     density="comfortable"
@@ -88,11 +88,14 @@
                     <template #item="{ props, item }">
                         <v-list-item v-bind="props" density="compact">
                             <v-list-item-subtitle class="text-caption">
-                                {{ item.raw.card_name }}
+                                {{ item.raw.card_type }}: {{ item.raw.card_code }}
                             </v-list-item-subtitle>
+                            <template v-slot:append>
+                                <v-list-item-title class="text-primary text-caption">{{ item.raw.remaining_amount }}元</v-list-item-title>
+                            </template>
                         </v-list-item>
                     </template>
-                </v-select>
+                </v-autocomplete>
                 <div class="d-flex justify-end">
                     <v-btn color="primary" variant="tonal" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
@@ -174,12 +177,14 @@ const save = async () => {
     isSaving.value = true;
     try {
         let res;
+        const card = bankCards.value.find(card => card.card_name === obj.value.bank_card);
         if (props.mode === 'add') {
             res = await ADD_SCORE(
                 obj.value.group_nickname,
                 obj.value.player_name,
                 obj.value.option_score,
                 obj.value.option_type,
+                card ? card.card_code : '',
                 obj.value.bank_card
             );
         } else {
@@ -188,12 +193,14 @@ const save = async () => {
                 obj.value.player_name,
                 obj.value.option_score,
                 obj.value.option_type,
+                card ? card.card_code : '',
                 obj.value.bank_card
             );
         }   
         if (res.code == 200) {
             toast.success(res.msg);
             emit('complete');
+            getBankCards();
         } else {
             toast.error(res.msg);
         }

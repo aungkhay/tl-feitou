@@ -49,14 +49,16 @@ export const GET_SCORE_OPTION_TYPE = async (group_nickname) => {
  * @param {integer} option_score 操作分数
  * @param {string} option_type 操作类型
  * @param {string} bank_card 银行卡(可选）
+ * @param {string} card_name 银行卡名称(可选)
  */
-export const ADD_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card) => {
+export const ADD_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card, card_name) => {
     return await API.post(`${prefix}/player_option/add_score`, {
         group_nickname: group_nickname,
         player_name: player_name,
         option_score: option_score,
         option_type: option_type,
-        bank_card: bank_card
+        bank_card: bank_card,
+        card_name: card_name
     });
 }
 
@@ -67,14 +69,16 @@ export const ADD_SCORE = async (group_nickname, player_name, option_score, optio
  * @param {integer} option_score 操作分数
  * @param {string} option_type 操作类型
  * @param {string} bank_card 银行卡(可选）
+ * @param {string} card_name 银行卡名称(可选)
  */
-export const SUBSTRACT_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card) => {
+export const SUBSTRACT_SCORE = async (group_nickname, player_name, option_score, option_type, bank_card, card_name) => {
     return await API.post(`${prefix}/player_option/subtract_score`, {
         group_nickname: group_nickname,
         player_name: player_name,
         option_score: option_score,
         option_type: option_type,
-        bank_card: bank_card
+        bank_card: bank_card,
+        card_name: card_name
     });
 }
 

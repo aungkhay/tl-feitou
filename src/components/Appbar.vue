@@ -125,7 +125,7 @@ const tabs = ref([
         key: 'office-business',
         title: '办公业务',
         children: [
-            { key: 'expense-registration',  routeName: 'ExpenseRegistration', title: '费用登记' },
+            { key: 'expanse-registeration',  routeName: 'ExpanseRegisteration', title: '费用登记' },
         ],
     },
     {

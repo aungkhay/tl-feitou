@@ -61,7 +61,7 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                :model-value="formattedFilterDate(filters.start_time)"
+                                :model-value="formattedDate(filters.start_time)"
                                 label="开始时间"
                                 readonly
                                 density="compact"
@@ -78,7 +78,7 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                :model-value="formattedFilterDate(filters.end_time)"
+                                :model-value="formattedDate(filters.end_time)"
                                 label="结束时间"
                                 readonly
                                 density="compact"
@@ -210,6 +210,7 @@ import { required, helpers } from '@vuelidate/validators';
 import { GET_GROUP_PLAYERS } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
 import { TRANS_SCORE } from '../../js/api/desk_option';
+import { formattedDate } from '../../js/common';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -267,11 +268,6 @@ const rules = ref({
     target_player_name: { required: helpers.withMessage('目的玩家昵称不能为空', required) },
 })
 const v$ = useVuelidate(rules.value, obj.value);
-
-const formattedFilterDate = (date) => {
-    if (!date) return ''
-    return new Date(date).toLocaleDateString('zh-CN')
-}
 
 const exportTable = async () => {
 

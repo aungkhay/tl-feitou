@@ -59,6 +59,7 @@ import { useRoute } from 'vue-router';
 import { useToast } from "vue-toastification";
 import { LOGIN } from '../js/api/auth';
 import router from '../router';
+import { GET_GROUP_NICKNAME } from '../js/api/player_option';
 
 const { mdAndUp, mdAndDown, xs, smAndDown } = useDisplay();
 const toast = useToast();
@@ -87,6 +88,7 @@ const login = async () => {
     if (res.code == 500) {
         toast.error(res.msg);
     } else {
+        await GET_GROUP_NICKNAME();
         toast.success(res.msg);
         router.push({ name: 'PointInOut', replace: true });
     }

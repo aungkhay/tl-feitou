@@ -109,7 +109,7 @@
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="1" class="d-flex">
-                    <v-btn class="mr-2" color="primary" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn class="mr-2" color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                     <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
                 </v-col>
             </v-row>
@@ -166,7 +166,7 @@ const headers = ref([
     { title: '操作前金额', value: 'before_option_amount', minWidth: 150 },
     { title: '操作人', value: 'optioner', minWidth: 120 },
     { title: '操作时间', value: 'option_time', minWidth: 170 },
-    { title: '台号', value: 'group_nickname', minWidth: 120 },
+    { title: '台号', value: 'desk_number', minWidth: 120 },
     { title: '备注', value: 'remark', minWidth: 200 },
 ]);
 

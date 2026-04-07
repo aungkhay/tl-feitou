@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 
 export const formattedDate = (date) => {
-    if (!date) return '选择日期'
+    if (!date) return ''
 
     const d = new Date(date)
     const y = d.getFullYear()

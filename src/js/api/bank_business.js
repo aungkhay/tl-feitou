@@ -160,3 +160,42 @@ export const CARD_DETAILS_INQUIRY = async (card_type, optioner, card_name, optio
         pageSize: pageSize,
     });
 }
+
+/**
+ * 银行统计
+ * @param {string} card_status 卡状态
+ * @param {string} card_name 卡姓名
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {integer} currentPage 当前页
+ * @param {integer} pageSize 每页总条数
+ * @returns 
+ */
+export const BANK_STATISTICS_BY_DAY = async (card_name, startTime, endTime, currentPage, pageSize) => {
+    return await API.post(`${prefix}/bank_business/bank_statistics`, {
+        card_name: card_name,
+        startTime: startTime,
+        endTime: endTime,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}
+
+/**
+ * 银行统计
+ * @param {string} card_status 卡状态
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {integer} currentPage 当前页
+ * @param {integer} pageSize 每页总条数
+ * @returns 
+ */
+export const BANK_STATISTICS_BY_PERIOD = async (card_status, startTime, endTime, currentPage, pageSize) => {
+    return await API.post(`${prefix}/bank_business/bank_statistics`, {
+        card_status: card_status,
+        startTime: startTime,
+        endTime: endTime,   
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}

@@ -1,18 +1,53 @@
 <template>
     <div class="pa-4">
-        <div class="text-h6">洗手下注明细</div>
-        <div class="mb-4 border rounded-lg pa-4 bg-grey-lighten-4">
-            <v-row>
+        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
+            <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-select
-                        :items="[]"
-                        item-title="title"
-                        item-value="value"
+                        v-model="filters.group_nickname"
+                        :items="groups"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
                         label="选择操作台"
                         density="compact"
                         variant="outlined"
                         hide-details
-                    ></v-select>
+                        clearable
+                        @click:clear="filters.group_nickname = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-select>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-select
+                        v-model="filters.bet_type"
+                        :items="betTypes"
+                        item-title="title"
+                        item-value="value"
+                        label="下注类型"
+                        density="compact"
+                        variant="outlined"
+                        hide-details
+                        clearable
+                        @click:clear="filters.bet_type = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-select>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-text-field
+                        v-model="filters.player_name"
+                        item-title="title"
+                        item-value="value"
+                        label="选手名称"
+                        density="compact"
+                        variant="outlined"
+                        hide-details
+                    ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
@@ -23,17 +58,17 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                label="从"
+                                label="开始时间"
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(fromDate)"
+                                :model-value="formattedDate(filters.startTime)"
                                 hide-details
                             ></v-text-field>
                         </template>
 
                         <v-date-picker
-                            v-model="fromDate"
+                            v-model="filters.startTime"
                             @update:model-value="fromDateMenu = false"
                         />
                     </v-menu>
@@ -47,101 +82,138 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                label="到"
+                                label="结束时间"
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(toDate)"
+                                :model-value="formattedDate(filters.endTime)"
                                 hide-details
                             ></v-text-field>
                         </template>
 
                         <v-date-picker
-                            v-model="toDate"
+                            v-model="filters.endTime"
                             @update:model-value="toDateMenu = false"
                         />
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-text-field
-                        item-title="title"
-                        item-value="value"
-                        label="代理商昵称"
-                        density="compact"
-                        variant="outlined"
-                        hide-details
-                    ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="2">
-                    <div class="d-flex">
-                        <v-btn class="mr-2" color="primary"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
-                        <v-btn color="primary"><v-icon>mdi-refresh</v-icon> 重置</v-btn>
-                    </div>
+                    <v-btn color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>
-        <div>
-            <v-btn color="primary" class="mb-4">单个台单个洗手下注流水</v-btn>
-            <v-btn color="primary" class="mb-4 mx-2">全部台单个洗手下注流水</v-btn>
-            <v-btn color="primary" class="mb-4"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+        <div class="d-flex justify-space-between align-center mb-2">
+            <div>
+                <v-btn color="primary">单个台单个洗手下注流水</v-btn>
+                <v-btn color="primary" class="mx-2">全部台单个洗手下注流水</v-btn>
+            </div>
+            <v-btn color="success" ><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
         </div>
 
-        <v-table density="compact" hover>
-            <thead>
-                <tr>
-                    <th>序列</th>
-                    <th>会员昵称</th>
-                    <th>靴局</th>
-                    <th>下注金额</th>
-                    <th>下注输赢</th>
-                    <th>下注命令</th>
-                    <th>命令格式</th>
-                    <th>下注时间</th>
-                    <th>开奖结果</th>
-                    <th>开奖时间</th>
-                    <th>结算状态</th>
-                    <th>原始字符串</th>
-                    <th>下注前金额</th>
-                    <th>初始金额</th>
-                    <th>台号</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="i in 10" :key="i">
-                    <td>{{ i }}</td>
-                    <td>张三</td>
-                    <td>001</td>
-                    <td>500元</td>
-                    <td>200元</td>
-                    <td>下注命令示例</td>
-                    <td>命令格式示例</td>
-                    <td>2024-01-01 12:00:00</td>
-                    <td>开奖结果示例</td>
-                    <td>2024-01-01 12:05:00</td>
-                    <td>已结算</td>
-                    <td>原始字符串示例</td>
-                    <td>1000元</td>
-                    <td>1500元</td>
-                    <td>A1</td>
-                </tr>
-            </tbody>
-        </v-table>
-
-        <v-pagination 
-            :length="4"
+        <v-data-table-server
+            v-model:page="page"
+            v-model:items-per-page="perPage"
+            :headers="headers"
+            :items="records"
+            :items-length="total"
+            :loading="loading"
             density="compact"
-            color="primary"
-            class="mt-4"
-        />
+            class="table1"
+            :items-per-page-options="pageSizeOptions"
+            @update:options="getRecords"
+            hover
+        >
+            <template #loading>
+                <v-skeleton-loader type="table-row@8"/>
+            </template>
+            <template #item.option_time="{ item }">
+                {{ $filters.formatFullDate(item.option_time) }}
+            </template>
+            <template #item.bet_time="{ item }">
+                {{ $filters.formatFullDate(item.bet_time) }}
+            </template>
+        </v-data-table-server>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { formattedDate } from '../../js/common';
+import { useUserStore } from '../../stores/user';
+import { GET_PLAYER_BETTING_DETAILS } from '../../js/api/financial_inquiries';
 
+const userStore = useUserStore();
 const fromDateMenu = ref(false);
-const fromDate = ref(new Date());
 const toDateMenu = ref(false);
-const toDate = ref(new Date());
+
+const records = ref([]);
+const page = ref(1);
+const perPage = ref(10);
+const total = ref(0);
+const loading = ref(false);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
+const headers = ref([
+    { title: '序列', value: 'index', fixed: 'start', minWidth: 70 },
+    { title: '会员昵称', value: 'palyer_nickname', minWidth: 120 },
+    { title: '靴局', value: 'round', minWidth: 100 },
+    { title: '下注金额', value: 'bet', minWidth: 120 },
+    { title: '下注输赢', value: 'win', minWidth: 120 },
+    { title: '下注命令', value: 'bet_command', minWidth: 150 },
+    { title: '命令格式', value: 'command_format', minWidth: 150 },
+    { title: '下注时间', value: 'bet_time', minWidth: 170 },
+    { title: '开奖结果', value: 'result', minWidth: 150 },
+    { title: '开奖时间', value: 'result_time', minWidth: 170 },
+    { title: '结算状态', value: 'settlement_status', minWidth: 120 },
+    { title: '原始字符串', value: 'raw_string', minWidth: 170 },
+    { title: '下注前金额', value: 'before_bet_money', minWidth: 120 },
+    { title: '初始金额', value: 'init_money', minWidth: 120 },
+    { title: '台号', value: 'table_number', minWidth: 100, fixed: 'end' },
+])
+
+const groups = computed(() => userStore.groups);
+const betTypes = ref([
+    { title: "庄", value: "z" },
+    { title: "闲对", value: "xd" },
+    { title: "庄对", value: "zd" },
+    { title: "和", value: "h" },
+    { title: "幸运6", value: "l" },
+    { title: "完美", value: "m" },
+    { title: "任意", value: "d" },
+    { title: "庄闲洗码", value: "xml_zx" },
+    { title: "三宝洗码", value: "xml_sb" },
+    { title: "庄闲盈亏", value: "zx_yl" },
+    { title: "三宝盈亏", value: "sb_yl" },
+    { title: "有效流水", value: "yxxz" },
+]);
+
+const filters = ref({
+    group_nickname: null,
+    bet_type: null,
+    player_name: '',
+    startTime: '',
+    endTime: '',
+});
+
+const getRecords = async () => {
+    loading.value = true;
+    try {
+        const res = await GET_PLAYER_BETTING_DETAILS(
+            filters.value.player_name,
+            filters.value.startTime,
+            filters.value.endTime,
+            filters.value.bet_type,
+            filters.value.group_nickname,
+            page.value,
+            perPage.value,
+        );
+        if (res.code == 200) {
+            records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            total.value = res.data.count;
+        }
+    } catch (error) {
+        console.error('获取记录失败:', error);
+    } finally {
+        loading.value = false;
+    }
+}
 </script>

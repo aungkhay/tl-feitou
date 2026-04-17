@@ -25,3 +25,51 @@ export const GET_PLAYER_BETTING_DETAILS = async (player_name, startTime, endTime
         pageSize: pageSize
     });
 }
+
+/**
+ * 
+ * @param {string} shoe 靴数
+ * @param {string} date 查询时间
+ * @param {integer} is_virtual 是否包含虚拟
+ * @param {string} group_nickname 操作台(群昵称)
+ * @param {integer} currentPage 当前页
+ * @param {integer} pageSize 每页总条数
+ * @returns 
+ */
+export const GET_ROUND_DETAILS = async (shoe, date, is_virtual, group_nickname, currentPage, pageSize) => {
+    return await API.post(`${prefix}/financial_inquiries/round_details`, {
+        shoe: shoe,
+        date: date ? moment(date).format('YYYY-MM-DD') : '',
+        is_virtual: is_virtual ? 1 : 0,
+        group_nickname: group_nickname,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}
+
+/**
+ * 选手洗码盈亏-查询选手明细
+ * @param {string} name 名称(可选）
+ * @param {integer} shoe 靴（可选）
+ * @param {integer} round 局（可选）
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {integer} is_contains_virtual 是否包含虚拟 （0. 不包含 1. 包含）
+ * @param {string} group_nickname 
+ * @param {integer} currentPage 当前页
+ * @param {integer} pageSize 每页总条数
+ * @returns 
+ */
+export const GET_PLAYER_DETAILS_QUERY = async (name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname, currentPage, pageSize) => {
+    return await API.post(`${prefix}/financial_inquiries/ht_player_details_query`, {
+        name: name,
+        shoe: shoe,
+        round: round,
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        is_contains_virtual: is_contains_virtual ? 1 : 0,
+        group_nickname: group_nickname,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}

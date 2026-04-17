@@ -98,16 +98,16 @@
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-btn color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <div class="d-flex">
+                        <div class="w-50 pr-1">
+                            <v-btn color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                        </div>
+                        <div class="w-50 pl-1">
+                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                        </div>
+                    </div>
                 </v-col>
             </v-row>
-        </div>
-        <div class="d-flex justify-space-between align-center mb-2">
-            <div>
-                <v-btn color="primary">单个台单个洗手下注流水</v-btn>
-                <v-btn color="primary" class="mx-2">全部台单个洗手下注流水</v-btn>
-            </div>
-            <v-btn color="success" ><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
         </div>
 
         <v-data-table-server

@@ -24,6 +24,11 @@ const routes = [
                 component: () => import('../views/home/PointInOut.vue'),
             },
             {
+                path: 'redeem-point',
+                name: 'RedeemPoint',
+                component: () => import('../views/home/RedeemPoint.vue'),
+            },
+            {
                 path: 'multi-desk-transfer',
                 name: 'MultiDeskTransfer',
                 component: () => import('../views/home/MultiDeskTransfer.vue'),

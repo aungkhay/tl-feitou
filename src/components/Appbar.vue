@@ -81,7 +81,7 @@ const tabs = ref([
         children: [
             { key: 'in-out-points', routeName: 'PointInOut', title: '上下分' },
             { key: 'multi-desk-transfer', routeName: 'MultiDeskTransfer', title: '多台转分' },
-            { key: 'exchange-points', routeName: '', title: '兑换积分' },
+            { key: 'redeem-point', routeName: 'RedeemPoint', title: '兑换积分' },
         ],
     },
     {

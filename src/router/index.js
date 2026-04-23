@@ -55,8 +55,8 @@ const routes = [
             },
             {
                 path: 'jiajiancai-registration',
-                name: 'JiaJianCaiRegistration',
-                component: () => import('../views/JiaJianCaiRegistration.vue'),
+                name: 'JiajiancaiRegistration',
+                component: () => import('../views/JiajiancaiRegistration.vue'),
             },
             {
                 path: 'wash-hand-bet-details',

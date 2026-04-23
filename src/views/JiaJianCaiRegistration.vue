@@ -1,39 +1,53 @@
 <template>
     <div class="pa-4">
-        <div class="text-h6">加减彩登记</div>
-        <div class="mb-4 border rounded-lg pa-4 bg-grey-lighten-4">
+
+        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row>
                 <v-col cols="12" sm="2">
                     <v-select
-                        :items="[]" 
-                        item-title="title" 
-                        item-value="value" 
-                        label="拉取端" 
-                        density="compact" 
-                        variant="outlined" 
+                        v-model="filters.group_nickname"
+                        :items="groups"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
+                        label="拉取端"
+                        density="compact"
+                        variant="outlined"
                         hide-details
-                    />
+                        clearable
+                        @click:append-inner="filters.group_nickname = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>                    
+                    </v-select>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-select
-                        :items="[]" 
-                        item-title="title" 
-                        item-value="value" 
+                        v-model="filters.option_type"
+                        :items="['加彩', '减彩']" 
                         label="操作类型" 
                         density="compact" 
                         variant="outlined" 
                         hide-details
-                    />
+                        clearable
+                        @click:clear="filters.option_type = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>   
+                    </v-select>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-select
-                        :items="[]" 
+                    <v-text-field
+                        v-model="filters.optioner"
                         item-title="title" 
                         item-value="value" 
                         label="操作人" 
                         density="compact" 
                         variant="outlined" 
                         hide-details
+                        clearable
+                        @click:clear="filters.optioner = null"
                     />
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -45,17 +59,20 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                label="从"
+                                label="开始时间"
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(fromDate)"
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.startTime)"
                                 hide-details
+                                clearable
+                                @click:clear="filters.startTime = ''"
                             ></v-text-field>
                         </template>
 
                         <v-date-picker
-                            v-model="fromDate"
+                            v-model="filters.startTime"
                             @update:model-value="fromDateMenu = false"
                         />
                     </v-menu>
@@ -69,72 +86,58 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                label="到"
+                                label="结束时间"
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(toDate)"
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.endTime)"
                                 hide-details
+                                clearable
+                                @click:clear="filters.endTime = ''"
                             ></v-text-field>
                         </template>
 
                         <v-date-picker
-                            v-model="toDate"
+                            v-model="filters.endTime"
                             @update:model-value="toDateMenu = false"
                         />
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <div class="d-flex">
-                        <v-btn class="mr-2" color="primary"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
-                        <v-btn color="primary"><v-icon>mdi-refresh</v-icon> 重置</v-btn>
-                    </div>
+                    <v-btn class="mr-2" color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>
-        <div class="d-flex mb-2">
+        <div class="d-flex justify-space-between mb-2">
             <v-btn color="primary" class="mr-2" @click="dialog = true"><v-icon>mdi-plus</v-icon> 新增</v-btn>
-            <v-btn color="primary"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
+            <v-btn color="success"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
         </div>
-        <v-table density="compact" hover>
-            <thead>
-                <tr>
-                    <th>序列</th>
-                    <th>拉取端</th>
-                    <th>当前金额</th>
-                    <th>操作金额</th>
-                    <th>操作前金额</th>
-                    <th>操作类型</th>
-                    <th>操作时间</th>
-                    <th>操作人</th>
-                    <th>备注</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(record, index) in 10" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>辉煌一台</td>
-                    <td>5000</td>
-                    <td>300</td>
-                    <td>5300</td>
-                    <td>支出</td>
-                    <td>2024-06-01 14:30:00</td>
-                    <td>张三</td>
-                    <td>购买打印纸和墨盒</td>
-                    <td>
-                        <v-btn size="small" color="primary" class="mr-2"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
-                        <v-btn size="small" color="red"><v-icon>mdi-delete</v-icon> 删除</v-btn>
-                    </td>
-                </tr>
-            </tbody>
-        </v-table>
-        <v-pagination 
-            :length="4"
+
+        <v-data-table-server
+            v-model:page="page"
+            v-model:items-per-page="perPage"
+            :headers="headers"
+            :items="records"
+            :items-length="total"
+            :loading="loading"
             density="compact"
-            color="primary"
-            class="mt-4"
-        />
+            class="table1"
+            :items-per-page-options="pageSizeOptions"
+            @update:options="getRecords"
+            hover
+        >
+            <template #loading>
+                <v-skeleton-loader type="table-row@8"/>
+            </template>
+            <template #item.option_time="{ item }">
+                {{ $filters.formatFullDate(item.option_time) }}
+            </template>
+            <template #item.actions="{ item }">
+                <v-btn color="success" variant="tonal" size="small" @click="editRecord(item)" class="mr-2"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
+                <v-btn color="error" variant="tonal" size="small" @click="deleteRecord(item)"><v-icon>mdi-delete</v-icon> 删除</v-btn>
+            </template>
+        </v-data-table-server>
 
         <v-dialog
             v-model="dialog"
@@ -143,39 +146,73 @@
         >
             <v-card>
                 <v-card-title class="text-h6 d-flex justify-space-between bg-grey-lighten-3 pa-3">
-                    <div>添加登记</div>
-                    <v-btn icon="mdi-close" @click="dialog = false" variant="text" density="compact"></v-btn>
+                    <div>{{ selectedRecord ? '编辑' : '添加' }}登记</div>
+                    <v-btn icon="mdi-close" :disabled="isSaving" @click="resetForm()" variant="text" density="compact"></v-btn>
                 </v-card-title>
                 <v-card-text>
                     <v-select
-                        :items="[]" 
-                        item-title="title" 
-                        item-value="value" 
-                        label="拉取端" 
-                        density="compact" 
-                        variant="outlined" 
-                    />
+                        v-model="obj.group_nickname"
+                        :items="groups"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
+                        label="拉取端"
+                        density="compact"
+                        variant="outlined"
+                        :error-messages="v$.group_nickname.$errors.map(e => e.$message)"
+                        @input="v$.group_nickname.$touch"
+                        @blur="v$.group_nickname.$touch"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>                    
+                    </v-select>
                     <v-select
-                        :items="[]" 
-                        item-title="title" 
-                        item-value="value" 
+                        v-model="obj.option_type"
+                        :items="['加彩', '减彩']" 
                         label="操作类型" 
                         density="compact" 
                         variant="outlined" 
+                        :error-messages="v$.option_type.$errors.map(e => e.$message)"
+                        @input="v$.option_type.$touch"
+                        @blur="v$.option_type.$touch"
                     />
                     <v-text-field
+                        v-model="obj.amount"
                         label="金额"
                         density="compact"
                         variant="outlined"
+                        :error-messages="v$.amount.$errors.map(e => e.$message)"
+                        @input="v$.amount.$touch"
+                        @blur="v$.amount.$touch"
                     />
                     <v-textarea
+                        v-model="obj.memo"
                         label="备注"
                         density="compact"
                         variant="outlined"
                         rows="3"
+                        :error-messages="v$.memo.$errors.map(e => e.$message)"
+                        @input="v$.memo.$touch"
+                        @blur="v$.memo.$touch"
                     />
                     <div class="d-flex justify-end">
-                        <v-btn color="primary">新增保存</v-btn>
+                        <v-btn color="primary" :disabled="v$.$invalid" :loading="isSaving" @click="saveRecord">{{ selectedRecord ? '更新' : '保存' }}</v-btn>
+                    </div>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+            v-model="deleteDialog"
+            max-width="400"
+            persistent
+        >
+            <v-card title="删除记录">
+                <v-card-text>
+                    <div class="mb-4">确定要删除记录吗？</div>
+                    <div class="d-flex justify-end">
+                        <v-btn variant="tonal" color="primary" class="mr-2" :disabled="isDeleting" @click="resetForm">取消</v-btn>
+                        <v-btn variant="tonal" color="error" :loading="isDeleting" @click="confirmDelete">确定</v-btn>
                     </div>
                 </v-card-text>
             </v-card>
@@ -184,12 +221,153 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { formattedDate } from '../js/common';
+import { useUserStore } from '../stores/user';
+import { GET_POINTS_RECORD, ADD_POINTS, EDIT_POINTS, DELETE_POINTS } from '../js/api/points_business'
+import { useVuelidate } from '@vuelidate/core';
+import { required, helpers } from '@vuelidate/validators';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
+const userStore = useUserStore();
 const dialog = ref(false);
+const deleteDialog = ref(false);
+const records = ref([]);
+const total = ref(0);
+const page = ref(1);
+const perPage = ref(10);
+const loading = ref(false);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
+const headers = ref([
+    { title: '序列', value: 'index', fixed: 'start', width: 70 },
+    { title: '拉取端', value: 'pull_end', fixed: 'start', minWidth: 120 },
+    { title: '当前金额', value: 'money', minWidth: 120 },
+    { title: '操作金额', value: 'option_money', minWidth: 120 },
+    { title: '操作前金额', value: 'befor_opton_money', minWidth: 150 },
+    { title: '操作类型', value: 'option_type', minWidth: 120 },
+    { title: '操作时间', value: 'option_time', minWidth: 170 },
+    { title: '操作人', value: 'optioner', minWidth: 120 },
+    { title: '备注', value: 'memo', minWidth: 200 },
+    { title: '操作', value: 'actions', fixed: 'end', minWidth: 180 }
+]);
+
+const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
-const fromDate = ref(new Date());
 const toDateMenu = ref(false);
-const toDate = ref(new Date());
+const filters = ref({
+    startTime: null,
+    endTime: null,
+    group_nickname: null,
+    optioner: null,
+    option_type: null
+});
+
+const selectedRecord = ref(null);
+const isSaving = ref(false);
+const isDeleting = ref(false);
+const obj = ref({
+    group_nickname: null,
+    option_type: null,
+    amount: null,
+    memo: null
+})
+
+const rules = ref({
+    group_nickname: { required: helpers.withMessage('拉取端不能为空', required) },
+    option_type: { required: helpers.withMessage('操作类型不能为空', required) },
+    amount: { required: helpers.withMessage('金额不能为空', required), },
+    memo: { required: helpers.withMessage('备注不能为空', required) },
+})
+
+const v$ = useVuelidate(rules.value, obj.value);
+
+const getRecords = async () => {
+    loading.value = true;
+    try {
+        const res = await GET_POINTS_RECORD(
+            filters.value.group_nickname,
+            filters.value.optioner,
+            filters.value.option_type,
+            filters.value.startTime,
+            filters.value.endTime,
+            page.value,
+            perPage.value
+        );
+        if (res.code == 200) {
+            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            total.value = res.data.total;
+        }
+    } catch (error) {
+        console.error('Error fetching records:', error);
+    } finally {
+        loading.value = false;
+    }
+};
+
+const resetForm = () => {
+    obj.value.group_nickname = null;
+    obj.value.option_type = null;
+    obj.value.amount = null;
+    obj.value.memo = null;
+    v$.value.$reset();
+    selectedRecord.value = null;
+    deleteDialog.value = false;
+    dialog.value = false;
+};
+
+const saveRecord = async () => {
+    if(v$.value.$invalid) return;
+
+    isSaving.value = true;
+    try {
+        let res;
+        if (selectedRecord.value) {
+            res = await EDIT_POINTS(selectedRecord.value.Id, obj.value.group_nickname, obj.value.option_type, obj.value.amount, obj.value.memo);
+        } else {
+            res = await ADD_POINTS(obj.value.group_nickname, obj.value.option_type, obj.value.amount, obj.value.memo);
+        }
+        if (res.code == 200) {
+            resetForm();
+            getRecords();
+        }
+        toast.success(res.msg);
+    } catch (error) {
+        console.error('Error saving record:', error);
+        toast.error('保存记录时出错');
+    } finally {
+        isSaving.value = false;
+    }
+};
+
+const editRecord = (record) => {
+    selectedRecord.value = record;
+    obj.value.group_nickname = record.pull_end;
+    obj.value.option_type = record.option_type;
+    obj.value.amount = record.option_money;
+    obj.value.memo = record.memo;
+    dialog.value = true;
+};
+
+const deleteRecord = (record) => {
+    selectedRecord.value = record;
+    deleteDialog.value = true;
+};
+
+const confirmDelete = async () => {
+    isDeleting.value = true;
+    try {
+        const res = await DELETE_POINTS(selectedRecord.value.Id);
+        if (res.code == 200) {
+            resetForm();
+            getRecords();
+        }
+        toast.success(res.msg);
+    } catch (error) {
+        console.error('Error deleting record:', error);
+        toast.error('删除记录时出错');
+    } finally {
+        isDeleting.value = false;
+    }
+};
 </script>

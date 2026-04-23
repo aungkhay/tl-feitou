@@ -147,7 +147,7 @@ const tabs = ref([
             { key: 'hedging-change-query', routeName: 'HedgingChangeQuery', title: '对冲零钱查询' },
             // { key: 'promotion-business-query', routeName: 'PromotionBusinessQuery', title: '推广业务查询' },
             // { key: 'loan-deposit-withdrawal-query', routeName: 'LoanDepositWithdrawalQuery', title: '借款，存取款查询' },
-            { key: 'personal-share-query', routeName: 'PersonalShareQuery', title: '个人占成查询' },
+            { key: 'personal-share-query', routeName: 'PersonalShareQuery', title: '个人占成明细' },
             { key: 'cash-recharge-details', routeName: 'CashRechargeDetails', title: '现金充值明细' },
             // { key: 'wash-hand-data-error-check', routeName: 'WashHandDataErrorCheck', title: '洗手数据查错' },
             // { key: 'reconciliation-analysis-difference', routeName: 'ReconciliationAnalysisDifference', title: '对账分析差额' },
@@ -158,33 +158,33 @@ const tabs = ref([
         key: 'financial-statistics',
         title: '财务统计',
         children: [
-            { key: 'table-general-ledger', routeName: 'TableGeneralLedger', title: '台面总账' },
+            { key: 'desk-ledger', routeName: 'DeskLedger', title: '台面总账' },
             { key: 'sanbao-statistics', routeName: 'SanbaoStatistics', title: '三宝统计' },
             { key: 'personal-share-statistics', routeName: 'PersonalShareStatistics', title: '个人占成统计' },
-            { key: 'hedging-change-statistics', routeName: 'HedgingChangeStatistics', title: '对冲零钱统计' },
-            { key: 'promotion-business-statistics', routeName: 'PromotionBusinessStatistics', title: '推广业务统计' },
+            // { key: 'hedging-change-statistics', routeName: 'HedgingChangeStatistics', title: '对冲零钱统计' },
+            // { key: 'promotion-business-statistics', routeName: 'PromotionBusinessStatistics', title: '推广业务统计' },
         ],
     },
-    {
-        key: 'agent-business',
-        title: '代理业务',
-        children: [
-            { key: 'agent-settings', routeName: 'AgentSettings', title: '代理设置' },
-            { key: 'agent-commission', routeName: 'AgentCommission', title: '代理返佣' },
-            { key: 'agent-details', routeName: 'AgentDetails', title: '代理明细' },
-        ],
-    },
-    {
-        key: 'data-analysis',
-        title: '数据分析',
-        children: [
-            { key: 'pump-detail-analysis', routeName: 'PumpDetailAnalysis', title: '抽水明细分析' },
-            { key: 'pump-statistics-analysis', routeName: 'PumpStatisticsAnalysis', title: '抽水统计分析' },
-            { key: 'activity-analysis', routeName: 'ActivityAnalysis', title: '活跃度分析' },
-            { key: 'recently-inactive-players', routeName: 'RecentlyInactivePlayers', title: '最近没有玩过玩家' },
-            { key: 'manual-bet-entry-log', routeName: 'ManualBetEntryLog', title: '手工录入注码日志' },
-        ],
-    },
+    // {
+    //     key: 'agent-business',
+    //     title: '代理业务',
+    //     children: [
+    //         { key: 'agent-settings', routeName: 'AgentSettings', title: '代理设置' },
+    //         { key: 'agent-commission', routeName: 'AgentCommission', title: '代理返佣' },
+    //         { key: 'agent-details', routeName: 'AgentDetails', title: '代理明细' },
+    //     ],
+    // },
+    // {
+    //     key: 'data-analysis',
+    //     title: '数据分析',
+    //     children: [
+    //         { key: 'pump-detail-analysis', routeName: 'PumpDetailAnalysis', title: '抽水明细分析' },
+    //         { key: 'pump-statistics-analysis', routeName: 'PumpStatisticsAnalysis', title: '抽水统计分析' },
+    //         { key: 'activity-analysis', routeName: 'ActivityAnalysis', title: '活跃度分析' },
+    //         { key: 'recently-inactive-players', routeName: 'RecentlyInactivePlayers', title: '最近没有玩过玩家' },
+    //         { key: 'manual-bet-entry-log', routeName: 'ManualBetEntryLog', title: '手工录入注码日志' },
+    //     ],
+    // },
 ])
 const showLogoutDialog = ref(false);
 const showChangePasswordDialog = ref(false);

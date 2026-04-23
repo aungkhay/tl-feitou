@@ -1,9 +1,195 @@
 <template>
     <div class="pa-4">
-        <div class="text-h6">现金充值明细</div>
+
+        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
+            <v-row dense>
+                <v-col cols="12" sm="2">
+                    <v-select
+                        v-model="filters.group_nickname"
+                        :items="groups"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
+                        label="选择操作台"
+                        density="compact"
+                        variant="outlined"
+                        hide-details
+                        clearable
+                        @click:append-inner="filters.group_nickname = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>                    
+                    </v-select>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-select
+                        v-model="filters.option_type"
+                        :items="['充值', '取款']"
+                        label="操作类型"
+                        variant="outlined"
+                        density="compact"
+                        hide-details
+                        clearable
+                        @click:clear="filters.option_type = ''"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>   
+                    </v-select>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-menu
+                        v-model="fromDateMenu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                    >
+                        <template #activator="{ props }">
+                            <v-text-field
+                                v-bind="props"
+                                label="开始时间"
+                                variant="outlined"
+                                density="compact"
+                                readonly
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.startTime)"
+                                hide-details
+                                clearable
+                                @click:clear="filters.startTime = ''"
+                            ></v-text-field>
+                        </template>
+
+                        <v-date-picker
+                            v-model="filters.startTime"
+                            @update:model-value="fromDateMenu = false"
+                        />
+                    </v-menu>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-menu
+                        v-model="toDateMenu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                    >
+                        <template #activator="{ props }">
+                            <v-text-field
+                                v-bind="props"
+                                label="结束时间"
+                                variant="outlined"
+                                density="compact"
+                                readonly
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.endTime)"
+                                hide-details
+                                clearable
+                                @click:clear="filters.endTime = ''"
+                            ></v-text-field>
+                        </template>
+
+                        <v-date-picker
+                            v-model="filters.endTime"
+                            @update:model-value="toDateMenu = false"
+                        />
+                    </v-menu>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <div class="d-flex">
+                        <div class="w-50 pr-1">
+                            <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                        </div>
+                        <div class="w-50 pl-1">
+                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                        </div>
+                    </div>
+                </v-col>
+            </v-row>
+        </div>
+
+        <v-data-table-server
+            v-model:page="page"
+            v-model:items-per-page="perPage"
+            :headers="headers"
+            :items="records"
+            :items-length="total"
+            :loading="loading"
+            density="compact"
+            class="table1"
+            :items-per-page-options="pageSizeOptions"
+            @update:options="getRecords"
+            hover
+        >
+            <template #loading>
+                <v-skeleton-loader type="table-row@8"/>
+            </template>
+            <template #item.shoe_round="{ item }">
+                <span>{{ item.cc }} - {{ item.jc }}</span>
+            </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="2">总充值: {{ summary.total_add }}</td>
+                    <td colspan="2">总取款: {{ summary.total_subtract }}</td>
+                    <td colspan="2">净总额: {{ summary.net_total }}</td>
+                    <td colspan="4"></td>
+                </tr>
+            </template>
+        </v-data-table-server>
     </div>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue';
+import { useUserStore } from '../../stores/user';
+import { GET_RECHARGE_DETAILS_INQUIRY } from '../../js/api/financial_inquiries';
+import { formattedDate } from '../../js/common';
 
+const userStore = useUserStore();
+const records = ref([]);
+const total = ref(0);
+const page = ref(1);
+const perPage = ref(10);
+const loading = ref(false);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
+const headers = ref([
+    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
+    { title: '会员昵称', value: 'playername', minWidth: 120 },
+    { title: '操作金额', value: 'score', minWidth: 120 },
+    { title: '操作前金额', value: 'before_option_score', minWidth: 120 },
+    { title: '操作类型', value: 'option_type', minWidth: 120 },
+    { title: '工作日', value: 'working_date', minWidth: 120 },
+    { title: '操作时间', value: 'option_time', minWidth: 170 },
+    { title: '操作员', value: 'optioner', minWidth: 120 },
+    { title: '操作说明', value: 'memo', minWidth: 200 },
+    { title: '银行卡', value: 'bank_card', minWidth: 150 },
+]);
+const summary = ref({
+    net_total: 0,
+    total_add: 0,
+    total_subtract: 0,
+})
+const groups = computed(() => userStore.groups);
+const fromDateMenu = ref(false);
+const toDateMenu = ref(false);
+const filters = ref({
+    startTime: null,
+    endTime: null,
+    group_nickname: null,
+    option_type: null,
+});
+
+const getRecords = async () => {
+    loading.value = true;
+    try {
+        const res = await GET_RECHARGE_DETAILS_INQUIRY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, filters.value.option_type, page.value, perPage.value);
+        records.value = res.data.list.map((record, index) => ({
+            ...record,
+            index: (page.value - 1) * perPage.value + index + 1,
+        }));
+        total.value = res.data.total;
+        summary.value = res.data.summary;
+    } catch (error) {
+        console.error('Error fetching records:', error);
+    } finally {
+        loading.value = false;
+    }
+};
 </script>

@@ -17,8 +17,8 @@ const prefix = '/api/ht';
 export const GET_PLAYER_BETTING_DETAILS = async (player_name, startTime, endTime, bet_type, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/player_betting_details`, {
         player_name: player_name,
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
         bet_type: bet_type,
         group_nickname: group_nickname,
         currentPage: currentPage,
@@ -65,8 +65,8 @@ export const GET_PLAYER_DETAILS_QUERY = async (name, shoe, round, startTime, end
         name: name,
         shoe: shoe,
         round: round,
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
         is_contains_virtual: is_contains_virtual ? 1 : 0,
         group_nickname: group_nickname,
         currentPage: currentPage,
@@ -85,8 +85,8 @@ export const GET_PLAYER_DETAILS_QUERY = async (name, shoe, round, startTime, end
  */
 export const GET_SANBAO_DETAILS_QUERY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/ht_sb_details_query`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
         group_nickname: group_nickname,
         currentPage: currentPage,
         pageSize: pageSize
@@ -104,9 +104,51 @@ export const GET_SANBAO_DETAILS_QUERY = async (startTime, endTime, group_nicknam
  */
 export const GET_CASH_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/cash_details_inquiry`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
         group_nickname: group_nickname,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}
+
+/**
+ * 个人占成明细查询
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {string} group_nickname 操作台(群昵称)
+ * @param {string} player_name 玩家名称
+ * @param {number} currentPage 当前页
+ * @param {number} pageSize 每页条数
+ * @returns 
+ */
+export const GET_ZC_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, player_name, currentPage, pageSize) => {
+    return await API.post(`${prefix}/financial_inquiries/zc_details_inquiry`, {
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        group_nickname: group_nickname,
+        player_name: player_name,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}
+
+/**
+ * 现金充值明细查询
+ * @param {string} startTime 开始时间 
+ * @param {string} endTime 结束时间
+ * @param {string} group_nickname 操作台(群昵称)
+ * @param {string} option_type 操作类型
+ * @param {number} currentPage 当前页
+ * @param {number} pageSize 每页条数
+ * @returns 
+ */
+export const GET_RECHARGE_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, option_type, currentPage, pageSize) => {
+    return await API.post(`${prefix}/financial_inquiries/recharge_details_inquiry`, {
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        group_nickname: group_nickname,
+        option_type: option_type,
         currentPage: currentPage,
         pageSize: pageSize
     });

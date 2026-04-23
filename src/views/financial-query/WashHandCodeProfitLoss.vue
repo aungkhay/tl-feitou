@@ -129,8 +129,6 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
-            <template #item.cc="{ item }">
-            </template>
         </v-data-table-server>
     </div>
 </template>

@@ -1,18 +1,25 @@
 <template>
     <div class="pa-4">
-        <div class="text-h6">三宝统计</div>
-        <div class="mb-4 border rounded-lg pa-4 bg-grey-lighten-4">
-            <v-row>
+
+        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
+            <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-select
-                        :items="[]"
-                        item-title="title"
-                        item-value="value"
+                        v-model="filters.group_nickname"
+                        :items="groups"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
                         label="选择操作台"
                         density="compact"
                         variant="outlined"
                         hide-details
-                    ></v-select>
+                        clearable
+                        @click:append-inner="filters.group_nickname = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>                    
+                    </v-select>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
@@ -23,17 +30,20 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                label="从"
+                                label="开始时间"
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(fromDate)"
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.startTime)"
                                 hide-details
+                                clearable
+                                @click:clear="filters.startTime = null"
                             ></v-text-field>
                         </template>
 
                         <v-date-picker
-                            v-model="fromDate"
+                            v-model="filters.startTime"
                             @update:model-value="fromDateMenu = false"
                         />
                     </v-menu>
@@ -47,80 +57,134 @@
                         <template #activator="{ props }">
                             <v-text-field
                                 v-bind="props"
-                                label="到"
+                                label="结束时间"
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(toDate)"
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.endTime)"
                                 hide-details
+                                clearable
+                                @click:clear="filters.endTime = null"
                             ></v-text-field>
                         </template>
 
                         <v-date-picker
-                            v-model="toDate"
+                            v-model="filters.endTime"
                             @update:model-value="toDateMenu = false"
                         />
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <div class="d-flex">
-                        <v-btn class="mr-2" color="primary"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
-                        <v-btn color="primary"><v-icon>mdi-refresh</v-icon> 重置</v-btn>
+                        <div class="w-50 pr-1">
+                            <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                        </div>
+                        <div class="w-50 pl-1">
+                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                        </div>
                     </div>
                 </v-col>
             </v-row>
         </div>
-        <div>
-            <v-btn color="primary" class="mb-4"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
-        </div>
-        <v-table density="compact" hover>
-            <thead>
-                <tr>
-                    <th>序列</th>
-                    <th>台号</th>
-                    <th>工作日</th>
-                    <th>三宝总投注分</th>
-                    <th>三宝洗手赢亏分</th>
-                    <th>幸运6(单)总投注分</th>
-                    <th>完美(双)总投注分</th>
-                    <th>任意总投注分</th>
-                    <th>幸运6(单)洗手赢亏总分</th>
-                    <th>完美(双)洗手赢亏总分</th>
-                    <th>任意洗手赢亏总分</th>
-                    <th>公司利润总分</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(record, index) in 10" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>辉煌一台</td>
-                    <td>2024-06-01</td>
-                    <td>5000</td>
-                    <td>300</td>
-                    <td>2000</td>
-                    <td>1500</td>
-                    <td>1000</td>
-                    <td>100</td>
-                    <td>50</td>
-                    <td>30</td>
-                    <td>420</td>
-                </tr>
-            </tbody>
-        </v-table>
-        <v-pagination 
-            :length="4"
+
+        <v-data-table-server
+            v-model:page="page"
+            v-model:items-per-page="perPage"
+            :headers="headers"
+            :items="records"
+            :items-length="total"
+            :loading="loading"
             density="compact"
-            color="primary"
-            class="mt-4"
-        />
+            class="table1"
+            :items-per-page-options="pageSizeOptions"
+            @update:options="getRecords"
+            hover
+        >
+            <template #loading>
+                <v-skeleton-loader type="table-row@8"/>
+            </template>
+            <template #item.date="{ item }">
+                {{ $filters.formatDate(item.date) }}
+            </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3">合计</td>
+                    <td>{{ summary.sb }}</td>
+                    <td>{{ summary.sb_yl }}</td>
+                    <td>{{ summary.l }}</td>
+                    <td>{{ summary.m }}</td>
+                    <td>{{ summary.d }}</td>
+                    <td>{{ summary.l_yl }}</td>
+                    <td>{{ summary.m_yl }}</td>
+                    <td>{{ summary.d_yl }}</td>
+                    <td>{{ summary.company_yl }}</td>
+                </tr>
+            </template>
+        </v-data-table-server>
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useUserStore } from '../../stores/user';
 import { formattedDate } from '../../js/common';
+import { GET_SB_STATISTICS } from '../../js/api/financial_statistics';
 
+const userStore = useUserStore();
+const records = ref([]);
+const total = ref(0);
+const page = ref(1);
+const perPage = ref(10);
+const loading = ref(false);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
+const headers = ref([
+    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
+    { title: '工作日', value: 'stat_date', minWidth: 120 },
+    { title: '三宝总投注分', value: 'sb', minWidth: 150 },
+    { title: '三宝洗手赢亏分', value: 'sb_yl', minWidth: 150 },
+    { title: '幸运6(单)总投注分', value: 'l', minWidth: 150 },
+    { title: '完美(双)总投注分', value: 'm', minWidth: 150 },
+    { title: '任意总投注分', value: 'd', minWidth: 150 },
+    { title: '幸运6(单)洗手赢亏总分', value: 'l_yl', minWidth: 180 },
+    { title: '完美(双)洗手赢亏总分', value: 'm_yl', minWidth: 170 },
+    { title: '任意洗手赢亏总分', value: 'd_yl', minWidth: 150 },
+    { title: '公司利润总分', value: 'company_yl', minWidth: 150 }
+]);
+const summary = ref({
+    sb: 0,
+    sb_yl: 0,
+    l: 0,
+    m: 0,
+    d: 0,
+    l_yl: 0,
+    m_yl: 0,
+    d_yl: 0,
+    company_yl: 0
+})
+
+const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
-const fromDate = ref(new Date());
 const toDateMenu = ref(false);
-const toDate = ref(new Date());
+const filters = ref({
+    startTime: null,
+    endTime: null,
+    group_nickname: null
+});
+
+const getRecords = async () => {
+    loading.value = true;
+    try {
+        const res = await GET_SB_STATISTICS(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, page.value, perPage.value);
+        if (res.code == 200) {
+            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            total.value = res.data.total;
+            summary.value = res.data.summary; 
+        }
+    } catch (error) {
+        console.error('Error fetching records:', error);
+    } finally {
+        loading.value = false;
+    }
+}
 </script>

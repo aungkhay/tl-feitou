@@ -164,8 +164,8 @@ const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const filters = ref({
-    startTime: new Date,
-    endTime: new Date,
+    startTime: null,
+    endTime: null,
     group_nickname: null
 });
 
@@ -173,9 +173,11 @@ const getRecords = async () => {
     loading.value = true;
     try {
         const res = await GET_DAILY_QUERY_SUMMARY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, page.value, perPage.value);
-        records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
-        total.value = res.data.total;
-        summary.value = res.data.summary;
+        if (res.code == 200) {
+            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            total.value = res.data.total;
+            summary.value = res.data.summary; 
+        }
     } catch (error) {
         console.error('查询失败:', error);
     } finally {

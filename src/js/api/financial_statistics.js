@@ -40,3 +40,22 @@ export const GET_SB_STATISTICS = async (startTime, endTime, group_nickname, curr
         pageSize: pageSize
     });
 }
+
+/**
+ * 个人占成统计
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {string} group_nickname 操作台(群昵称)
+ * @param {number} currentPage 当前页
+ * @param {number} pageSize 每页条数
+ * @returns 
+ */
+export const GET_PERSONAL_PROPORTION_STATISTICS = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
+    return await API.post(`${prefix}/financial_statistics/personal_proportion_statistics`, {
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        group_nickname: group_nickname,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}

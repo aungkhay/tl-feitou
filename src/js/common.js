@@ -21,3 +21,39 @@ export const exportExcel = (data, filename) => {
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, `${filename}.xlsx`);
 }
+
+export const checkResult = (result) => {
+    switch (result) {
+        case 1:
+            return '庄';
+            break;
+        case 2:
+            return '闲';
+            break;
+        case 4:
+            return '和';
+            break;
+        case 8:
+            return '庄对';
+            break;
+        case 16:
+            return '闲对';
+            break;
+        case 32:
+            return '幸运6_2';
+            break;
+        case 64:
+            return '幸运6_3';
+            break;
+        case 128:
+            return '完美';
+            break;
+        case 256:
+            return '任意对';
+            break;
+    
+        default:
+            return '';
+            break;
+    }
+}

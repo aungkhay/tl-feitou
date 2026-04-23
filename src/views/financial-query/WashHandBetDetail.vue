@@ -132,6 +132,15 @@
             <template #item.bet_time="{ item }">
                 {{ $filters.formatFullDate(item.bet_time) }}
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3">下注前金额: {{ summary.total_before_bet_ye }}</td>
+                    <td colspan="2">总数: {{ summary.total_count }}</td>
+                    <td colspan="2">总下注: {{ summary.total_xz }}</td>
+                    <td colspan="2">总盈亏: {{ summary.total_yl }}</td>
+                    <td colspan="6"></td>
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -185,6 +194,12 @@ const betTypes = ref([
     { title: "三宝盈亏", value: "sb_yl" },
     { title: "有效流水", value: "yxxz" },
 ]);
+const summary = ref({
+    total_before_bet_ye: 0,
+    total_count: 0,
+    total_xz: 0,
+    total_yl: 0
+});
 
 const filters = ref({
     group_nickname: null,
@@ -209,6 +224,7 @@ const getRecords = async () => {
         if (res.code == 200) {
             records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.count;
+            summary.value = res.data.summary;
         }
     } catch (error) {
         console.error('获取记录失败:', error);

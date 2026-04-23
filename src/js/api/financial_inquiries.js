@@ -79,12 +79,31 @@ export const GET_PLAYER_DETAILS_QUERY = async (name, shoe, round, startTime, end
  * @param {string} startTime 开始时间
  * @param {string} endTime 结束时间
  * @param {string} group_nickname 操作台(群昵称)
- * @param {number} currentPage 当前页
- * @param {number} pageSize 每页条数
+    * @param {number} currentPage 当前页
+    * @param {number} pageSize 每页条数
  * @returns 
  */
 export const GET_SANBAO_DETAILS_QUERY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/ht_sb_details_query`, {
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+        group_nickname: group_nickname,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}
+
+/**
+ * 对冲、零钱明细查询
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {string} group_nickname 操作台(群昵称)
+ * @param {number} currentPage 当前页
+ * @param {number} pageSize 每页条数
+ * @returns 
+ */
+export const GET_CASH_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
+    return await API.post(`${prefix}/financial_inquiries/cash_details_inquiry`, {
         startTime: startTime ? moment(startTime).format('YYYY-MM-DD HH:mm:ss') : '',
         endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : '',
         group_nickname: group_nickname,

@@ -1,9 +1,167 @@
 <template>
     <div class="pa-4">
-        <div class="text-h6">对冲零钱查询</div>
+
+        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
+            <v-row dense>
+                <v-col cols="12" sm="2">
+                    <v-select
+                        v-model="filters.group_nickname"
+                        :items="groups"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
+                        label="选择操作台"
+                        density="compact"
+                        variant="outlined"
+                        hide-details
+                        clearable
+                        @click:append-inner="filters.group_nickname = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>                    
+                    </v-select>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-menu
+                        v-model="fromDateMenu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                    >
+                        <template #activator="{ props }">
+                            <v-text-field
+                                v-bind="props"
+                                label="开始时间"
+                                variant="outlined"
+                                density="compact"
+                                readonly
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.startTime)"
+                                hide-details
+                                clearable
+                                @click:clear="filters.startTime = ''"
+                            ></v-text-field>
+                        </template>
+
+                        <v-date-picker
+                            v-model="filters.startTime"
+                            @update:model-value="fromDateMenu = false"
+                        />
+                    </v-menu>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <v-menu
+                        v-model="toDateMenu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                    >
+                        <template #activator="{ props }">
+                            <v-text-field
+                                v-bind="props"
+                                label="结束时间"
+                                variant="outlined"
+                                density="compact"
+                                readonly
+                                prepend-inner-icon="mdi-clock-outline"
+                                :model-value="formattedDate(filters.endTime)"
+                                hide-details
+                                clearable
+                                @click:clear="filters.endTime = ''"
+                            ></v-text-field>
+                        </template>
+
+                        <v-date-picker
+                            v-model="filters.endTime"
+                            @update:model-value="toDateMenu = false"
+                        />
+                    </v-menu>
+                </v-col>
+                <v-col cols="12" sm="2">
+                    <div class="d-flex">
+                        <div class="w-50 pr-1">
+                            <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                        </div>
+                        <div class="w-50 pl-1">
+                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                        </div>
+                    </div>
+                </v-col>
+            </v-row>
+        </div>
+
+        <v-data-table-server
+            v-model:page="page"
+            v-model:items-per-page="perPage"
+            :headers="headers"
+            :items="records"
+            :items-length="total"
+            :loading="loading"
+            density="compact"
+            class="table1"
+            :items-per-page-options="pageSizeOptions"
+            @update:options="getRecords"
+            hover
+        >
+            <template #loading>
+                <v-skeleton-loader type="table-row@8"/>
+            </template>
+            <template #item.shoe_round="{ item }">
+                <span>{{ item.cc }} - {{ item.jc }}</span>
+            </template>
+            <template #item.kj="{ item }">
+                <span>{{ checkResult(item.kj) }}</span>
+            </template>
+        </v-data-table-server>
     </div>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue';
+import { formattedDate, checkResult } from '../../js/common';
+import { useUserStore } from '../../stores/user';
+import { GET_CASH_DETAILS_INQUIRY } from '../../js/api/financial_inquiries';
 
+const userStore = useUserStore();
+const records = ref([]);
+const total = ref(0);
+const page = ref(1);
+const perPage = ref(10);
+const loading = ref(false);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
+const headers = ref([
+    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
+    { title: '工作日', value: 'stat_date', minWidth: 100 },
+    { title: '局', value: 'shoe_round', minWidth: 150 },
+    { title: '庄闲(龙虎)对冲', value: 'zxdc', minWidth: 150 },
+    { title: '零头', value: 'lt', minWidth: 100 },
+    { title: '上盘买', value: 'sp', minWidth: 100 },
+    { title: '结果', value: 'kj', minWidth: 100 },
+    { title: '对冲赢亏', value: 'dcyk', minWidth: 120 },
+    { title: '零头赢亏', value: 'ltyk', minWidth: 120 },
+]);
+
+const groups = computed(() => userStore.groups);
+const fromDateMenu = ref(false);
+const toDateMenu = ref(false);
+const filters = ref({
+    startTime: null,
+    endTime: null,
+    group_nickname: null
+});
+
+const getRecords = async () => {
+    loading.value = true;
+    try {
+        const res = await GET_CASH_DETAILS_INQUIRY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, page.value, perPage.value);
+        records.value = res.data.list.map((record, index) => ({
+            ...record,
+            index: (page.value - 1) * perPage.value + index + 1,
+        }));
+        total.value = res.data.total;
+    } catch (error) {
+        console.error('查询三宝详情失败:', error);
+    } finally {
+        loading.value = false;
+    }
+};
 </script>

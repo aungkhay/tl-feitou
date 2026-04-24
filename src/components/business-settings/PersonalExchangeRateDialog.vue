@@ -32,7 +32,7 @@
                 <div class="mt-4 font-weight-bold text-red">没有<v-icon size="20">mdi-star-outline</v-icon>号为隐藏选择</div>
                 <v-row class="pa-0">
                     <v-col cols="12" sm="3">
-                        <div class="border rounded px-1 bg-grey-lighten-4" style="height: 300px; overflow-y: auto;">
+                        <div class="border rounded px-1 bg-grey-lighten-4" style="height: 375px; overflow-y: auto;">
                             <v-list density="compact" class="bg-grey-lighten-4">
                                 <v-list-item v-for="player in players" :key="player.id" :active="obj.player_name == player.playername" active-class="bg-red-lighten-4 text-red rounded" @click="obj.player_name = player.playername">
                                     <v-list-item-title>
@@ -42,13 +42,13 @@
                                 </v-list-item>
                             </v-list>
                         </div>
-                        <div class="mt-2">
+                        <!-- <div class="mt-2">
                             <div class="text-right text-primary font-weight-bold">周润发 <span>[代理]</span></div>
                             <div class="d-flex justify-space-between">
                                 <div>剩余分: <span class="text-primary">20100</span></div>
                                 <div>初始分: <span class="text-primary">20100</span></div>
                             </div>
-                        </div>
+                        </div> -->
                     </v-col>
                     <v-col cols="12" sm="9">
                         <div class="mb-5">个人占成设置</div>
@@ -93,7 +93,7 @@
                                 />
                             </v-col>
                             <v-col cols="12" sm="3">
-                                <v-btn color="primary" class="mt-6">设置全部个人占成</v-btn>
+                                <v-btn color="primary" class="mt-6" :disabled="isSaving || isSavingIndividualExchange || v$.$invalid" :loading="isSavingIndividualShare" @click="saveIndividualShare">设置全部个人占成</v-btn>
                             </v-col>
                         </v-row>
                         <v-divider class="my-3"></v-divider>
@@ -151,7 +151,7 @@
                                 </v-menu>
                             </v-col>
                             <v-col cols="12" sm="3">
-                                <v-btn color="primary" class="mt-6">设置全部个人占成</v-btn>
+                                <v-btn color="primary" class="mt-6" :disabled="isSaving || isSavingIndividualShare || v$.$invalid" :loading="isSavingIndividualExchange" @click="saveIndividualExchange">设置全部个人兑换</v-btn>
                             </v-col>
                         </v-row>
                         <v-divider class="my-3"></v-divider>
@@ -232,7 +232,7 @@
             <v-divider></v-divider>
             <v-card-actions class="d-flex justify-center my-3">
                 <v-btn color="grey" variant="elevated">历史记录</v-btn>
-                <v-btn color="primary" variant="elevated" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">保存设置</v-btn>
+                <v-btn color="primary" variant="elevated" :disabled="isSaving || isSavingIndividualShare || isSavingIndividualExchange || v$.$invalid" :loading="isSaving" @click="save">保存设置</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -276,6 +276,8 @@ const obj = ref({
     start_exchange: null,
 })
 const isSaving = ref(false);
+const isSavingIndividualShare = ref(false);
+const isSavingIndividualExchange = ref(false);
 const rules = ref({
     player_name: { required: helpers.withMessage('玩家昵称不能为空', required) },
     group_nickname: { required: helpers.withMessage('操作台不能为空', required) },
@@ -321,7 +323,7 @@ const getPersonalExchangeRatio = async () => {
 
 const resetForm = () => {
     obj.value.player_name = null;
-    obj.value.group_nickname = null;
+    // obj.value.group_nickname = null;
     obj.value.bp_personal_share = null;
     obj.value.bp_personal_share_upperlimit = null;
     obj.value.sb_personal_share = null;
@@ -341,26 +343,31 @@ const closeDialog = () => {
     dialog.value = false;
 };
 
+const saveRecord = async (record) => {
+    // 这里可以根据需要调整传入的参数
+    return await PERSONAL_EXCHANGE_RATIO(
+        record.player_name,
+        record.group_nickname,
+        record.bp_personal_share,
+        record.bp_personal_share_upperlimit,
+        record.sb_personal_share,
+        record.redemption_type,
+        record.rebate_ratio,
+        record.personal_points_redemption_ratio,
+        record.redemption_start_time,
+        record.rebate_type,
+        record.rebate_pair_start_time,
+        record.start_exchange
+    );
+}
+
 const save = async () => {
     v$.value.$touch();
     if (v$.value.$invalid) return;
 
     isSaving.value = true;
     try {
-        const res = await PERSONAL_EXCHANGE_RATIO(
-            obj.value.player_name,
-            obj.value.group_nickname,
-            obj.value.bp_personal_share,
-            obj.value.bp_personal_share_upperlimit,
-            obj.value.sb_personal_share,
-            obj.value.redemption_type,
-            obj.value.rebate_ratio,
-            obj.value.personal_points_redemption_ratio,
-            obj.value.redemption_start_time,
-            obj.value.rebate_type,
-            obj.value.rebate_pair_start_time,
-            obj.value.start_exchange
-        );
+        const res = await saveRecord(obj.value);
         if (res && res.code === 200) {
             toast.success('设置保存成功');
         } else {
@@ -371,6 +378,48 @@ const save = async () => {
     } finally {
         isSaving.value = false;
         resetForm();
+    }
+};
+
+const saveIndividualShare = async () => {
+    v$.value.$touch();
+    if (v$.value.$invalid) return;
+
+    isSavingIndividualShare.value = true;
+    try {
+        const param = {...obj.value};
+        param.player_name = '全部占成';
+        const res = await saveRecord(param);
+        if (res && res.code === 200) {
+            toast.success('个人占成设置保存成功');
+        } else {
+            toast.error(res.msg || '个人占成设置保存失败');
+        }
+    } catch (error) {
+        toast.error('个人占成设置保存失败');
+    } finally {
+        isSavingIndividualShare.value = false;
+    }
+};
+
+const saveIndividualExchange = async () => {
+    v$.value.$touch();
+    if (v$.value.$invalid) return;
+
+    isSavingIndividualExchange.value = true;
+    try {
+        const param = {...obj.value};
+        param.player_name = '全部兑换';
+        const res = await saveRecord(param);
+        if (res && res.code === 200) {
+            toast.success('个人兑换设置保存成功');
+        } else {
+            toast.error(res.msg || '个人兑换设置保存失败');
+        }
+    } catch (error) {
+        toast.error('个人兑换设置保存失败');
+    } finally {
+        isSavingIndividualExchange.value = false;
     }
 };
 

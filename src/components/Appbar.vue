@@ -6,18 +6,38 @@
         <template #extension>
             <div class="bg-grey-lighten-4 w-100">
                 <v-tabs v-model="active" show-arrows density="compact" color="primary" bg-color="grey-lighten-3" variant="text">
-                    <v-tab density="compact" v-for="t in tabs" :key="t.key" :value="t.key" @click="goTab(t)">
+                    <v-tab density="compact" v-for="t in tabs" :key="t.key" :value="t.key" @click="goTab(t)" @contextmenu.prevent="openTabMenu($event, t)">
                         <span class="mr-2 text-caption">{{ t.title }}</span>
                         <v-btn v-if="tabs.length > 1" icon="mdi-close" variant="text" size="x-small" @click.stop="closeTab(t)"/>
                     </v-tab>
                 </v-tabs>
+
+                <v-menu
+                    v-model="tabMenu.open"
+                    :target="[tabMenu.x, tabMenu.y]"
+                    location="top"
+                    :close-on-content-click="true"
+                >
+                    <v-list density="compact" min-width="180">
+                        <v-list-item
+                            title="关闭当前"
+                            :disabled="!tabMenu.tab || tabs.length <= 1"
+                            @click="closeTab(tabMenu.tab)"
+                        />
+                        <v-list-item
+                            title="关闭其他"
+                            :disabled="!tabMenu.tab || tabs.length <= 1"
+                            @click="closeOthers(tabMenu.tab)"
+                        />
+                    </v-list>
+                </v-menu>
             </div>
         </template>
     </v-app-bar>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, reactive } from 'vue';
 import { useDrawerStore } from '../stores/drawer';
 import { useTabsStore } from '../stores/tabs';
 import { useRouter } from 'vue-router';
@@ -32,6 +52,23 @@ const active = computed({
 });
 const router = useRouter();
 
+const tabMenu = reactive({
+    open: false,
+    x: 0,
+    y: 0,
+    tab: null,
+});
+
+function openTabMenu(e, tab) {
+    tabMenu.tab = tab;
+    tabMenu.x = e.clientX;
+    tabMenu.y = e.clientY;
+
+    // reopen reliably
+    tabMenu.open = false;
+    requestAnimationFrame(() => (tabMenu.open = true));
+}
+
 function switchDrawer() {
     drawerStore.setDrawer();
 }
@@ -43,6 +80,11 @@ function goTab(t) {
 
 function closeTab(tab) {
     const nextPath = tabsStore.close(tab.key);
-    if (nextPath) router.push(nextPath);
+    if (nextPath) router.push({ name: nextPath });
+}
+
+function closeOthers(tab) {
+    const nextPath = tabsStore.closeOthers(tab.key); // add this action in store
+    if (nextPath) router.push({ name: nextPath });
 }
 </script>

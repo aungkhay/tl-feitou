@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="px-2 py-3">
         <div class="text-h6">手工录入注码日志</div>
         <div class="mb-4 border rounded-lg pa-4 bg-grey-lighten-4">
             <v-row>

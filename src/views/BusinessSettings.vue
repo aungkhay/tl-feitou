@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="px-2 py-3">
         <PointExchangeRateDialog v-model="showPointExchangeRateDialog" />
         <PersonalExchangeRateDialog v-model="showPersonalExchangeRateDialog" />
         <QuickPullShortcutDialog v-model="showQuickPullShortcutDialog" />

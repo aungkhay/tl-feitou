@@ -7,6 +7,7 @@
             :rail="isDrawerOpen == 2"
             style="box-shadow: 1px 0px 7px 1px #00000020;"
             theme="dark"
+            width="200"
         >
             <v-list-item style="background-color: var(--list-group-active);" height="64" title="财务端"></v-list-item>
 
@@ -47,7 +48,7 @@
             </v-list>
 
             <template v-slot:append>
-                <div class="pa-2">
+                <div class="px-2 py-3">
                     <v-btn block color="red-darken-4" variant="flat" @click="showLogoutDialog = true"><v-icon>mdi-logout</v-icon><span v-if="isDrawerOpen < 2">退出</span></v-btn>
                 </div>
             </template>

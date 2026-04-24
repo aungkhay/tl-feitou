@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="px-2 py-3">
         <ChangePasswordDialog v-model="showChangePasswordDialog" />
         <TgToken v-model="showTgTokenDialog" />
         <v-btn color="primary" variant="tonal" size="x-large" @click="showChangePasswordDialog = true" class="mr-2"><v-icon class="mr-2">mdi-lock-reset</v-icon> 修改密码</v-btn>

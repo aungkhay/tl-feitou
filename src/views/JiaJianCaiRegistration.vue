@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="px-2 py-3">
 
         <div class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row>

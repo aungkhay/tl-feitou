@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="px-2 py-3">
 
         <div class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row dense>
@@ -121,7 +121,7 @@
             <v-btn color="error" class="mr-2 mb-2" @click="cancelExchangeDialog = true"><v-icon>mdi-undo</v-icon> 撤销兑换</v-btn>
             <v-btn color="primary" class="mr-2 mb-2" @click="clearPointDialog = true">清零</v-btn>
             <v-btn color="primary" class="mr-2 mb-2" @click="clearVirtualPlayerDialog = true">虚拟选手整台清零</v-btn>
-            <v-btn color="success"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+            <v-btn color="success" class="mb-2"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
         </div>
 
         <v-data-table-server

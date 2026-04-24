@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="px-2 py-3">
 
         <div class="d-flex align-center justify-space-between">
             <div class="d-flex align-center">

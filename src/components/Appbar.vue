@@ -1,11 +1,11 @@
 <template>
-    <v-app-bar :elevation="0" density="comfortable">
+    <v-app-bar :elevation="0" density="compact">
         <v-app-bar-nav-icon @click="switchDrawer"></v-app-bar-nav-icon>
         <v-app-bar-title class="font-weight-bold">{{ barTitle }}</v-app-bar-title>
 
         <template #extension>
             <div class="bg-grey-lighten-4 w-100">
-                <v-tabs v-model="active" show-arrows density="compact" color="primary" bg-color="grey-lighten-4" variant="text">
+                <v-tabs v-model="active" show-arrows density="compact" color="primary" bg-color="grey-lighten-3" variant="text">
                     <v-tab density="compact" v-for="t in tabs" :key="t.key" :value="t.key" @click="goTab(t)">
                         <span class="mr-2 text-caption">{{ t.title }}</span>
                         <v-btn v-if="tabs.length > 1" icon="mdi-close" variant="text" size="x-small" @click.stop="closeTab(t)"/>

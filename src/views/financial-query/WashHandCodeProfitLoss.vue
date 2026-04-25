@@ -107,7 +107,7 @@
                             <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -137,8 +137,10 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_PLAYER_DETAILS_QUERY } from '../../js/api/financial_inquiries';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const records = ref([]);
 const page = ref(1);
@@ -159,7 +161,7 @@ const headers = ref([
     // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
     // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
 ]);
-
+const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
@@ -184,8 +186,38 @@ const getRecords = async () => {
         }
     } catch (error) {
         console.error('Error fetching records:', error);
+        toast.error('获取记录失败，请稍后再试');
     } finally {
         loading.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const { name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname } = filters.value;
+        const res = await GET_PLAYER_DETAILS_QUERY(name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname, 1, total.value || 10000);
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '洗手': item.username,
+                '代理号': item.reference_name,
+                '庄闲洗码总分': item.xml_zx,
+                '三宝+幸运6+对子洗码总分': item.xml_sb,
+                '庄闲赢亏总分': item.zx_yl,
+                '三宝+幸运6+对子总分': item.sb_yl,
+                '有效流水总分': item.yxxz,
+                '日积分总分': item.daily_points
+            }));
+            exportExcel(data, `洗手洗码盈亏-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 }
 </script>

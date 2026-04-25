@@ -94,7 +94,7 @@
 
         <div class="d-flex align-center justify-space-between mb-4">
             <v-btn color="primary" class="mr-2" @click="dialog = true"><v-icon>mdi-plus</v-icon> 添加</v-btn>
-            <v-btn color="success"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
+            <v-btn color="success" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
         </div>
 
         <v-data-table-server
@@ -245,12 +245,12 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { formattedDate } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { DELETE_INTER_BANK_TRANSFER, EDIT_INTER_BANK_TRANSFER, GET_BANK_CARD, GET_INTERBANK_TRANSFER, INTER_BANK_TRANSFER } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
+import { exportExcel, formattedDate } from '../../js/common';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -261,6 +261,7 @@ const toDateMenu = ref(false);
 const dialog = ref(false);
 const deleteDialog = ref(false);
 const workdayMenu = ref(false);
+const isExporting = ref(false);
 
 const filters = ref({
     card_type: null,
@@ -432,6 +433,45 @@ const deleteRecord = async () => {
         selectedRecordId.value = 0;
         isDeleting.value = false;
         deleteDialog.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_INTERBANK_TRANSFER(
+            filters.value.card_type,
+            filters.value.optioner,
+            filters.value.card_name,
+            filters.value.startTime,
+            filters.value.endTime,
+            1,
+            total.value || 1000
+       );
+
+       if (res && res.code == 200) {
+            const data = res.data.rows.map((item) => ({
+                '操作人': item.optioner || '-',
+                '操作时间': formattedDate(item.option_time) || '-',
+                '操作金额': item.option_amount || '-',
+                '转出卡姓名': item.transfer_out_card_name || '-',
+                '转出卡类型': item.transfer_out_card_type || '-',
+                '转出前金额': item.before_transfer_out_amount || '-',
+                '转出卡当前金额': item.transfer_out_card_current_amount || '-',
+                '转入卡姓名': item.transfer_in_card_name || '-',
+                '转入卡类型': item.transfer_in_card_type || '-',
+                '转入前金额': item.transfer_in_amount || '-',
+                '转入卡当前金额': item.transfer_in_card_current_amount || '-',
+                '工作日': formattedDate(item.working_day) || '-',
+            }));
+            exportExcel(data, `转账登记-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        toast.error(error.message || '获取数据失败，无法导出表格');
+    } finally {
+        isExporting.value = false;
     }
 }
 

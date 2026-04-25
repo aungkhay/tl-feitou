@@ -97,7 +97,7 @@
                             <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -128,7 +128,7 @@
                     <td colspan="2">总充值: {{ summary.total_add }}</td>
                     <td colspan="2">总取款: {{ summary.total_subtract }}</td>
                     <td colspan="2">净总额: {{ summary.net_total }}</td>
-                    <td colspan="4"></td>
+                    <td colspan="5"></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -139,8 +139,10 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_RECHARGE_DETAILS_INQUIRY } from '../../js/api/financial_inquiries';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const records = ref([]);
 const total = ref(0);
@@ -166,6 +168,7 @@ const summary = ref({
     total_add: 0,
     total_subtract: 0,
 })
+const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
@@ -190,6 +193,36 @@ const getRecords = async () => {
         console.error('Error fetching records:', error);
     } finally {
         loading.value = false;
+    }
+};
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_RECHARGE_DETAILS_INQUIRY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, filters.value.option_type, 1, total.value || 10000);
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '台号': item.group_nickname,
+                '会员昵称': item.playername,
+                '操作金额': item.score,
+                '操作前金额': item.before_option_score,
+                '操作类型': item.option_type,
+                '工作日': item.working_date,
+                '操作时间': item.option_time,
+                '操作员': item.optioner,
+                '操作说明': item.memo,
+                '银行卡': item.bank_card
+            }));
+            exportExcel(data, `现金充值明细-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 };
 </script>

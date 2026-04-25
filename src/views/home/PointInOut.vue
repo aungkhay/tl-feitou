@@ -312,7 +312,7 @@ const headers1 = ref([
     { title: '状态', key: 'is_hide', sortable: false, minWidth: 70 },
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
 ])
-const itemsPerPage1 = ref(10);
+const itemsPerPage1 = ref(5);
 const totalItems1 = ref(0);
 const isReady1 = ref(false);
 const loading1 = ref(false);
@@ -352,8 +352,8 @@ const getRecords1 = async () => {
     try {
         const res = await GET_PLAYER_DETAIL(filters.value.group_nickname);
         if (res.code == 200) {
-            records1.value = res.data.map((item, index) => ({ ...item, index: index + 1 }));
-            totalItems1.value = res.data.length;
+            records1.value = res.data.list.map((item, index) => ({ ...item, index: index + 1 }));
+            totalItems1.value = res.data.total;
         }
     } finally {
         loading1.value = false;
@@ -453,49 +453,87 @@ const confirmCancelAddSubstract = async () => {
     }
 }
 
-const exportTable1 = () => {
+const exportTable1 = async () => {
     isExportingTable1.value = true;
-    const data = records1.value.map(item => ({
-            '台号': item.group_nickname,
-            '会员昵称': item.playername,
-            '剩余积分': item.score,
-            '冻结积分': item.freeze_score,
-            '初始积分': item.raw_score,
-            '庄闲洗码': item.total_xml_zx,
-            '三宝洗码': item.total_xml_sb,
-            '庄闲赢亏': item.total_xzyl,
-            '三宝赢亏': item.total_sbyl,
-            '有效流水': item.total_yxxz,
-            '代理商': item.reference_name,
-            '日积分': item.daily_points,
-            '总积分': item.total_points,
-            '注册时间': proxy.$filters.formatFullDate(item.registTime),
-            '存款': item.deposit,
-            '欠积分': item.owe_points,
-            '状态': item.is_hide ? '隐藏' : '显示',
-            '操作时间': proxy.$filters.formatFullDate(item.option_time)
-        })
-    );
-    exportExcel(data, `${filters.value.group_nickname}_积分记录_${new Date().toLocaleDateString()}`);
-    isExportingTable1.value = false;
+
+    try {
+        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, 1, totalItems1.value);
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                    '台号': item.group_nickname,
+                    '会员昵称': item.playername,
+                    '剩余积分': item.score,
+                    '冻结积分': item.freeze_score,
+                    '初始积分': item.raw_score,
+                    '庄闲洗码': item.total_xml_zx,
+                    '三宝洗码': item.total_xml_sb,
+                    '庄闲赢亏': item.total_xzyl,
+                    '三宝赢亏': item.total_sbyl,
+                    '有效流水': item.total_yxxz,
+                    '代理商': item.reference_name,
+                    '日积分': item.daily_points,
+                    '总积分': item.total_points,
+                    '注册时间': proxy.$filters.formatFullDate(item.registTime),
+                    '存款': item.deposit,
+                    '欠积分': item.owe_points,
+                    '状态': item.is_hide ? '隐藏' : '显示',
+                    '操作时间': proxy.$filters.formatFullDate(item.option_time)
+                })
+            );
+            exportExcel(data, `${filters.value.group_nickname}-上下分-表格1-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格1');
+        }
+    } catch (error) {
+        toast.error('获取操作类型失败，无法导出表格1');
+        isExportingTable1.value = false;
+        return;
+    } finally {
+        isExportingTable1.value = false;
+    }
 }
 
-const exportTable2 = () => {
+const exportTable2 = async () => {
     isExportingTable2.value = true;
-    const data = records2.value.map(item => ({
-            '台号': item.group_nickname,
-            '会员昵称': item.playername,
-            '操作金额': item.score,
-            '操作前金额': item.before_option_score,
-            '操作类型': item.option_type,
-            '工作日': proxy.$filters.formatDate(item.working_date),
-            '操作时间': proxy.$filters.formatFullDate(item.option_time),
-            '操作员': item.optioner,
-            '操作说明': item.demo ? item.demo : '-'
-        })
-    );
-    exportExcel(data, `${filters.value.group_nickname}_操作记录_${new Date().toLocaleDateString()}`);
-    isExportingTable2.value = false;
+    try {
+        const res = await GET_SCORE_OPTION_RECORD(
+            filters.value.group_nickname,
+            filters.value.option_type,
+            filters.value.optioner,
+            filters.value.start_time,
+            filters.value.end_time,
+            filters.value.player_name,
+            filters.value.is_virtual,
+            1,
+            totalItems2.value,
+        );
+        if (res.code == 200) {
+            const data = res.data.record.map(item => ({
+                    '台号': item.group_nickname,
+                    '会员昵称': item.playername,
+                    '操作金额': item.score,
+                    '操作前金额': item.before_option_score,
+                    '操作类型': item.option_type,
+                    '工作日': proxy.$filters.formatDate(item.working_date),
+                    '操作时间': proxy.$filters.formatFullDate(item.option_time),
+                    '操作员': item.optioner,
+                    '操作说明': item.demo ? item.demo : '-'
+                })
+            );
+            exportExcel(data, `${filters.value.group_nickname}-上下分-表格2-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格2');
+            isExportingTable2.value = false;
+            return;
+        }
+    } catch (error) {
+        console.log(error);
+        toast.error('获取数据失败，无法导出表格2');
+        isExportingTable2.value = false;
+        return; 
+    } finally {
+        isExportingTable2.value = false;
+    }
 }
 </script>
 

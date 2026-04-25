@@ -97,7 +97,7 @@
         </div>
         <div class="d-flex justify-space-between mb-2">
             <v-btn color="primary" class="mr-2" @click="dialog = true"><v-icon>mdi-plus</v-icon> 新增</v-btn>
-            <v-btn color="success" :disabled="isExporting" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
+            <v-btn color="success" :disabled="isExporting" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
         </div>
 
         <v-data-table-server
@@ -242,12 +242,15 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { formattedDate } from '../js/common';
+import { formattedDate, exportExcel } from '../js/common';
 import { useUserStore } from '../stores/user';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { ADD_OFFICE_EXPENSE, DELETE_OFFICE_EXPENSE, EDIT_OFFICE_EXPENSE, GET_OFFICE_EXPENSES } from '../js/api/office_business';
 import { useToast } from 'vue-toastification';
+import { getCurrentInstance } from 'vue'
+
+const { appContext } = getCurrentInstance()
 
 const dialog = ref(false);
 const deleteDialog = ref(false);
@@ -416,6 +419,45 @@ const deleteRecord = async () => {
         console.error('删除记录失败:', error);
     } finally {
         isSaving.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_OFFICE_EXPENSES(
+            filters.value.expense_type,
+            filters.value.optioner,
+            filters.value.card_name,
+            filters.value.startTime,
+            filters.value.endTime,
+            total.value,
+            1,
+        );
+        if (res.code === 200) {
+            const data = res.data.rows.map((item, index) => ({
+                '序列': index + 1,
+                '项目名称': item.project_name,
+                '经手人': item.optioner,
+                '操作金额': item.option_money,
+                '操作时间': appContext.config.globalProperties.$filters.formatFullDate(item.option_time),
+                '操作人': item.optioner,
+                '银行卡姓名': item.card_name,
+                '卡类型': item.card_type,
+                '操作前金额': item.befor_opton_money,
+                '剩余金额': item.left_money,
+                '工作日': appContext.config.globalProperties.$filters.formatDate(item.working_date),
+                '备注': item.remark,
+            }));
+            exportExcel(data, `办公业务-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('导出表格失败:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 }
 </script>

@@ -22,7 +22,7 @@ export const exportExcel = (data, filename) => {
     saveAs(blob, `${filename}.xlsx`);
 }
 
-export const checkResult = (result) => {
+export const checkResult_ = (result) => {
     switch (result) {
         case 1:
             return '庄';
@@ -56,4 +56,23 @@ export const checkResult = (result) => {
             return '';
             break;
     }
+}
+
+export const checkResult = (code) => {
+    const map = [
+        [1, '庄赢'],
+        [2, '闲赢'],
+        [4, '和'],
+        [8, '庄对'],
+        [16, '闲对'],
+        [32, '幸运6_2'],
+        [64, '幸运6_3'],
+        [128, '完美'],
+        [256, '任意对']
+    ];
+
+    return map
+        .filter(([value]) => (code & value) === value)
+        .map(([, name]) => name)
+        .join(' ');
 }

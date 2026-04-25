@@ -125,11 +125,15 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { BANK_STATISTICS_BY_DAY, BANK_STATISTICS_BY_PERIOD } from '../../js/api/bank_business';
-import { exportExcel } from '../../js/common';
+import { useToast } from 'vue-toastification';
+import { getCurrentInstance } from 'vue'
 
+const { appContext } = getCurrentInstance()
+
+const toast = useToast();
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const toDate = ref(new Date());
@@ -209,7 +213,48 @@ const getCards = async () => {
     }
 }
 
-const exportTable = () => {
-
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        let res;
+        if (selectedFilterMethod.value === 'by_day') {
+            res = await BANK_STATISTICS_BY_DAY(
+                filters.value.card_name,
+                filters.value.startTime,
+                filters.value.endTime,
+                1,
+                10000
+            );
+        } else {
+            res = await BANK_STATISTICS_BY_PERIOD(
+                filters.value.card_status,
+                filters.value.startTime,
+                filters.value.endTime,
+                1,     
+                10000
+            );
+        }
+        if (res.code === 200) {
+            const data = res.data.rows.map((item, index) => ({
+                    '上分': item.option_type === '上分' ? item.total_amount : 0,
+                    '下分': item.option_type === '下分' ? item.total_amount : 0,
+                    '转入': item.option_type === '转入' ? item.total_amount : 0,
+                    '转出': item.option_type === '转出' ? item.total_amount : 0,
+                    '手续费': item.option_type === '手续费' ? item.total_amount : 0,
+                    '办公费用': item.option_type === '办公费用' ? item.total_amount : 0,
+                    '小计': 0,
+                    '时间': appContext.config.globalProperties.$filters.formatFullDate(item.option_time),
+                })
+            );
+            exportExcel(data, `银行现金统计-${selectedFilterMethod.value === 'by_day' ? '按天统计' : '按时间段统计'}-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('导出表格失败:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
+    }
 }
 </script>

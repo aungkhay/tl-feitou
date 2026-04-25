@@ -103,7 +103,7 @@
                             <v-btn color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -126,11 +126,11 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
-            <template #item.option_time="{ item }">
-                {{ $filters.formatFullDate(item.option_time) }}
-            </template>
             <template #item.bet_time="{ item }">
                 {{ $filters.formatFullDate(item.bet_time) }}
+            </template>
+            <template #item.result_time="{ item }">
+                {{ $filters.formatFullDate(item.result_time) }}
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
@@ -147,10 +147,15 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { GET_PLAYER_BETTING_DETAILS } from '../../js/api/financial_inquiries';
+import { getCurrentInstance } from 'vue'
+import { useToast } from 'vue-toastification';
 
+const { appContext } = getCurrentInstance()
+
+const toast = useToast();
 const userStore = useUserStore();
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
@@ -160,6 +165,7 @@ const page = ref(1);
 const perPage = ref(10);
 const total = ref(0);
 const loading = ref(false);
+const isExporting = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     { title: '序列', value: 'index', fixed: 'start', minWidth: 70 },
@@ -230,6 +236,48 @@ const getRecords = async () => {
         console.error('获取记录失败:', error);
     } finally {
         loading.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_PLAYER_BETTING_DETAILS(
+            filters.value.player_name,
+            filters.value.startTime,
+            filters.value.endTime,
+            filters.value.bet_type,
+            filters.value.group_nickname,
+            1,
+            total.value || 1000
+        );
+        if (res.code == 200) {
+            const data = res.data.rows.map(item => ({
+                '序列': item.index,
+                '会员昵称': item.palyer_nickname,
+                '靴局': item.round,
+                '下注金额': item.bet,
+                '下注输赢': item.win,
+                '下注命令': item.bet_command,
+                '命令格式': item.command_format,
+                '下注时间': appContext.config.globalProperties.$filters.formatFullDate(item.bet_time),
+                '开奖结果': item.result,
+                '开奖时间': appContext.config.globalProperties.$filters.formatFullDate(item.result_time),
+                '结算状态': item.settlement_status,
+                '原始字符串': item.raw_string,
+                '下注前金额': item.before_bet_money,
+                '初始金额': item.init_money,
+                '台号': item.table_number,
+            }));
+            exportExcel(data, `洗码下注明细-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 }
 </script>

@@ -81,7 +81,7 @@
                             <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -127,9 +127,11 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
 import { GET_DAILY_QUERY_SUMMARY } from '../../js/api/financial_statistics';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const records = ref([]);
 const total = ref(0);
@@ -159,7 +161,7 @@ const summary = ref({
     zxtmzcxm: 0,
     lyhs: 0
 });
-
+const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
@@ -182,6 +184,35 @@ const getRecords = async () => {
         console.error('查询失败:', error);
     } finally {
         loading.value = false;
+    }
+};
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_DAILY_QUERY_SUMMARY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, 1, total.value || 10000);
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '日期': item.date,
+                '庄闲/龙虎上盘输赢': item.xzspyk,
+                '上盘洗码汇总': item.spxm,
+                '上盘抽水赢亏': item.spzsyk,
+                '零钱利润': item.lxly,
+                '对冲总利润': item.dcly,
+                '庄闲/龙虎台面占成输赢': item.zxtmzcsy,
+                '庄闲/龙虎台面占成洗码': item.zxtmzcxm,
+                '利润汇总': item.lyhs
+            }));
+            exportExcel(data, `台面总账-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 };
 

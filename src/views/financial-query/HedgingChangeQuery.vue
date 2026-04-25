@@ -81,7 +81,7 @@
                             <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -116,10 +116,12 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { formattedDate, checkResult } from '../../js/common';
+import { formattedDate, checkResult, exportExcel } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { GET_CASH_DETAILS_INQUIRY } from '../../js/api/financial_inquiries';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const records = ref([]);
 const total = ref(0);
@@ -135,11 +137,11 @@ const headers = ref([
     { title: '庄闲(龙虎)对冲', value: 'zxdc', minWidth: 150 },
     { title: '零头', value: 'lt', minWidth: 100 },
     { title: '上盘买', value: 'sp', minWidth: 100 },
-    { title: '结果', value: 'kj', minWidth: 100 },
+    { title: '结果', value: 'kj', minWidth: 150 },
     { title: '对冲赢亏', value: 'dcyk', minWidth: 120 },
     { title: '零头赢亏', value: 'ltyk', minWidth: 120 },
 ]);
-
+const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
@@ -160,8 +162,38 @@ const getRecords = async () => {
         total.value = res.data.total;
     } catch (error) {
         console.error('查询三宝详情失败:', error);
+        toast.error('获取记录失败，请稍后再试');
     } finally {
         loading.value = false;
+    }
+};
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_CASH_DETAILS_INQUIRY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, 1, total.value || 10000);
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '台号': item.group_nickname,
+                '工作日': item.stat_date,
+                '局': `${item.cc} - ${item.jc}`,
+                '庄闲(龙虎)对冲': item.zxdc,
+                '零头': item.lt,
+                '上盘买': item.sp,
+                '结果': checkResult(item.kj),
+                '对冲赢亏': item.dcyk,
+                '零头赢亏': item.ltyk
+            }));
+            exportExcel(data, `对冲零钱查询-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 };
 </script>

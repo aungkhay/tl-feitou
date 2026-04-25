@@ -92,7 +92,7 @@
                             <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -126,8 +126,10 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_ZC_DETAILS_INQUIRY } from '../../js/api/financial_inquiries';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const records = ref([]);
 const total = ref(0);
@@ -146,7 +148,7 @@ const headers = ref([
     { title: '三宝占成赢亏', value: 'sb_yl', minWidth: 150 },
     // { title: '占成总流水', value: 'total_profit', minWidth: 150 },
 ]);
-
+const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
@@ -168,8 +170,36 @@ const getRecords = async () => {
         total.value = res.data.total;
     } catch (error) {
         console.error('Error fetching records:', error);
+        toast.error('获取记录失败，请稍后再试');
     } finally {
         loading.value = false;
+    }
+};
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_ZC_DETAILS_INQUIRY(filters.value.startTime, filters.value.endTime, filters.value.group_nickname, filters.value.player_name, 1, total.value || 10000);
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '台号': item.group_nickname,
+                '日期': item.stat_date,
+                '昵称': item.nickname,
+                '闲庄/龙虎占成洗码': item.zxzcxm,
+                '闲庄/龙虎占成赢亏': item.zxyl,
+                '三宝占成洗码': item.xml_sb,
+                '三宝占成赢亏': item.sb_yl
+            }));
+            exportExcel(data, `个人占成明细-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 };
 </script>

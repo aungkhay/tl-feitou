@@ -146,7 +146,7 @@
                 {{ $filters.formatDate(item.working_date) }}
             </template>
             <template #item.actions="{ item }">
-                <v-btn color="error" size="small" variant="tonal" :disabled="item.is_revoke == 1" @click="selectedRecord = item; revokeDialog = true"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
+                <v-btn color="error" size="small" variant="tonal" v-if="item.trans_id" :disabled="item.is_revoke == 1" @click="selectedRecord = item; revokeDialog = true"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
         </v-data-table-server>
 
@@ -258,6 +258,7 @@ import { GET_GROUP_PLAYERS, GET_SCORE_OPTION_RECORD } from '../../js/api/player_
 import { useToast } from 'vue-toastification';
 import { TRANS_SCORE, REVOKE_TRANS_SCORE, TRANS_ALL_SCORE } from '../../js/api/desk_option';
 import { formattedDate } from '../../js/common';
+import { exportExcel } from '../../js/common';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -323,7 +324,39 @@ const rules = ref({
 const v$ = useVuelidate(rules.value, obj.value);
 
 const exportTable = async () => {
-
+    isExporting.value = true;
+    try {
+        const res = await GET_SCORE_OPTION_RECORD(
+            filters.value.group_nickname,
+            filters.value.action_type,
+            filters.value.optioner,
+            filters.value.start_time,
+            filters.value.end_time,
+            filters.value.player_name,
+            filters.value.is_virtual,
+            1,
+            total.value
+        );
+        if (res && res.code == 200) {
+            const exportData = res.data.record.map((item, index) => ({
+                '序列': index + 1,
+                '台号': item.group_nickname,
+                '会员昵称': item.playername,
+                '操作金额': item.score,
+                '操作前余额': item.before_option_score,
+                '操作类型': item.option_type,
+                '工作日': formattedDate(item.working_date),
+                '操作时间': formattedDate(item.option_time, true),
+                '操作员': item.optioner,
+                '备注': item.memo
+            }));
+            exportExcel(exportData, `多台转分-${formattedDate(new Date())}`);
+        }
+    } catch (error) {
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
+    }
 }
 
 const getRecords = async () => {

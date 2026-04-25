@@ -60,7 +60,7 @@
                             <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 按天查询靴</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" @click="exportTable" :loading="isExporting" block><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
@@ -91,10 +91,12 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { GET_ROUND_DETAILS } from '../../js/api/financial_inquiries';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const records = ref([]);
 const page = ref(1);
@@ -144,6 +146,7 @@ const headers = ref([
     { title: '上盘抽水赢亏', value: 'upper_plate_rake_win_loss', minWidth: 120 },
 ]);
 
+const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
 const dateMenu = ref(false);
 const filters = ref({
@@ -169,9 +172,75 @@ const getRecords = async () => {
             total.value = res.data.count;
         }
     } catch (error) {
-        
+        console.error('获取记录失败:', error);
+        toast.error('获取记录失败，请稍后再试');
     } finally {
         loading.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_ROUND_DETAILS(
+            filters.value.shoe,
+            filters.value.date,
+            filters.value.is_virtual,
+            filters.value.group_nickname,
+            1,
+            total.value || 10000
+        );
+        if (res.code === 200) {
+            const data = res.data.list.map(item => ({
+                '台号': item.group_nickname,
+                '靴号': item.shoe,
+                '局数': item.cc,
+                '闲': item.x,
+                '庄': item.z,
+                '闲对': item.xd,
+                '庄对': item.zd,
+                '幸运6': item.l,
+                '完美': item.m,
+                '个人完美': item.g_m,
+                '个闲': item.g_x,
+                '个庄': item.g_z,
+                '个闲对': item.g_xd,
+                '个庄对': item.g_zd,
+                '个和': item.g_h,
+                '任意': item.d,
+                '个人任意': item.g_d,
+                '庄闲对冲': item.zxdc,
+                '个人幸运6': item.g_l,
+                '台庄闲': item.table_banker_player,
+                '台三宝+幸运6': item.table_three_treasures_lucky_6,
+                '零头': item.lt,
+                '上盘': item.sp,
+                '上盘买': item.spm,
+                '结果': item.kj,
+                '开奖时间': formattedDate(item.option_time),
+                '总赢亏': item.zyk,
+                '庄闲赢亏': item.xzyk,
+                '个赢亏': item.gyk,
+                '对冲赢亏': item.dcyk,
+                '闲庄台赢亏': item.banker_player_table_win_loss,
+                '三宝+幸运6台赢亏': item.three_treasures_lucky_6_table_win_loss,
+                '三宝+幸运6上盘赢亏': item.three_treasures_lucky_6_upper_plate_win_loss,
+                '闲庄上盘赢亏': item.banker_player_upper_plate_win_loss,
+                '零头赢亏': item.ltyk,
+                '飞牌金额': item.fly_card_amount,
+                '飞牌闲庄': item.fly_card_banker_player,
+                '飞牌输赢': item.fly_card_win_loss,
+                '上盘抽水赢亏': item.upper_plate_rake_win_loss,
+             }));
+            exportExcel(data, `局查询明细-${filters.value.group_nickname}-靴号${filters.value.shoe}-${formattedDate(new Date())}`);
+         } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+         }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
     }
 }
 

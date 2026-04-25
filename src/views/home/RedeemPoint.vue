@@ -121,7 +121,7 @@
             <v-btn color="error" class="mr-2 mb-2" @click="cancelExchangeDialog = true"><v-icon>mdi-undo</v-icon> 撤销兑换</v-btn>
             <v-btn color="primary" class="mr-2 mb-2" @click="clearPointDialog = true">清零</v-btn>
             <v-btn color="primary" class="mr-2 mb-2" @click="clearVirtualPlayerDialog = true">虚拟选手整台清零</v-btn>
-            <v-btn color="success" class="mb-2"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+            <v-btn color="success" class="mb-2" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
         </div>
 
         <v-data-table-server
@@ -308,9 +308,9 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
-import { formattedDate } from '../../js/common';
 import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR } from '../../js/api/point_exchange';
 import { useToast } from 'vue-toastification';
+import { exportExcel, formattedDate } from '../../js/common';
 
 const toast = useToast();
 
@@ -321,6 +321,7 @@ const cancelExchangeDialog = ref(false);
 const clearPointDialog = ref(false);
 const clearVirtualPlayerDialog = ref(false);
 const isSaving = ref(false);
+const isExporting = ref(false);
 
 const userStore = useUserStore();
 const page = ref(1);
@@ -510,6 +511,43 @@ const virtualPlayerPointsClear = async () => {
         toast.error('清零失败');
     } finally {
         isSaving.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_POINTS_EXCHANGE_INFO(
+            filters.value.group_nickname,
+            filters.value.startTime,
+            filters.value.endTime,
+            filters.value.player_name,
+            filters.value.option_type,
+            filters.value.is_virtual,
+            1,
+            total.value
+        );
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                    '台号': item.group_nickname,
+                    '会员昵称': item.player_name,
+                    '兑换积分/庄闲洗码/返水': item.option_type,
+                    '兑换/返水金额': item.exchange_money,
+                    '操作时间': formattedDate(item.option_time),
+                    '备注': item.memo || '-',
+                    '兑换/返水类型': item.exchange_type || '-',
+                    '庄闲洗码/返水兑换日期': item.exchange_date ? formattedDate(item.exchange_date) : '-',
+                    '操作员': item.operator || '-'
+                })
+            );
+            exportExcel(data, `兑换积分-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        toast.error('导出失败');
+    } finally {
+        isExporting.value = false;
     }
 }
 </script>

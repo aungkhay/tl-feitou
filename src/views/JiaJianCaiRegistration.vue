@@ -111,7 +111,7 @@
         </div>
         <div class="d-flex justify-space-between mb-2">
             <v-btn color="primary" class="mr-2" @click="dialog = true"><v-icon>mdi-plus</v-icon> 新增</v-btn>
-            <v-btn color="success"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
+            <v-btn color="success" :disabled="isExporting" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
         </div>
 
         <v-data-table-server
@@ -222,7 +222,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { formattedDate } from '../js/common';
+import { formattedDate, exportExcel } from '../js/common';
 import { useUserStore } from '../stores/user';
 import { GET_POINTS_RECORD, ADD_POINTS, EDIT_POINTS, DELETE_POINTS } from '../js/api/points_business'
 import { useVuelidate } from '@vuelidate/core';
@@ -266,6 +266,7 @@ const filters = ref({
 const selectedRecord = ref(null);
 const isSaving = ref(false);
 const isDeleting = ref(false);
+const isExporting = ref(false);
 const obj = ref({
     group_nickname: null,
     option_type: null,
@@ -370,4 +371,38 @@ const confirmDelete = async () => {
         isDeleting.value = false;
     }
 };
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await GET_POINTS_RECORD(
+            filters.value.group_nickname,
+            filters.value.optioner,
+            filters.value.option_type,
+            filters.value.startTime,
+            filters.value.endTime,
+            1,
+            total.value || 1000
+        );
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '拉取端': item.pull_end,
+                '当前金额': item.money,
+                '操作类型': item.option_type,
+                '操作金额': item.option_money,
+                '操作前金额': item.befor_opton_money,
+                '操作时间': item.option_time,
+                '操作人': item.optioner,
+                '备注': item.memo,
+            }));
+            exportExcel(data, `加减彩业务-${formattedDate(new Date())}`);
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出表格时出错');
+    } finally {
+        isExporting.value = false;
+    }
+}
 </script>

@@ -110,7 +110,7 @@
                 </v-col>
                 <v-col cols="12" sm="1" class="d-flex">
                     <v-btn class="mr-2" color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
-                    <v-btn color="success" block><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
+                    <v-btn color="success" block :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
                 </v-col>
             </v-row>
         </div>
@@ -140,16 +140,19 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { formattedDate } from '../../js/common';
+import { formattedDate, exportExcel } from '../../js/common';
 import { CARD_DETAILS_INQUIRY } from '../../js/api/bank_business';
 import { useUserStore } from '../../stores/user';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const actionTypes = ref(['上分', '下分', '转入', '转出', '办公费', '办公费', '手续费', '借款', '还款']);
 const cardTypes = ref(['上分卡', '下分卡', '存储卡', '中转卡', '财务卡', '第三方']);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
+const isExporting = ref(false);
 
 const loading = ref(false);
 const records = ref([]);
@@ -200,6 +203,45 @@ const getRecords = async () => {
         console.error('查询失败:', error);
     } finally {
         loading.value = false;
+    }
+}
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const res = await CARD_DETAILS_INQUIRY(
+            filters.value.card_type,
+            filters.value.optioner,
+            filters.value.card_name,
+            filters.value.option_type,
+            filters.value.startTime,
+            filters.value.endTime,
+            1,
+            total.value || 1000
+        );
+        if (res && res.code == 200) {
+            const data = res.data.rows.map((item) => ({
+                '操作人': item.optioner || '-',
+                '操作时间': formattedDate(item.option_time) || '-',
+                '操作金额': item.option_amount || '-',
+                '转出卡姓名': item.transfer_out_card_name || '-',
+                '转出卡类型': item.transfer_out_card_type || '-',
+                '转出前金额': item.before_transfer_out_amount || '-',
+                '转出卡当前金额': item.transfer_out_card_current_amount || '-',
+                '转入卡姓名': item.transfer_in_card_name || '-',
+                '转入卡类型': item.transfer_in_card_type || '-',
+                '转入前金额': item.transfer_in_amount || '-',
+                '转入卡当前金额': item.transfer_in_card_current_amount || '-',
+                '工作日': formattedDate(item.working_day) || '-',
+            }));
+            exportExcel(data, `转账登记-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        toast.error(error.message || '获取数据失败，无法导出表格');
+    } finally {
+        isExporting.value = false;
     }
 }
 </script>

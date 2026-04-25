@@ -181,7 +181,7 @@ import { GET_BANK_CARD, ADD_BANK_CARD, EDIT_BANK_CARD } from '../../js/api/bank_
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
-import { exportExcel } from '../../js/common';
+import { exportExcel, formattedDate } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 
 const userStore = useUserStore();
@@ -313,26 +313,45 @@ const saveCard = async () => {
     }
 }
 
-const exportTable = () => {
+const exportTable = async () => {
     isExporting.value = true;
-    const data = cards.value.map(item => ({
-        '卡类型': item.card_type,
-        '姓名': item.card_name,
-        '卡号': item.card_code,
-        '初始金额': item.initial_amount,
-        '上分金额': item.bonus_amount,
-        '下分金额': item.deduction_amount,
-        '转入金额': item.transfer_in_amount,
-        '转出金额': item.transfer_out_amount,
-        '手续费': item.handling_fee,
-        '剩余金额': item.remaining_amount,
-        '办公金额': item.office_amount,
-        '卡状态': item.card_status,
-        '操作人': item.optioner ? item.optioner : '-',
-        })
-    );
-    exportExcel(data, `${filters.value.group_nickname}_操作记录_${new Date().toLocaleDateString()}`);
-    isExporting.value = false;
+
+    try {
+        const res = await GET_BANK_CARD(
+            filters.value.card_type,
+            filters.value.card_status,
+            filters.value.optioner,
+            filters.value.card_name,
+            filters.value.sort_name,
+            1,
+            total.value || 1000
+        );
+        if (res.code === 200) {
+            const data = cards.value.map(item => ({
+                '卡类型': item.card_type,
+                '姓名': item.card_name,
+                '卡号': item.card_code,
+                '初始金额': item.initial_amount,
+                '上分金额': item.bonus_amount,
+                '下分金额': item.deduction_amount,
+                '转入金额': item.transfer_in_amount,
+                '转出金额': item.transfer_out_amount,
+                '手续费': item.handling_fee,
+                '剩余金额': item.remaining_amount,
+                '办公金额': item.office_amount,
+                '卡状态': item.card_status,
+                '操作人': item.optioner ? item.optioner : '-',
+                })
+            );
+            exportExcel(data, `银行卡设置-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        toast.error(error.message || '获取数据失败，无法导出表格');
+    } finally {
+        isExporting.value = false;
+    }
 }
 
 const editCard = async (card) => {

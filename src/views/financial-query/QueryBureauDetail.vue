@@ -85,13 +85,19 @@
             <template #item.cc="{ item }">
                 <span>{{ item.cc + '-' + item.jc }}</span>
             </template>
+            <template #item.stime="{ item }">
+                {{ $filters.formatFullDate(item.stime) }}
+            </template>
+            <template #item.kj="{ item }">
+                <span>{{ checkResult(item.kj) }}</span>
+            </template>
         </v-data-table-server>
     </div>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { formattedDate, exportExcel } from '../../js/common';
+import { formattedDate, exportExcel, checkResult } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { GET_ROUND_DETAILS } from '../../js/api/financial_inquiries';
 import { useToast } from 'vue-toastification';
@@ -124,26 +130,26 @@ const headers = ref([
     { title: '个人任意', value: 'g_d', minWidth: 100 },
     { title: '庄闲对冲', value: 'zxdc', minWidth: 100 },
     { title: '个人幸运6', value: 'g_l', minWidth: 110 },
-    { title: '台庄闲', value: 'table_banker_player', minWidth: 80 },
-    { title: '台三宝+幸运6', value: 'table_three_treasures_lucky_6', minWidth: 150 },
+    { title: '台庄闲', value: 'tzx', minWidth: 80 },
+    { title: '台三宝+幸运6', value: 'tsbl', minWidth: 150 },
     { title: '零头', value: 'lt', minWidth: 80 },
     { title: '上盘', value: 'sp', minWidth: 80 },
     { title: '上盘买', value: 'spm', minWidth: 80 },
     { title: '结果', value: 'kj', minWidth: 80 },
-    { title: '开奖时间', value: 'option_time', minWidth: 170 },
+    { title: '开奖时间', value: 'stime', minWidth: 170 },
     { title: '总赢亏', value: 'zyk', minWidth: 80 },
     { title: '庄闲赢亏', value: 'xzyk', minWidth: 100 },
     { title: '个赢亏', value: 'gyk', minWidth: 80 },
     { title: '对冲赢亏', value: 'dcyk', minWidth: 100 },
-    { title: '闲庄台赢亏', value: 'banker_player_table_win_loss', minWidth: 150 },
-    { title: '三宝+幸运6台赢亏', value: 'three_treasures_lucky_6_table_win_loss', minWidth: 200 },
-    { title: '三宝+幸运6上盘赢亏', value: 'three_treasures_lucky_6_upper_plate_win_loss', minWidth: 200 },
-    { title: '闲庄上盘赢亏', value: 'banker_player_upper_plate_win_loss', minWidth: 150 },
+    { title: '闲庄台赢亏', value: 'xztyk', minWidth: 150 },
+    { title: '三宝+幸运6台赢亏', value: 'sbltyk', minWidth: 200 },
+    { title: '三宝+幸运6上盘赢亏', value: 'sblspyk', minWidth: 200 },
+    { title: '闲庄上盘赢亏', value: 'xzspyk', minWidth: 150 },
     { title: '零头赢亏', value: 'ltyk', minWidth: 100 },
-    { title: '飞牌金额', value: 'fly_card_amount', minWidth: 100 },
-    { title: '飞牌闲庄', value: 'fly_card_banker_player', minWidth: 100 },
-    { title: '飞牌输赢', value: 'fly_card_win_loss', minWidth: 100 },
-    { title: '上盘抽水赢亏', value: 'upper_plate_rake_win_loss', minWidth: 120 },
+    // { title: '飞牌金额', value: 'fly_card_amount', minWidth: 100 },
+    // { title: '飞牌闲庄', value: 'fly_card_banker_player', minWidth: 100 },
+    // { title: '飞牌输赢', value: 'fly_card_win_loss', minWidth: 100 },
+    { title: '上盘抽水赢亏', value: 'spzsyk', minWidth: 120 },
 ]);
 
 const isExporting = ref(false);
@@ -211,26 +217,26 @@ const exportTable = async () => {
                 '个人任意': item.g_d,
                 '庄闲对冲': item.zxdc,
                 '个人幸运6': item.g_l,
-                '台庄闲': item.table_banker_player,
-                '台三宝+幸运6': item.table_three_treasures_lucky_6,
+                '台庄闲': item.tzx,
+                '台三宝+幸运6': item.tsbl,
                 '零头': item.lt,
                 '上盘': item.sp,
                 '上盘买': item.spm,
                 '结果': item.kj,
-                '开奖时间': formattedDate(item.option_time),
+                '开奖时间': formattedDate(item.stime),
                 '总赢亏': item.zyk,
                 '庄闲赢亏': item.xzyk,
                 '个赢亏': item.gyk,
                 '对冲赢亏': item.dcyk,
-                '闲庄台赢亏': item.banker_player_table_win_loss,
-                '三宝+幸运6台赢亏': item.three_treasures_lucky_6_table_win_loss,
-                '三宝+幸运6上盘赢亏': item.three_treasures_lucky_6_upper_plate_win_loss,
-                '闲庄上盘赢亏': item.banker_player_upper_plate_win_loss,
+                '闲庄台赢亏': item.xztyk,
+                '三宝+幸运6台赢亏': item.sbltyk,
+                '三宝+幸运6上盘赢亏': item.sblspyk,
+                '闲庄上盘赢亏': item.xzspyk,
                 '零头赢亏': item.ltyk,
-                '飞牌金额': item.fly_card_amount,
-                '飞牌闲庄': item.fly_card_banker_player,
-                '飞牌输赢': item.fly_card_win_loss,
-                '上盘抽水赢亏': item.upper_plate_rake_win_loss,
+                // '飞牌金额': item.fly_card_amount,
+                // '飞牌闲庄': item.fly_card_banker_player,
+                // '飞牌输赢': item.fly_card_win_loss,
+                '上盘抽水赢亏': item.spzsyk,
              }));
             exportExcel(data, `局查询明细-${filters.value.group_nickname}-靴号${filters.value.shoe}-${formattedDate(new Date())}`);
          } else {

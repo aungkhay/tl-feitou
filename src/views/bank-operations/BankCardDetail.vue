@@ -131,8 +131,8 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
             </template>
-            <template #item.option_time="{ item }">
-                {{ $filters.formatFullDate(item.option_time) }}
+            <template #item.create_at="{ item }">
+                {{ $filters.formatFullDate(item.create_at) }}
             </template>
         </v-data-table-server>
     </div>
@@ -168,9 +168,9 @@ const headers = ref([
     { title: '操作金额', value: 'option_amount', minWidth: 120 },
     { title: '操作前金额', value: 'before_option_amount', minWidth: 150 },
     { title: '操作人', value: 'optioner', minWidth: 120 },
-    { title: '操作时间', value: 'option_time', minWidth: 170 },
+    { title: '操作时间', value: 'create_at', minWidth: 170 },
     { title: '台号', value: 'desk_number', minWidth: 120 },
-    { title: '备注', value: 'remark', minWidth: 200 },
+    // { title: '备注', value: 'remark', minWidth: 200 },
 ]);
 
 const filters = ref({
@@ -222,7 +222,7 @@ const exportTable = async () => {
         if (res && res.code == 200) {
             const data = res.data.rows.map((item) => ({
                 '操作人': item.optioner || '-',
-                '操作时间': formattedDate(item.option_time) || '-',
+                '操作时间': formattedDate(item.create_at) || '-',
                 '操作金额': item.option_amount || '-',
                 '转出卡姓名': item.transfer_out_card_name || '-',
                 '转出卡类型': item.transfer_out_card_type || '-',

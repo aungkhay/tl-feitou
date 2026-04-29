@@ -107,6 +107,9 @@
             <template #item.shoe_round="{ item }">
                 <span>{{ item.cc }} - {{ item.jc }}</span>
             </template>
+            <template #item.kj="{ item }">
+                <span>{{ checkResult(item.kj) }}</span>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -115,7 +118,7 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_SANBAO_DETAILS_QUERY } from '../../js/api/financial_inquiries';
-import { formattedDate, exportExcel } from '../../js/common';
+import { formattedDate, exportExcel, checkResult } from '../../js/common';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
@@ -138,12 +141,12 @@ const headers = ref([
     { title: '完美(虎双)', value: 'm', minWidth: 120 },
     { title: '任意(对)', value: 'd', minWidth: 120 },
     { title: '开奖结果', value: 'kj', minWidth: 150 },
-    { title: '闲对(虎单)输赢', value: 'xd_yl', minWidth: 120 },
-    { title: '庄对(龙单)输赢', value: 'zd_yl', minWidth: 120 },
+    { title: '闲对(虎单)输赢', value: 'xd_yl', minWidth: 140 },
+    { title: '庄对(龙单)输赢', value: 'zd_yl', minWidth: 140 },
     { title: '和输赢', value: 'h_yl', minWidth: 80 },
-    { title: '幸运6(龙双)输赢', value: 'l_yl', minWidth: 120 },
-    { title: '完美(虎双)输赢', value: 'm_yl', minWidth: 120 },
-    { title: '任意(对)输赢', value: 'd_yl', minWidth: 120 },
+    { title: '幸运6(龙双)输赢', value: 'l_yl', minWidth: 140 },
+    { title: '完美(虎双)输赢', value: 'm_yl', minWidth: 140 },
+    { title: '任意(对)输赢', value: 'd_yl', minWidth: 140 },
     { title: '本局输赢', value: 'yl', minWidth: 120 },
     // { title: '备注', value: 'remark', minWidth: 150 }
 ]);

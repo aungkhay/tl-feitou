@@ -32,7 +32,7 @@
                             { label: '积分充值', value: 'point_recharge' },
                         ]"
                         item-title="label"
-                        item-value="value"
+                        item-value="label"
                         label="操作类型"
                         density="compact"
                         variant="outlined"
@@ -310,9 +310,9 @@ const obj = ref({
     target_desk: '',
     target_player_name: ''
 });
-const rules = ref({
+const rules = computed(() => ({
     source_desk: { required: helpers.withMessage('源台不能为空', required) },
-    source_score: { required: helpers.withMessage('转分数量不能为空', required) },
+    source_score: isTransAll.value ? {} : { required: helpers.withMessage('转分数量不能为空', required) },
     source_player_name: { required: helpers.withMessage('源玩家昵称不能为空', required) },
     // target_desk cannot be the same as source_desk
     target_desk: { 
@@ -320,8 +320,8 @@ const rules = ref({
         // notSameAsSource: helpers.withMessage('目的台不能与源台相同', value => value !== obj.value.source_desk) 
     },
     target_player_name: { required: helpers.withMessage('目的玩家昵称不能为空', required) },
-})
-const v$ = useVuelidate(rules.value, obj.value);
+}));
+const v$ = useVuelidate(rules, obj);
 
 const exportTable = async () => {
     isExporting.value = true;
@@ -477,5 +477,9 @@ watch(() => obj.value.target_desk, async (newVal) => {
         }
         obj.value.target_player_name = '';
     }
+});
+
+watch(() => isTransAll.value, () => {
+    v$.value.$reset();
 });
 </script>

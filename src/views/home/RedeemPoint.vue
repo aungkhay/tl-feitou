@@ -5,7 +5,7 @@
             <v-row dense>
                 <v-col cols="12" sm="3" class="d-flex">
                     <div class="w-50 pr-1">
-                        <v-select
+                        <v-autocomplete
                             v-model="filters.group_nickname"
                             :items="groups"
                             item-title="group_nickname"
@@ -16,11 +16,12 @@
                             hide-details
                             clearable
                             @click:append-inner="filters.group_nickname = null"
+                            autocomplete="off"
                         >
                             <template #item="{ props }">
                                 <v-list-item v-bind="props" density="compact" />
                             </template>                    
-                        </v-select>
+                        </v-autocomplete>
                     </div>
                     <div class="w-50 pl-1">
                         <v-select

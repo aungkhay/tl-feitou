@@ -27,3 +27,17 @@ export const LOGIN = async (username, password) => {
 
     return res;
 }
+
+/**
+ * 
+ * @param {string} username 账号
+ * @param {string} password 密码
+ * @returns 
+ */
+export const REGISTER = async (username, password) => {
+    const res = await API.post(`${prefix}/user/regist`, {
+        username: username,
+        password: md5(password)
+    })
+    return res;
+}

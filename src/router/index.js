@@ -220,6 +220,11 @@ const routes = [
                 path: 'manual-bet-entry-log',
                 name: 'ManualBetEntryLog',
                 component: () => import('../views/data-analysis/ManualBetEntryLog.vue'),
+            },
+            {
+                path: 'user-management',
+                name: 'UserManagement',
+                component: () => import('../views/UserManagement.vue'),
             }
         ],
     },

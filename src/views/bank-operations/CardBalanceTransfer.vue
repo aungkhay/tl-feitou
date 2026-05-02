@@ -152,6 +152,7 @@
                         :error-messages="v$.transfer_out_card_name.$errors.map(e => e.$message)"
                         @input="v$.transfer_out_card_name.$touch"
                         @blur="v$.transfer_out_card_name.$touch"
+                        autocomplete="off"
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact">
@@ -174,6 +175,7 @@
                         :error-messages="v$.transfer_in_card_name.$errors.map(e => e.$message)"
                         @input="v$.transfer_in_card_name.$touch"
                         @blur="v$.transfer_in_card_name.$touch"
+                        autocomplete="off"
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact">

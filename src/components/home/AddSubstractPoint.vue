@@ -28,7 +28,7 @@
                         <v-list-item v-bind="props" density="compact" />
                     </template>
                 </v-select>
-                <v-select
+                <v-autocomplete
                     v-model="obj.player_name"
                     :items="players"
                     item-title="playername"
@@ -41,11 +41,12 @@
                     :error-messages="v$.player_name.$errors.map(e => e.$message)"
                     @input="v$.player_name.$touch"
                     @blur="v$.player_name.$touch"
+                    autocomplete="off"
                 >  
                     <template #item="{ props }">
                         <v-list-item v-bind="props" density="compact" />
                     </template>
-                </v-select>
+                </v-autocomplete>
                 <v-text-field
                     v-model="obj.option_score"
                     label="操作分数"
@@ -84,6 +85,7 @@
                     :error-messages="v$.bank_card.$errors.map(e => e.$message)"
                     @input="v$.bank_card.$touch"
                     @blur="v$.bank_card.$touch"
+                    autocomplete="off"
                 >
                     <template #item="{ props, item }">
                         <v-list-item v-bind="props" density="compact">

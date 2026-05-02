@@ -12,7 +12,7 @@
             <v-card-text class="pa-3">
                 <v-row class="mb-4 mt-1 bg-grey-lighten-3 border rounded-lg mx-1">
                     <v-col cols="12" sm="3">
-                        <v-select
+                        <v-autocomplete
                             v-model="obj.group_nickname"
                             :items="groups"
                             item-title="group_nickname"
@@ -25,11 +25,12 @@
                             :error-messages="v$.group_nickname.$errors.map(e => e.$message)"
                             @input="v$.group_nickname.$touch"
                             @blur="v$.group_nickname.$touch"
+                            autocomplete="off"
                         >
                             <template #item="{ props }">
                                 <v-list-item v-bind="props" density="compact" />
                             </template>
-                        </v-select>
+                        </v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="3">
                         <v-text-field

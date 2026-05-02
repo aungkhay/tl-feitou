@@ -254,6 +254,12 @@ const drawerItems = ref([
         icon: 'mdi-cog',
         routeName: 'BusinessSettings',
         isSelected: false,
+    },
+    {
+        title: '用户管理',
+        icon: 'mdi-account-group',
+        routeName: 'UserManagement',
+        isSelected: false,
     }
 ]);
 

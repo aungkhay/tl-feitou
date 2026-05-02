@@ -4,7 +4,7 @@
         <v-card elevation="0" class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row dense>
                 <v-col cols="12" sm="6" md="2">
-                    <v-select
+                    <v-autocomplete
                         v-model="filters.group_nickname"
                         :items="groups"
                         label="群昵称"
@@ -16,11 +16,12 @@
                         hide-details
                         clearable
                         @click:clear="filters.group_nickname = null"
+                        autocomplete="off"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="compact" />
                         </template>
-                    </v-select>
+                    </v-autocomplete>
                 </v-col>
                 <v-col cols="12" sm="6" md="2">
                     <v-select
@@ -153,7 +154,7 @@
         <v-dialog v-model="dialog" max-width="400" persistent>
             <v-card :title="isTransAll ? '积分全转' : '转分'">
                 <v-card-text>
-                    <v-select
+                    <v-autocomplete
                         v-model="obj.source_desk"
                         :items="groups"
                         item-title="group_nickname"
@@ -165,12 +166,13 @@
                         :error-messages="v$.source_desk.$errors.map(e => e.$message)"
                         @input="v$.source_desk.$touch"
                         @blur="v$.source_desk.$touch"
+                        autocomplete="off"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="comfortable" />
                         </template>
-                    </v-select>
-                    <v-select
+                    </v-autocomplete>
+                    <v-autocomplete
                         v-model="obj.source_player_name"
                         :items="players[obj.source_desk] || []"
                         item-title="playername"
@@ -182,8 +184,14 @@
                         :error-messages="v$.source_player_name.$errors.map(e => e.$message)"
                         @input="v$.source_player_name.$touch"
                         @blur="v$.source_player_name.$touch"
-                    />
-                    <v-select
+                        autocomplete="off"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
+                
+                    <v-autocomplete
                         v-model="obj.target_desk"
                         :items="groups"
                         item-title="group_nickname"
@@ -195,12 +203,13 @@
                         :error-messages="v$.target_desk.$errors.map(e => e.$message)"
                         @input="v$.target_desk.$touch"
                         @blur="v$.target_desk.$touch"
+                        autocomplete="off"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="comfortable" />
                         </template>
-                    </v-select>
-                    <v-select
+                    </v-autocomplete>
+                    <v-autocomplete
                         v-model="obj.target_player_name"
                         :items="players[obj.target_desk] || []"
                         item-title="playername"
@@ -212,7 +221,12 @@
                         :error-messages="v$.target_player_name.$errors.map(e => e.$message)"
                         @input="v$.target_player_name.$touch"
                         @blur="v$.target_player_name.$touch"
-                    />
+                        autocomplete="off"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
                     <v-text-field
                         v-if="!isTransAll"
                         v-model="obj.source_score"

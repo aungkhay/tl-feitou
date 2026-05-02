@@ -4,7 +4,7 @@
         <div class="d-flex align-center justify-space-between">
             <div class="d-flex align-center">
                 <div class="d-flex align-center" style="width: 200px;">
-                    <v-select
+                    <v-autocomplete
                         v-model="filters.group_nickname"
                         :items="groups"
                         label="群昵称"
@@ -15,11 +15,12 @@
                         color="primary"
                         hide-details
                         class="mr-2"
+                        autocomplete="off"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="compact" />
                         </template>
-                    </v-select>
+                    </v-autocomplete>
                 </div>
                 <v-btn color="primary" @click="addSubstractPointDialog = true; addOrSubstract = 'add'"><v-icon>mdi-arrow-up</v-icon> 上分</v-btn>
                 <v-btn color="primary" class="mx-2" @click="addSubstractPointDialog = true; addOrSubstract = 'substract'"><v-icon>mdi-arrow-down</v-icon> 下分</v-btn>
@@ -71,7 +72,7 @@
                         clearable
                         @click:clear="filters.optioner = null"
                     ></v-text-field>
-                    <v-select
+                    <v-autocomplete
                         v-model="filters.player_name"
                         :items="players"
                         label="选手昵称"
@@ -85,6 +86,7 @@
                         return-object
                         clearable
                         @click:clear="filters.player_name = null"
+                        autocomplete="off"
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact">
@@ -95,7 +97,7 @@
                                 </template>
                             </v-list-item>
                         </template>
-                    </v-select>
+                    </v-autocomplete>
                 </v-col>
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <v-select

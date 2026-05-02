@@ -10,14 +10,18 @@
                 <v-btn icon="mdi-close" @click="dialog = false" variant="text" density="compact"></v-btn>
             </v-card-title>
             <v-card-text>
-                <v-select
-                    :items="desks"
+                <v-autocomplete
+                    :items="groups"
                     label="选择操作台"
+                    item-title="group_nickname"
+                    item-value="group_nickname"
                     density="compact"
                     variant="outlined"
                     hide-details
                     color="primary"
-                />
+                    autocomplete="off"
+                >
+                </v-autocomplete>
             </v-card-text>
             <v-card-actions class="d-flex justify-center mb-3">
                 <v-btn color="primary" variant="tonal">确认</v-btn>
@@ -27,7 +31,8 @@
 </template>
 
 <script setup>
-import { ref,watch } from 'vue';
+import { ref,watch, computed } from 'vue';
+import { useUserStore } from '../../stores/user';
 const dialog = ref(false);
 const props = defineProps({
     modelValue: {
@@ -39,6 +44,9 @@ const props = defineProps({
 const desks = ref([
     { title: '辉煌一台' }
 ]);
+
+const userStore = useUserStore();
+const groups = computed(() => userStore.groups);
 
 const emit = defineEmits(['update:modelValue']);
 watch(() => props.modelValue, (newVal) => {

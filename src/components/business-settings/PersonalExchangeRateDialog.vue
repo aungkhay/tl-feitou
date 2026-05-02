@@ -12,7 +12,7 @@
             <v-card-text>
                 <v-row class="pa-0">
                     <v-col cols="12" sm="3">
-                        <v-select
+                        <v-autocomplete
                             v-model="obj.group_nickname"
                             :items="groups"
                             item-title="group_nickname"
@@ -22,11 +22,12 @@
                             hide-details
                             variant="outlined"
                             color="primary"
+                            autocomplete="off"
                         >
                             <template #item="{ props }">
                                 <v-list-item v-bind="props" density="compact" />
                             </template>
-                        </v-select>
+                        </v-autocomplete>
                     </v-col>
                 </v-row>
                 <div class="mt-4 font-weight-bold text-red">没有<v-icon size="20">mdi-star-outline</v-icon>号为隐藏选择</div>

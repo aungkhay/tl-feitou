@@ -27,7 +27,7 @@
                         <v-list-item v-bind="props" density="compact" />
                     </template>
                 </v-select>
-                <v-select
+                <v-autocomplete
                     v-model="obj.player_name"
                     :items="players"
                     item-title="playername"
@@ -39,11 +39,12 @@
                     :error-messages="v$.player_name.$errors.map(e => e.$message)"
                     @input="v$.player_name.$touch"
                     @blur="v$.player_name.$touch"
+                    autocomplete="off"
                 >
                     <template #item="{ props }">
                         <v-list-item v-bind="props" density="compact" />
                     </template>
-                </v-select>
+                </v-autocomplete>
                 <div class="d-flex justify-end">
                     <v-btn color="primary" variant="tonal" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>

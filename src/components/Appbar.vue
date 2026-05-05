@@ -33,11 +33,14 @@
                 </v-menu>
             </div>
         </template>
+
+        <v-spacer></v-spacer>
+        <v-btn :icon="isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" color="primary" @click="toggleFullScreen"></v-btn>
     </v-app-bar>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, reactive } from 'vue';
+import { computed, onMounted, onUnmounted, ref, reactive, watch } from 'vue';
 import { useDrawerStore } from '../stores/drawer';
 import { useTabsStore } from '../stores/tabs';
 import { useRouter } from 'vue-router';
@@ -51,6 +54,7 @@ const active = computed({
     set: (key) => tabsStore.setActive(key),
 });
 const router = useRouter();
+const isFullScreen = ref(false);
 
 const tabMenu = reactive({
     open: false,
@@ -87,4 +91,24 @@ function closeOthers(tab) {
     const nextPath = tabsStore.closeOthers(tab.key); // add this action in store
     if (nextPath) router.push({ name: nextPath });
 }
+
+const toggleFullScreen = async () => {
+    try {
+        if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+        } else {
+            await document.exitFullscreen();
+        }
+    } catch (e) {
+        console.error('Fullscreen error:', e);
+    }
+}
+
+const checkFullscreen = () => {
+    isFullScreen.value = !isFullScreen.value;
+};
+
+onMounted(() => {
+    window.addEventListener('resize', checkFullscreen);
+});
 </script>

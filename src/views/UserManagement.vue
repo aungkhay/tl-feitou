@@ -69,7 +69,7 @@ import { required, helpers } from '@vuelidate/validators';
 import { ref, computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useToast } from 'vue-toastification';
-import { REGISTER } from '../js/api/auth';
+import { REGISTER, GET_USER_LIST } from '../js/api/user';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -86,6 +86,11 @@ const headers = [
     { title: '创建时间', value: 'option_time' },
     { title: '操作', value: 'actions' },
 ];
+const filters = ref({
+    name: null,
+    is_virtual: 0,
+    is_hide: 0
+});
 const dialog = ref(false);
 const isSaving = ref(false);
 const isShow = ref(false);
@@ -106,7 +111,22 @@ const closeDialog = () => {
     obj.value.password = '';
 }
 
-const getUsers = async () => {}
+const getUsers = async () => {
+    loading.value = true;
+    try {
+        const res = await GET_USER_LIST(filters.value.name, filters.value.is_virtual, filters.value.is_hide, page.value, perPage.value);
+        if (res.code == 200) {
+            users.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            total.value = res.data.total;
+        } else {
+            toast.error(res.msg);
+        }
+    } catch (error) {
+        toast.error('获取用户列表失败');
+    } finally {
+        loading.value = false;
+    }
+}
 
 const saveUser = async () => {
     if(v$.value.$invalid) return;

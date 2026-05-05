@@ -74,6 +74,7 @@
                     </template>
                 </v-select>
                 <v-autocomplete
+                    v-if="obj.option_type === '现金'"
                     v-model="obj.bank_card"
                     :items="bankCards"
                     item-title="card_name"
@@ -99,7 +100,7 @@
                     </template>
                 </v-autocomplete>
                 <div class="d-flex justify-end">
-                    <v-btn color="primary" variant="tonal" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
+                    <v-btn color="primary" variant="tonal" :disabled="isSaving || (obj.option_type === '现金' && !obj.bank_card) || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
             </v-card-text>
         </v-card>
@@ -150,7 +151,8 @@ const rules = ref({
     player_name: { required: helpers.withMessage('玩家昵称不能为空', required) },
     option_score: { required: helpers.withMessage('操作分数不能为空', required) },
     option_type: { required: helpers.withMessage('操作类型不能为空', required) },
-    bank_card: { required: helpers.withMessage('银行卡号不能为空', required) },
+    // bank_card: { required: helpers.withMessage('银行卡号不能为空', required) },
+    bank_card: { },
 })
 const v$ = useVuelidate(rules.value, obj.value);
 

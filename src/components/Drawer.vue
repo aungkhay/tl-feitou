@@ -9,7 +9,7 @@
             theme="dark"
             width="200"
         >
-            <v-list-item style="background-color: var(--list-group-active);" height="64" title="财务端"></v-list-item>
+            <v-list-item height="64" class="text-primary font-weight-bold"><v-icon>mdi-finance</v-icon> 财务端</v-list-item>
 
             <v-list nav slim :opened="open">
                 <div v-for="(item, index) in drawerItems" :key="index">
@@ -26,7 +26,6 @@
                                 :prepend-icon="item.icon"
                                 :active="item.isSelected"
                                 color="primary"
-                                :style="`background-color: ${item.isSelected ? 'var(--list-group-active)' : ''}`"
                                 @click="item.children ? {} : changeRoute(index, -1)"
                                 :height="50"
                             ></v-list-item>
@@ -59,6 +58,7 @@
 </template>
 
 <script setup>
+import FinanceImg from '../assets/Finance-rafiki.svg';
 import LogoutDialog from './system-settings/LogoutDialog.vue';
 import { ref, computed, watch } from 'vue';
 import { useDisplay } from 'vuetify';

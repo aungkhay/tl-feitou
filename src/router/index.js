@@ -9,6 +9,11 @@ const routes = [
         component: () => import('../views/Login.vue')
     },
     {
+        path: '/test',
+        name: 'test',
+        component: () => import('../views/TestPage.vue')
+    },
+    {
         path: '/',
         redirect: '/in-out-points',
         component: () => import('../layouts/MainLayout.vue'),

@@ -36,6 +36,7 @@
 
         <v-spacer></v-spacer>
         <v-btn :icon="isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" color="primary" @click="toggleFullScreen"></v-btn>
+        <v-btn color="primary" @click="refreshPage" variant="tonal"><v-icon>mdi-refresh</v-icon> 刷新</v-btn>
     </v-app-bar>
 </template>
 
@@ -91,6 +92,13 @@ function closeOthers(tab) {
     const nextPath = tabsStore.closeOthers(tab.key); // add this action in store
     if (nextPath) router.push({ name: nextPath });
 }
+
+const refreshPage = () => {
+    const currentRoute = router.currentRoute.value;
+    router.replace({ path: '/redirect' }).then(() => {
+        router.replace(currentRoute.fullPath);
+    });
+};
 
 const toggleFullScreen = async () => {
     try {

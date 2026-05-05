@@ -2,7 +2,9 @@ import axios from "axios";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 
-let BASEURL = '/';
+const isEelectron = true;
+
+let BASEURL = isEelectron ? import.meta.env.VITE_BASE_URL : '/';
 let API = axios.create({
     baseURL: BASEURL,
     timeout: 20000,
@@ -37,6 +39,9 @@ API.interceptors.request.use((config) => {
     const userStore = useUserStore();
     if (userStore.isLoggedIn) {
         config.headers.token = userStore.token;
+    }
+    if (isEelectron) {
+        config.url = config.url?.replace('/api', '');
     }
     return config;
 }, (error) => {

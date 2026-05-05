@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar :elevation="0" density="compact">
+    <v-app-bar :elevation="0" density="compact" color="grey-lighten-4">
         <v-app-bar-nav-icon @click="switchDrawer"></v-app-bar-nav-icon>
         <v-app-bar-title class="font-weight-bold">{{ barTitle }}</v-app-bar-title>
 

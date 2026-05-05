@@ -9,7 +9,7 @@
             theme="dark"
             width="200"
         >
-            <v-list-item height="64" class="text-primary font-weight-bold"><v-icon>mdi-finance</v-icon> 财务端</v-list-item>
+            <v-list-item height="64" class="text-primary font-weight-bold"><v-icon>mdi-finance</v-icon><span v-if="isDrawerOpen < 2"> 财务端</span></v-list-item>
 
             <v-list nav slim :opened="open">
                 <div v-for="(item, index) in drawerItems" :key="index">
@@ -58,7 +58,6 @@
 </template>
 
 <script setup>
-import FinanceImg from '../assets/Finance-rafiki.svg';
 import LogoutDialog from './system-settings/LogoutDialog.vue';
 import { ref, computed, watch } from 'vue';
 import { useDisplay } from 'vuetify';

@@ -9,6 +9,7 @@ export default ({ mode }) => {
         vue(),
         vuetify({ autoImport: true }),
       ],
+      base: "./",
       resolve: {
         alias: {
           '@': '/src',

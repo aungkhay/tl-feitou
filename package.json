@@ -1,12 +1,46 @@
 {
-  "name": "tenglong-caiwu",
+  "name": "weitou-caiwu",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "author": {
+    "name": "Xiaoyang"
+  },
+  "description": "",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:pack": "vite build && electron-builder --dir",
+    "electron:dist": "vite build && electron-builder"
+  },
+  "main": "electron/main.cjs",
+  "build": {
+    "appId": "com.xiaoyang.weitoucaiwu",
+    "productName": "微投财务",
+    "files": ["dist/**", "electron/**", "build/**", "package.json"],
+    "directories": {
+      "buildResources": "build"
+    },
+    "icon": "build/icon",
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["nsis"]
+    },
+    "nsis": {
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "displayLanguageSelector": true,
+      "installerLanguages": ["zh_CN", "en_US"],
+
+      "artifactName": "${productName} ${version}.${ext}",
+      "shortcutName": "${productName}",
+      "uninstallDisplayName": "${productName} 卸载程序"
+    }
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -26,7 +60,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
+    "concurrently": "^9.2.1",
+    "electron": "^41.5.0",
+    "electron-builder": "^26.8.1",
     "vite": "^7.2.4",
-    "vite-plugin-vuetify": "^2.1.2"
+    "vite-plugin-vuetify": "^2.1.2",
+    "wait-on": "^9.0.5"
   }
 }

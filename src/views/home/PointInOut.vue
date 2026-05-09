@@ -116,18 +116,7 @@
                             <v-list-item v-bind="props" density="compact" />
                         </template>
                     </v-select>
-                    <v-select
-                        v-model="filters.is_virtual"
-                        :items="[{Id: 0, name: '不包括虚拟'}, {Id: 1, name: '包括虚拟'}]"
-                        label="是否包括虚拟"
-                        density="compact"
-                        item-title="name"
-                        item-value="Id"
-                        variant="outlined"
-                        hide-details
-                        class="ml-1"
-                        color="primary"
-                    ></v-select>
+                    <v-checkbox v-model="filters.is_virtual" color="primary" class="w-50" label="是否包括虚拟" hide-details density="compact"></v-checkbox>
                 </v-col>
                 <v-col cols="12" md="4" class="d-flex align-center">
                     <v-menu
@@ -285,8 +274,8 @@ const filters = ref({
     group_nickname: '',
     option_type: null,
     optioner: null,
-    start_time: moment().format('YYYY-MM-DD') + ' 00:00:00',
-    end_time: moment().format('YYYY-MM-DD') + ' 23:59:59',
+    start_time: moment().startOf('day').format('YYYY-MM-DD'),
+    end_time: moment().add(1, 'day').startOf('day').format('YYYY-MM-DD'),
     player_name: null,
     is_virtual: 1,
 })

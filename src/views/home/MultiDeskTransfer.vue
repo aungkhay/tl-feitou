@@ -273,6 +273,7 @@ import { useToast } from 'vue-toastification';
 import { TRANS_SCORE, REVOKE_TRANS_SCORE, TRANS_ALL_SCORE } from '../../js/api/desk_option';
 import { formattedDate } from '../../js/common';
 import { exportExcel } from '../../js/common';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -306,8 +307,8 @@ const isTransAll = ref(false);
 
 const filters = ref({
     group_nickname: null,
-    start_time: null,
-    end_time: null,
+    start_time: moment().startOf('day').format('YYYY-MM-DD'),
+    end_time: moment().add(1, 'day').startOf('day').format('YYYY-MM-DD'),
     is_virtual: 1,
     action_type: null,
     optioner: null,

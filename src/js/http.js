@@ -2,7 +2,7 @@ import axios from "axios";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 
-const isEelectron = true;
+const isEelectron = false;
 
 let BASEURL = isEelectron ? import.meta.env.VITE_BASE_URL : '/';
 let API = axios.create({

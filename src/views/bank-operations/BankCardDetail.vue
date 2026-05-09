@@ -144,6 +144,7 @@ import { formattedDate, exportExcel } from '../../js/common';
 import { CARD_DETAILS_INQUIRY } from '../../js/api/bank_business';
 import { useUserStore } from '../../stores/user';
 import { useToast } from 'vue-toastification';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -178,8 +179,8 @@ const filters = ref({
     optioner: null,
     card_name: null,
     option_type: null,
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
 })
 
 const getRecords = async () => {

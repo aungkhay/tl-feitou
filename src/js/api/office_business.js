@@ -1,4 +1,5 @@
 import API from "../http";
+import moment from "moment";
 
 const prefix = '/api/ht';
 
@@ -18,8 +19,8 @@ export const GET_OFFICE_EXPENSES = async (project_name, card_name, optioner, sta
         project_name: project_name,
         card_name: card_name,
         optioner: optioner,
-        startTime: startTime,
-        endTime: endTime,
+        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : null,
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : null,
         pageSize: pageSize,
         currentPage: currentPage
     });

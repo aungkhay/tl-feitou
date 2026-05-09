@@ -119,7 +119,7 @@ export const GET_SCORE_OPTION_RECORD = async (group_nickname, option_type, optio
         start_time: start_time ? moment(start_time).format('YYYY-MM-DD') : '',
         end_time: end_time ? moment(end_time).format('YYYY-MM-DD') : '',
         player_name: player_name,
-        is_virtual: is_virtual,
+        is_virtual: is_virtual ? 1 : 0,
         currentPage: currentPage,
         pageSize: pageSize
     });

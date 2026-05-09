@@ -58,7 +58,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.startTime)"
                                 hide-details
                                 clearable
@@ -85,7 +84,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.endTime)"
                                 hide-details
                                 clearable
@@ -140,6 +138,7 @@ import { useUserStore } from '../../stores/user';
 import { GET_PLAYER_DETAILS_QUERY } from '../../js/api/financial_inquiries';
 import { formattedDate, exportExcel } from '../../js/common';
 import { useToast } from 'vue-toastification';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -151,7 +150,7 @@ const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '洗手', value: 'username', fixed: 'start', width: 60 },
+    { title: '洗手', value: 'username', fixed: 'start', width: 120 },
     { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
     { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
     { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
@@ -170,10 +169,10 @@ const filters = ref({
     name: '',
     shoe: null,
     round: null,
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
     is_contains_virtual: true,
-    group_nickname: ''
+    group_nickname: null
 });
 
 const getRecords = async () => {

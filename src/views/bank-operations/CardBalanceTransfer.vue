@@ -253,6 +253,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
 import { exportExcel, formattedDate } from '../../js/common';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -269,8 +270,8 @@ const filters = ref({
     card_type: null,
     optioner: null,
     card_name: null,
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
 })
 const cards = ref([]);
 const loading = ref(false);

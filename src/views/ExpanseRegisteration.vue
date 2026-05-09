@@ -49,7 +49,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.startTime)"
                                 hide-details
                                 clearable
@@ -76,7 +75,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.endTime)"
                                 hide-details
                                 clearable
@@ -249,6 +247,7 @@ import { required, helpers } from '@vuelidate/validators';
 import { ADD_OFFICE_EXPENSE, DELETE_OFFICE_EXPENSE, EDIT_OFFICE_EXPENSE, GET_OFFICE_EXPENSES } from '../js/api/office_business';
 import { useToast } from 'vue-toastification';
 import { getCurrentInstance } from 'vue'
+import moment from 'moment';
 
 const { appContext } = getCurrentInstance()
 
@@ -286,8 +285,8 @@ const filters = ref({
     expense_type: null,
     optioner: null,
     card_name: null,
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
 });
 
 const workdayMenu = ref(false);

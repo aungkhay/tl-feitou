@@ -64,7 +64,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.startTime)"
                                 hide-details
                                 clearable
@@ -91,7 +90,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.endTime)"
                                 hide-details
                                 clearable
@@ -229,6 +227,7 @@ import { GET_POINTS_RECORD, ADD_POINTS, EDIT_POINTS, DELETE_POINTS } from '../js
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -257,8 +256,8 @@ const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const filters = ref({
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
     group_nickname: null,
     optioner: null,
     option_type: null

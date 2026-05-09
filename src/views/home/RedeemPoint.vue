@@ -63,7 +63,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.startTime)"
                                 hide-details
                                 clearable
@@ -90,7 +89,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.endTime)"
                                 hide-details
                                 clearable
@@ -312,6 +310,7 @@ import { useUserStore } from '../../stores/user';
 import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR } from '../../js/api/point_exchange';
 import { useToast } from 'vue-toastification';
 import { exportExcel, formattedDate } from '../../js/common';
+import moment from 'moment';
 
 const toast = useToast();
 
@@ -348,8 +347,8 @@ const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const filters = ref({
     group_nickname: null,
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').format('YYYY-MM-DD'),
+    endTime: moment().add(1, 'day').startOf('day').format('YYYY-MM-DD'),
     player_name: null,
     option_type: '兑换',
     is_virtual: 0

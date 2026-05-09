@@ -46,7 +46,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.startTime)"
                                 hide-details
                                 clearable
@@ -73,7 +72,6 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                prepend-inner-icon="mdi-clock-outline"
                                 :model-value="formattedDate(filters.endTime)"
                                 hide-details
                                 clearable
@@ -129,6 +127,7 @@ import { useUserStore } from '../../stores/user';
 import { GET_ZC_DETAILS_INQUIRY } from '../../js/api/financial_inquiries';
 import { formattedDate, exportExcel } from '../../js/common';
 import { useToast } from 'vue-toastification';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -154,8 +153,8 @@ const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const filters = ref({
-    startTime: null,
-    endTime: null,
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
     group_nickname: null,
     player_name: null,
 });

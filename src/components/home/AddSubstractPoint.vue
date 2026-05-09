@@ -10,7 +10,7 @@
                 <v-btn icon="mdi-close" @click="closeDialog" variant="text" density="compact"></v-btn>
             </v-card-title>
             <v-card-text>
-                <v-select
+                <!-- <v-select
                     v-model="obj.group_nickname"
                     :items="groups"
                     item-title="group_nickname"
@@ -27,8 +27,8 @@
                     <template #item="{ props }">
                         <v-list-item v-bind="props" density="compact" />
                     </template>
-                </v-select>
-                <v-autocomplete
+                </v-select> -->
+                <!-- <v-autocomplete
                     v-model="obj.player_name"
                     :items="players"
                     item-title="playername"
@@ -46,7 +46,20 @@
                     <template #item="{ props }">
                         <v-list-item v-bind="props" density="compact" />
                     </template>
-                </v-autocomplete>
+                </v-autocomplete> -->
+                <v-text-field
+                    v-model="obj.player_name"
+                    item-title="playername"
+                    item-value="playername"
+                    label="玩家昵称"
+                    variant="outlined"
+                    density="comfortable"
+                    class="mb-1"
+                    color="primary"
+                    :error-messages="v$.player_name.$errors.map(e => e.$message)"
+                    @input="v$.player_name.$touch"
+                    @blur="v$.player_name.$touch"
+                ></v-text-field>
                 <v-text-field
                     v-model="obj.option_score"
                     label="操作分数"
@@ -140,14 +153,14 @@ const isSaving = ref(false);
 const players = ref([]);
 const bankCards = ref([]);
 const obj = ref({
-    group_nickname: '',
+    // group_nickname: '',
     player_name: '',
     option_score: '',
     option_type: '',
     bank_card: '',
 });
 const rules = ref({
-    group_nickname: { required: helpers.withMessage('群昵称不能为空', required) },
+    // group_nickname: { required: helpers.withMessage('群昵称不能为空', required) },
     player_name: { required: helpers.withMessage('玩家昵称不能为空', required) },
     option_score: { required: helpers.withMessage('操作分数不能为空', required) },
     option_type: { required: helpers.withMessage('操作类型不能为空', required) },

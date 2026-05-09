@@ -130,6 +130,7 @@ import { useUserStore } from '../../stores/user';
 import { BANK_STATISTICS_BY_DAY, BANK_STATISTICS_BY_PERIOD } from '../../js/api/bank_business';
 import { useToast } from 'vue-toastification';
 import { getCurrentInstance } from 'vue'
+import moment from 'moment';
 
 const { appContext } = getCurrentInstance()
 
@@ -166,8 +167,8 @@ const selectedFilterMethod = ref('by_day');
 const filters = ref({
     card_status: null,
     card_name: '',
-    startTime: '',
-    endTime: '',
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
 });
 
 const getCards = async () => {

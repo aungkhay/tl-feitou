@@ -153,6 +153,7 @@ import { useUserStore } from '../../stores/user';
 import { GET_PLAYER_BETTING_DETAILS } from '../../js/api/financial_inquiries';
 import { getCurrentInstance } from 'vue'
 import { useToast } from 'vue-toastification';
+import moment from 'moment';
 
 const { appContext } = getCurrentInstance()
 
@@ -212,8 +213,8 @@ const filters = ref({
     group_nickname: null,
     bet_type: null,
     player_name: '',
-    startTime: '',
-    endTime: '',
+    startTime: moment().startOf('day').toDate(),
+    endTime: moment().add(1, 'day').startOf('day').toDate(),
 });
 
 const getRecords = async () => {

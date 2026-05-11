@@ -18,8 +18,8 @@ const prefix = '/api/ht';
 export const GET_POINTS_EXCHANGE_INFO = async (group_nickname, startTime, endTime, player_name, option_type, is_virtual, currentPage, pageSize) => {
     return await API.post(`${prefix}/points_exchange/get_exchange_info`, {
         group_nickname: group_nickname,
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime ? startTime : '',
+        endTime: endTime ? endTime : '',
         player_name: player_name,
         option_type: option_type,
         is_virtual: is_virtual,

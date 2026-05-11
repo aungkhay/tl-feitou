@@ -41,15 +41,20 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.date)"
+                                :model-value="formattedDate(filters.date, filters.time)"
                                 hide-details
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.date"
-                            @update:model-value="dateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker v-model="filters.date" color="primary" bg-color="blue-lighten-4"/>
+                                <v-time-picker v-model="filters.time" use-seconds format="24hr" color="primary" bg-color="blue-lighten-4"/>
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="dateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -92,6 +97,43 @@
             <template #item.kj="{ item }">
                 <span>{{ checkResult(item.kj) }}</span>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3" style="position: sticky; left: 0; background-color: #d4d4d4; z-index: 1;">合计: {{ summary.total_count }}</td>
+                    <td>{{ summary.total_x }}</td>
+                    <td>{{ summary.total_z }}</td>
+                    <td>{{ summary.total_xd }}</td>
+                    <td>{{ summary.total_zd }}</td>
+                    <td>{{ summary.total_l }}</td>
+                    <td>{{ summary.total_m }}</td>
+                    <td>{{ summary.total_g_m }}</td>
+                    <td>{{ summary.total_g_x }}</td>
+                    <td>{{ summary.total_g_z }}</td>
+                    <td>{{ summary.total_g_xd }}</td>
+                    <td>{{ summary.total_g_zd }}</td>
+                    <td>{{ summary.total_g_h }}</td>
+                    <td>{{ summary.total_d }}</td>
+                    <td>{{ summary.total_g_d }}</td>
+                    <td>{{ summary.total_zxdc }}</td>
+                    <td>{{ summary.total_g_l }}</td>
+                    <td>{{ summary.total_tzx }}</td>
+                    <td>{{ summary.total_tsbl }}</td>
+                    <td>{{ summary.total_lt }}</td>
+                    <td>{{ summary.total_sp }}</td>
+                    <td>{{ summary.total_spm }}</td>
+                    <td colspan="2"></td>
+                    <td>{{ summary.total_zyk }}</td>
+                    <td>{{ summary.total_xzyk }}</td>
+                    <td>{{ summary.total_gyk }}</td>
+                    <td>{{ summary.total_dcyk }}</td>
+                    <td>{{ summary.total_xztyk }}</td>
+                    <td>{{ summary.total_sbltyk }}</td>
+                    <td>{{ summary.total_sblspyk }}</td>
+                    <td>{{ summary.total_xzspyk }}</td>
+                    <td>{{ summary.total_ltyk }}</td>
+                    <td>{{ summary.total_spzsyk }}</td>
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -102,6 +144,7 @@ import { formattedDate, exportExcel, checkResult } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { GET_ROUND_DETAILS } from '../../js/api/financial_inquiries';
 import { useToast } from 'vue-toastification';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -152,6 +195,40 @@ const headers = ref([
     // { title: '飞牌输赢', value: 'fly_card_win_loss', minWidth: 100 },
     { title: '上盘抽水赢亏', value: 'spzsyk', minWidth: 120 },
 ]);
+const summary = ref({
+    total_count: 0,
+    total_z: 0,
+    total_h: 0,
+    total_x: 0,
+    total_zd: 0,
+    total_xd: 0,
+    total_l: 0,
+    total_m: 0,
+    total_d: 0,
+    total_g_z: 0,
+    total_g_x: 0,
+    total_g_zd: 0,
+    total_g_xd: 0,
+    total_g_h: 0,
+    total_g_m: 0,
+    total_g_l: 0,
+    total_zxdc: 0,
+    total_tzx: 0,
+    total_tsbl: 0,
+    total_lt: 0,
+    total_sp: 0,
+    total_spm: 0,
+    total_zyk: 0,
+    total_xzyk: 0,
+    total_gyk: 0,
+    total_dcyk: 0,
+    total_xztyk: 0,
+    total_sbltyk: 0,
+    total_sblspyk: 0,
+    total_xzspyk: 0,
+    total_ltyk: 0,
+    total_spzsyk: 0
+})
 
 const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
@@ -159,6 +236,7 @@ const dateMenu = ref(false);
 const filters = ref({
     shoe: 1,
     date: new Date(),
+    time: '00:00:00',
     is_virtual: true,
     group_nickname: null,
 });
@@ -168,7 +246,7 @@ const getRecords = async () => {
     try {
         const res = await GET_ROUND_DETAILS(
             filters.value.shoe,
-            filters.value.date,
+            filters.value.date && filters.value.time ? moment(filters.value.date).format('YYYY-MM-DD') + ' ' + filters.value.time : null,
             filters.value.is_virtual,
             filters.value.group_nickname,
             page.value,
@@ -191,7 +269,7 @@ const exportTable = async () => {
     try {
         const res = await GET_ROUND_DETAILS(
             filters.value.shoe,
-            filters.value.date,
+            filters.value.date && filters.value.time ? moment(filters.value.date).format('YYYY-MM-DD') + ' ' + filters.value.time : null,
             filters.value.is_virtual,
             filters.value.group_nickname,
             1,

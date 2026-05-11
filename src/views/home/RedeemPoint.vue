@@ -52,7 +52,7 @@
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
-                        v-model="fromDateMenu"
+                        v-model="startDateMenu"
                         :close-on-content-click="false"
                         transition="scale-transition"
                     >
@@ -63,22 +63,37 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.startTime)"
+                                :model-value="formattedDate(filters.start_date, filters.start_time)"
                                 hide-details
                                 clearable
-                                @click:clear="filters.startTime = null"
+                                @click:clear="filters.start_date = null; filters.start_time = null;"
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.startTime"
-                            @update:model-value="fromDateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker 
+                                    v-model="filters.start_date" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker 
+                                    v-model="filters.start_time" 
+                                    use-seconds 
+                                    format="24hr" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="startDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
-                        v-model="toDateMenu"
+                        v-model="endDateMenu"
                         :close-on-content-click="false"
                         transition="scale-transition"
                     >
@@ -89,17 +104,32 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.endTime)"
+                                :model-value="formattedDate(filters.end_date, filters.end_time)"
                                 hide-details
                                 clearable
-                                @click:clear="filters.endTime = null"
+                                @click:clear="filters.end_date = null; filters.end_time = null;"
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.endTime"
-                            @update:model-value="toDateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker
+                                    v-model="filters.end_date"
+                                    color="primary"
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker
+                                    v-model="filters.end_time"
+                                    use-seconds
+                                    format="24hr"
+                                    color="primary"
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="endDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="3" class="d-flex">
@@ -343,12 +373,14 @@ const headers = ref([
 ]);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const groups = computed(() => userStore.groups);
-const fromDateMenu = ref(false);
-const toDateMenu = ref(false);
+const startDateMenu = ref(false);
+const endDateMenu = ref(false);
 const filters = ref({
     group_nickname: null,
-    startTime: moment().startOf('day').format('YYYY-MM-DD'),
-    endTime: moment().add(1, 'day').startOf('day').format('YYYY-MM-DD'),
+    start_date: moment().startOf('day').format('YYYY-MM-DD'),
+    start_time: '00:00:00',
+    end_date: moment().startOf('day').format('YYYY-MM-DD'),
+    end_time: '23:59:59',
     player_name: null,
     option_type: '兑换',
     is_virtual: 0
@@ -375,8 +407,8 @@ const getRecords = async () => {
     try {
         const res = await GET_POINTS_EXCHANGE_INFO(
             filters.value.group_nickname,
-            filters.value.startTime,
-            filters.value.endTime,
+            filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
+            filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.player_name,
             filters.value.option_type,
             filters.value.is_virtual,
@@ -519,8 +551,8 @@ const exportTable = async () => {
     try {
         const res = await GET_POINTS_EXCHANGE_INFO(
             filters.value.group_nickname,
-            filters.value.startTime,
-            filters.value.endTime,
+            filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
+            filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.player_name,
             filters.value.option_type,
             filters.value.is_virtual,

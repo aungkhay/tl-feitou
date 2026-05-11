@@ -58,17 +58,32 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.startTime)"
+                                :model-value="formattedDate(filters.start_date, filters.start_time)"
                                 hide-details
                                 clearable
-                                @click:clear="filters.startTime = ''"
+                                @click:clear="filters.start_date = null; filters.start_time = null"
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.startTime"
-                            @update:model-value="fromDateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker 
+                                    v-model="filters.start_date" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker 
+                                    v-model="filters.start_time" 
+                                    use-seconds 
+                                    format="24hr" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="fromDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -84,17 +99,32 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.endTime)"
+                                :model-value="formattedDate(filters.end_date, filters.end_time)"
                                 hide-details
                                 clearable
-                                @click:clear="filters.endTime = ''"
+                                @click:clear="filters.end_date = null; filters.end_time = null;"
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.endTime"
-                            @update:model-value="toDateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker
+                                    v-model="filters.end_date"
+                                    color="primary"
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker
+                                    v-model="filters.end_time"
+                                    use-seconds
+                                    format="24hr"
+                                    color="primary"
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="toDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -169,8 +199,10 @@ const filters = ref({
     name: '',
     shoe: null,
     round: null,
-    startTime: moment().startOf('day').toDate(),
-    endTime: moment().add(1, 'day').startOf('day').toDate(),
+    start_date: moment().startOf('day').toDate(),
+    start_time: '00:00:00',
+    end_date: moment().startOf('day').toDate(),
+    end_time: '23:59:59',
     is_contains_virtual: true,
     group_nickname: null
 });
@@ -178,8 +210,18 @@ const filters = ref({
 const getRecords = async () => {
     loading.value = true;
     try {
-        const { name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname } = filters.value;
-        const res = await GET_PLAYER_DETAILS_QUERY(name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname, page.value, perPage.value);
+        const { name, shoe, round, start_date, start_time, end_date, end_time, is_contains_virtual, group_nickname } = filters.value;
+        const res = await GET_PLAYER_DETAILS_QUERY(
+            name, 
+            shoe, 
+            round, 
+            start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
+            end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
+            is_contains_virtual, 
+            group_nickname, 
+            page.value, 
+            perPage.value
+        );
         if (res.code == 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
@@ -195,8 +237,18 @@ const getRecords = async () => {
 const exportTable = async () => {
     isExporting.value = true;
     try {
-        const { name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname } = filters.value;
-        const res = await GET_PLAYER_DETAILS_QUERY(name, shoe, round, startTime, endTime, is_contains_virtual, group_nickname, 1, total.value || 10000);
+        const { name, shoe, round, start_date, start_time, end_date, end_time, is_contains_virtual, group_nickname } = filters.value;
+        const res = await GET_PLAYER_DETAILS_QUERY(
+            name, 
+            shoe, 
+            round, 
+            start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
+            end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
+            is_contains_virtual, 
+            group_nickname, 
+            1, 
+            total.value || 10000
+        );
         if (res.code == 200) {
             const data = res.data.list.map(item => ({
                 '序列': item.index,

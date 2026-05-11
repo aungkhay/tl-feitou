@@ -17,8 +17,8 @@ const prefix = '/api/ht';
 export const GET_PLAYER_BETTING_DETAILS = async (player_name, startTime, endTime, bet_type, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/player_betting_details`, {
         player_name: player_name,
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         bet_type: bet_type,
         group_nickname: group_nickname,
         currentPage: currentPage,
@@ -39,7 +39,7 @@ export const GET_PLAYER_BETTING_DETAILS = async (player_name, startTime, endTime
 export const GET_ROUND_DETAILS = async (shoe, date, is_virtual, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/round_details`, {
         shoe: shoe,
-        date: date ? moment(date).format('YYYY-MM-DD') : '',
+        date: date ? date : '',
         is_virtual: is_virtual ? 1 : 0,
         group_nickname: group_nickname,
         currentPage: currentPage,
@@ -65,8 +65,8 @@ export const GET_PLAYER_DETAILS_QUERY = async (name, shoe, round, startTime, end
         name: name,
         shoe: shoe,
         round: round,
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         is_contains_virtual: is_contains_virtual ? 1 : 0,
         group_nickname: group_nickname,
         currentPage: currentPage,
@@ -85,8 +85,8 @@ export const GET_PLAYER_DETAILS_QUERY = async (name, shoe, round, startTime, end
  */
 export const GET_SANBAO_DETAILS_QUERY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/ht_sb_details_query`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         currentPage: currentPage,
         pageSize: pageSize
@@ -104,8 +104,8 @@ export const GET_SANBAO_DETAILS_QUERY = async (startTime, endTime, group_nicknam
  */
 export const GET_CASH_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/cash_details_inquiry`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         currentPage: currentPage,
         pageSize: pageSize
@@ -124,8 +124,8 @@ export const GET_CASH_DETAILS_INQUIRY = async (startTime, endTime, group_nicknam
  */
 export const GET_ZC_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, player_name, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/zc_details_inquiry`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         player_name: player_name,
         currentPage: currentPage,
@@ -145,8 +145,8 @@ export const GET_ZC_DETAILS_INQUIRY = async (startTime, endTime, group_nickname,
  */
 export const GET_RECHARGE_DETAILS_INQUIRY = async (startTime, endTime, group_nickname, option_type, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_inquiries/recharge_details_inquiry`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         option_type: option_type,
         currentPage: currentPage,

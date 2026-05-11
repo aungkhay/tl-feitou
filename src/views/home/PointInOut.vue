@@ -131,19 +131,33 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.start_time)"
+                                :model-value="formattedDate(filters.start_date, filters.start_time)"
                                 hide-details
                                 clearable
-                                @click:clear="filters.start_time = null"
+                                @click:clear="filters.start_date = null; filters.start_time = null;"
                                 class="mr-1"
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.start_time"
-                            @update:model-value="startDateMenu = false"
-                            :max="filters.end_time"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker 
+                                    v-model="filters.start_date" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker 
+                                    v-model="filters.start_time" 
+                                    use-seconds 
+                                    format="24hr" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="startDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                     <v-menu
                         v-model="endDateMenu"
@@ -157,19 +171,33 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.end_time)"
+                                :model-value="formattedDate(filters.end_date, filters.end_time)"
                                 hide-details
                                 clearable
-                                @click:clear="filters.end_time = null"
+                                @click:clear="filters.end_date = null; filters.end_time = null;"
                                 class="ml-1"
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.end_time"
-                            @update:model-value="endDateMenu = false"
-                            :max="filters.start_time"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker
+                                    v-model="filters.end_date"
+                                    color="primary"
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker
+                                    v-model="filters.end_time"
+                                    use-seconds
+                                    format="24hr"
+                                    color="primary"
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="endDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" md="2">
@@ -274,8 +302,10 @@ const filters = ref({
     group_nickname: '',
     option_type: null,
     optioner: null,
-    start_time: moment().startOf('day').format('YYYY-MM-DD'),
-    end_time: moment().add(1, 'day').startOf('day').format('YYYY-MM-DD'),
+    start_date: moment().startOf('day').format('YYYY-MM-DD'),
+    start_time: '00:00',
+    end_date: moment().startOf('day').format('YYYY-MM-DD'),
+    end_time: '23:59:59',
     player_name: null,
     is_virtual: 1,
 })
@@ -359,8 +389,8 @@ const getRecords2 = async () => {
             filters.value.group_nickname,
             filters.value.option_type,
             filters.value.optioner,
-            filters.value.start_time,
-            filters.value.end_time,
+            filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
+            filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.player_name,
             filters.value.is_virtual,
             currentPage2.value,
@@ -491,8 +521,8 @@ const exportTable2 = async () => {
             filters.value.group_nickname,
             filters.value.option_type,
             filters.value.optioner,
-            filters.value.start_time,
-            filters.value.end_time,
+            filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
+            filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.player_name,
             filters.value.is_virtual,
             1,

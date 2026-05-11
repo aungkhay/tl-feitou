@@ -19,8 +19,8 @@ export const GET_POINTS_RECORD = async (group_nickname, optioner, option_type, s
         group_nickname: group_nickname,
         optioner: optioner,
         option_type: option_type,
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         currentPage: currentPage,
         pageSize: pageSize
     });

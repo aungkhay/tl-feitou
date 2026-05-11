@@ -63,15 +63,30 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.startTime)"
+                                :model-value="formattedDate(filters.start_date, filters.start_time)"
                                 hide-details
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.startTime"
-                            @update:model-value="fromDateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker 
+                                    v-model="filters.start_date" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker 
+                                    v-model="filters.start_time" 
+                                    use-seconds 
+                                    format="24hr" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="fromDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -87,15 +102,30 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
-                                :model-value="formattedDate(filters.endTime)"
+                                :model-value="formattedDate(filters.end_date, filters.end_time)"
                                 hide-details
                             ></v-text-field>
                         </template>
 
-                        <v-date-picker
-                            v-model="filters.endTime"
-                            @update:model-value="toDateMenu = false"
-                        />
+                        <div class="bg-blue-lighten-4">
+                            <div class="d-flex">
+                                <v-date-picker 
+                                    v-model="filters.end_date" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                                <v-time-picker 
+                                    v-model="filters.end_time" 
+                                    use-seconds 
+                                    format="24hr" 
+                                    color="primary" 
+                                    bg-color="blue-lighten-4"
+                                />
+                            </div>
+                            <div class="d-flex justify-end mb-2 mr-2">
+                                <v-btn text color="primary" variant="tonal" @click="toDateMenu = false">确定</v-btn>
+                            </div>
+                        </div>
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -213,8 +243,10 @@ const filters = ref({
     group_nickname: null,
     bet_type: null,
     player_name: '',
-    startTime: moment().startOf('day').toDate(),
-    endTime: moment().add(1, 'day').startOf('day').toDate(),
+    start_date: moment().startOf('day').toDate(),
+    start_time: '00:00:00',
+    end_date: moment().startOf('day').toDate(),
+    end_time: '23:59:59',
 });
 
 const getRecords = async () => {
@@ -222,8 +254,8 @@ const getRecords = async () => {
     try {
         const res = await GET_PLAYER_BETTING_DETAILS(
             filters.value.player_name,
-            filters.value.startTime,
-            filters.value.endTime,
+            filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
+            filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.bet_type,
             filters.value.group_nickname,
             page.value,
@@ -246,8 +278,8 @@ const exportTable = async () => {
     try {
         const res = await GET_PLAYER_BETTING_DETAILS(
             filters.value.player_name,
-            filters.value.startTime,
-            filters.value.endTime,
+            filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
+            filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.bet_type,
             filters.value.group_nickname,
             1,

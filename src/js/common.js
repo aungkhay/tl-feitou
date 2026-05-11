@@ -1,16 +1,24 @@
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+import moment from 'moment'
 
-export const formattedDate = (date) => {
+export const formattedDate = (date, time) => {
     if (!date) return ''
 
-    const d = new Date(date)
-    const y = d.getFullYear()
-    const m = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
+    const d = time ? moment(date).format('YYYY-MM-DD') + ' ' + time : moment(date).format('YYYY-MM-DD');
+    const y = moment(d).year()
+    const m = moment(d).month() + 1
+    const day = moment(d).date()
+    const h = moment(d).hour()
+    const min = moment(d).minute()
+    const s = moment(d).second()
 
-    const str = `${y}年${m}月${day}日`;
-    return str;
+    let dateTimeStr = `${y}-${m.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    if (time) {
+        dateTimeStr += ` ${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    return dateTimeStr;
 }
 
 export const exportExcel = (data, filename) => {

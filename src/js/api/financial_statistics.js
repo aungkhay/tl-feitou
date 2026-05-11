@@ -14,8 +14,8 @@ const prefix = '/api/ht';
  */
 export const GET_DAILY_QUERY_SUMMARY = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_statistics/daily_query_summary`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         currentPage: currentPage,
         pageSize: pageSize
@@ -33,8 +33,8 @@ export const GET_DAILY_QUERY_SUMMARY = async (startTime, endTime, group_nickname
  */
 export const GET_SB_STATISTICS = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_statistics/sb_statistics`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         currentPage: currentPage,
         pageSize: pageSize
@@ -52,8 +52,8 @@ export const GET_SB_STATISTICS = async (startTime, endTime, group_nickname, curr
  */
 export const GET_PERSONAL_PROPORTION_STATISTICS = async (startTime, endTime, group_nickname, currentPage, pageSize) => {
     return await API.post(`${prefix}/financial_statistics/personal_proportion_statistics`, {
-        startTime: startTime ? moment(startTime).format('YYYY-MM-DD') : '',
-        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
+        startTime: startTime,
+        endTime: endTime,
         group_nickname: group_nickname,
         currentPage: currentPage,
         pageSize: pageSize

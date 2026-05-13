@@ -136,7 +136,7 @@
             <template #item.date="{ item }">
                 {{ $filters.formatDate(item.date) }}
             </template>
-            <template #body.append>
+            <!-- <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="2">合计</td>
                     <td>{{ summary.xzspyk }}</td>
@@ -148,7 +148,7 @@
                     <td>{{ summary.zxtmzcxm }}</td>
                     <td>{{ summary.lyhs }}</td>
                 </tr>
-            </template>
+            </template> -->
         </v-data-table-server>
     </div>
 </template>

@@ -158,6 +158,17 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
+             <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3">合计</td>
+                    <td>{{ summary.total_xml_zx }}</td>
+                    <td>{{ summary.total_xml_sb }}</td>
+                    <td>{{ summary.total_zx_yl }}</td> 
+                    <td>{{ summary.total_sb_yl }}</td> 
+                    <td>{{ summary.total_yxxz }}</td> 
+                    <td></td>
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -207,6 +218,14 @@ const filters = ref({
     group_nickname: null
 });
 
+const summary = ref({
+    total_sb_yl: 0,
+    total_xml_sb: 0,
+    total_xml_zx: 0,
+    total_yxxz: 0,
+    total_zx_yl: 0
+})
+
 const getRecords = async () => {
     loading.value = true;
     try {
@@ -225,6 +244,7 @@ const getRecords = async () => {
         if (res.code == 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
+            summary.value = res.data.summary
         }
     } catch (error) {
         console.error('Error fetching records:', error);

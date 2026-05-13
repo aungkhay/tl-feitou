@@ -147,6 +147,15 @@
             <template #item.stat_date="{ item }">
                 {{ $filters.formatDate(item.stat_date) }}
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="4">合计</td>
+                    <td>{{ summary.zxzcxm }}</td>
+                    <td>{{ summary.zxyl }}</td>
+                    <td>{{ summary.xml_sb }}</td>
+                    <td>{{ summary.sb_yl }}</td>
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -190,6 +199,12 @@ const filters = ref({
     group_nickname: null,
     player_name: null,
 });
+const summary = ref({
+    sb_yl: 0,
+    xml_sb: 0,
+    zxyl: 0,
+    zxzcxm: 0
+});
 
 const getRecords = async () => {
     loading.value = true;
@@ -207,6 +222,7 @@ const getRecords = async () => {
             index: (page.value - 1) * perPage.value + index + 1,
         }));
         total.value = res.data.total;
+        summary.value = res.data.summary;
     } catch (error) {
         console.error('Error fetching records:', error);
         toast.error('获取记录失败，请稍后再试');

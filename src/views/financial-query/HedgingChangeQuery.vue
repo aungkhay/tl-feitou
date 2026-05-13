@@ -139,6 +139,17 @@
             <template #item.kj="{ item }">
                 <span>{{ checkResult(item.kj) }}</span>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="4">合计</td> 
+                    <td>{{ summary.total_zxdc }}</td> 
+                    <td>{{ summary.total_lt }}</td> 
+                    <td>{{ summary.total_sp }}</td> 
+                    <td></td>
+                    <td>{{ summary.total_dcyk }}</td> 
+                    <td>{{ summary.total_ltyk }}</td>
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -163,7 +174,7 @@ const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
-    { title: '工作日', value: 'stat_date', minWidth: 100 },
+    { title: '工作日', value: 'stat_date', minWidth: 120 },
     { title: '局', value: 'shoe_round', minWidth: 150 },
     { title: '庄闲(龙虎)对冲', value: 'zxdc', minWidth: 150 },
     { title: '零头', value: 'lt', minWidth: 100 },
@@ -183,6 +194,14 @@ const filters = ref({
     end_time: '23:59:59',
     group_nickname: null
 });
+const summary = ref({
+    total_count: 0,
+    total_dcyk: 0,
+    total_lt: 0,
+    total_ltyk: 0,
+    total_sp: 0,
+    total_zxdc: 0
+});
 
 const getRecords = async () => {
     loading.value = true;
@@ -199,6 +218,7 @@ const getRecords = async () => {
             index: (page.value - 1) * perPage.value + index + 1,
         }));
         total.value = res.data.total;
+        summary.value = res.data.summary;
     } catch (error) {
         console.error('查询三宝详情失败:', error);
         toast.error('获取记录失败，请稍后再试');

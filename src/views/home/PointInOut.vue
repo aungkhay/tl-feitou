@@ -33,6 +33,7 @@
         </div>
 
         <v-data-table-server
+            v-model:page="currentPage1"
             v-model:items-per-page="itemsPerPage1"
             :headers="headers1"
             :items="records1"
@@ -83,7 +84,6 @@
                         hide-details
                         class="ml-1"
                         color="primary"
-                        return-object
                         clearable
                         @click:clear="filters.player_name = null"
                         autocomplete="off"
@@ -303,7 +303,7 @@ const filters = ref({
     option_type: null,
     optioner: null,
     start_date: moment().startOf('day').format('YYYY-MM-DD'),
-    start_time: '00:00',
+    start_time: '00:00:00',
     end_date: moment().startOf('day').format('YYYY-MM-DD'),
     end_time: '23:59:59',
     player_name: null,
@@ -333,6 +333,7 @@ const headers1 = ref([
     { title: '状态', key: 'is_hide', sortable: false, minWidth: 70 },
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
 ])
+const currentPage1 = ref(1);
 const itemsPerPage1 = ref(5);
 const totalItems1 = ref(0);
 const isReady1 = ref(false);
@@ -371,7 +372,7 @@ const getRecords1 = async () => {
     if (!isReady1.value) return;
     loading1.value = true;
     try {
-        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname);
+        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, itemsPerPage1.value, currentPage1.value);
         if (res.code == 200) {
             records1.value = res.data.list.map((item, index) => ({ ...item, index: index + 1 }));
             totalItems1.value = res.data.total;
@@ -397,8 +398,11 @@ const getRecords2 = async () => {
             itemsPerPage2.value,
         );
         if (res.code == 200) {
-            records2.value = res.data.record.map((item, index) => ({ ...item, index: index + 1 }));
-            totalItems2.value = res.data.count;
+            records2.value = res.data.list.map((record, index) => ({
+                ...record,
+                index: (currentPage2.value - 1) * itemsPerPage2.value + index + 1,
+            }));
+            totalItems2.value = res.data.total;
             // currentPage2.value = Math.ceil(totalItems2.value / itemsPerPage2.value);
         }
     } finally {

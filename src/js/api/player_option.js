@@ -87,9 +87,11 @@ export const SUBSTRACT_SCORE = async (group_nickname, player_name, option_score,
  * @param {string} group_nickname 台号(群昵称）
  * @returns
  */
-export const GET_PLAYER_DETAIL = async (group_nickname) => {
+export const GET_PLAYER_DETAIL = async (group_nickname, pageSize, currentPage) => {
     const res = await API.post(`${prefix}/player_option/get_player_detail`, {
-        group_nickname: group_nickname
+        group_nickname: group_nickname,
+        pageSize: pageSize,
+        currentPage: currentPage
     });
     if (res.code == 200) {
         const userStore = useUserStore();

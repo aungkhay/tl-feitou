@@ -139,6 +139,25 @@
             <template #item.kj="{ item }">
                 <span>{{ checkResult(item.kj) }}</span>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="4">合计</td>
+                    <td>{{ summary.total_xd }}</td> 
+                    <td>{{ summary.total_zd }}</td> 
+                    <td>{{ summary.total_h }}</td> 
+                    <td>{{ summary.total_l }}</td> 
+                    <td>{{ summary.total_m }}</td> 
+                    <td>{{ summary.total_d }}</td> 
+                    <td></td>
+                    <td>{{ summary.total_xd_yl }}</td> 
+                    <td>{{ summary.total_zd_yl }}</td> 
+                    <td>{{ summary.total_h_yl }}</td> 
+                    <td>{{ summary.total_l_yl }}</td> 
+                    <td>{{ summary.total_m_yl }}</td> 
+                    <td>{{ summary.total_d_yl }}</td> 
+                    <td>{{ summary.total_yl }}</td> 
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -191,6 +210,21 @@ const filters = ref({
     end_time: '23:59:59',
     group_nickname: null
 });
+const summary = ref({
+    total_d: 0,
+    total_d_yl: 0,
+    total_h: 0,
+    total_h_yl: 0,
+    total_l: 0,
+    total_l_yl: 0,
+    total_m: 0, 
+    total_m_yl: 0, 
+    total_xd: 0, 
+    total_xd_yl: 0, 
+    total_yl: 0, 
+    total_zd: 0, 
+    total_zd_yl: 0
+})
 
 const getRecords = async () => {
     loading.value = true;
@@ -206,6 +240,7 @@ const getRecords = async () => {
         if (res.code == 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
+            summary.value = res.data.summary;
         }
     } catch (error) {
         console.error(error);

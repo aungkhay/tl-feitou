@@ -16,6 +16,8 @@
                         hide-details
                         class="mr-2"
                         autocomplete="off"
+                        clearable
+                        @click:clear="filters.group_nickname = null; currentPage1 = 1; getRecords1();"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="compact" />
@@ -33,6 +35,7 @@
         </div>
 
         <v-data-table-server
+            ref="table1Ref"
             v-model:page="currentPage1"
             v-model:items-per-page="itemsPerPage1"
             :headers="headers1"
@@ -42,12 +45,14 @@
             density="compact"
             class="mt-2 table1"
             :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords1"
             hover
+            fixed-header
+            hide-default-footer
+            height="300"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.registTime="{ item }">
                 {{ $filters.formatFullDate(item.registTime) }}
             </template>
@@ -58,46 +63,56 @@
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
+            <template #body.append>
+                <tr v-if="noMoreData1">
+                    <td :colspan="headers1.length" class="text-center py-2">没有更多数据</td>
+                </tr>
+            </template>
         </v-data-table-server>
         
         <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-10">
             <v-row dense>
                 <v-col cols="12" md="3" class="d-flex align-center">
-                    <v-text-field
-                        v-model="filters.optioner"
-                        label="操作人"
-                        density="compact"
-                        variant="outlined"
-                        hide-details
-                        class="mx-1"
-                        clearable
-                        @click:clear="filters.optioner = null"
-                    ></v-text-field>
-                    <v-autocomplete
-                        v-model="filters.player_name"
-                        :items="players"
-                        label="选手昵称"
-                        density="compact"
-                        item-title="playername"
-                        item-value="playername"
-                        variant="outlined"
-                        hide-details
-                        class="ml-1"
-                        color="primary"
-                        clearable
-                        @click:clear="filters.player_name = null"
-                        autocomplete="off"
-                    >
-                        <template #item="{ props, item }">
-                            <v-list-item v-bind="props" density="compact">
-                                <template #append>
-                                    <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
-                                        {{ item.raw.is_hide ? '隐藏' : '显示' }}
-                                    </span>
-                                </template>
-                            </v-list-item>
-                        </template>
-                    </v-autocomplete>
+                    <div class="w-50">
+                        <v-text-field
+                            v-model="filters.optioner"
+                            label="操作人"
+                            density="compact"
+                            variant="outlined"
+                            hide-details
+                            class="mx-1"
+                            clearable
+                            @click:clear="filters.optioner = null"
+                        ></v-text-field>
+                    </div>
+                    <div class="w-50">
+                        <v-autocomplete
+                            v-model="filters.player_name"
+                            v-model:search="searchPlayer"
+                            :items="players"
+                            label="选手昵称"
+                            density="compact"
+                            item-title="playername"
+                            item-value="playername"
+                            variant="outlined"
+                            hide-details
+                            class="ml-1"
+                            color="primary"
+                            clearable
+                            @click:clear="filters.player_name = null"
+                            autocomplete="off"
+                        >
+                            <template #item="{ props, item }">
+                                <v-list-item v-bind="props" density="compact">
+                                    <template #append>
+                                        <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
+                                            {{ item.raw.is_hide ? '隐藏' : '显示' }}
+                                        </span>
+                                    </template>
+                                </v-list-item>
+                            </template>
+                        </v-autocomplete>
+                    </div>
                 </v-col>
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <v-select
@@ -207,6 +222,7 @@
         </v-card>
         
         <v-data-table-server
+            ref="table2Ref"
             v-model:page="currentPage2"
             v-model:items-per-page="itemsPerPage2"
             :headers="headers2"
@@ -218,11 +234,12 @@
             fixed-header
             hover
             :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords2"
+            hide-default-footer
+            height="300"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.working_date="{ item }">
                 {{ $filters.formatDate(item.working_date) }}
             </template>
@@ -234,6 +251,11 @@
             </template>
             <template #item.actions="{ item }">
                 <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
+            </template>
+            <template #body.append>
+                <tr v-if="noMoreData2">
+                    <td :colspan="headers2.length" class="text-center py-2">没有更多数据</td>
+                </tr>
             </template>
         </v-data-table-server>
 
@@ -274,32 +296,34 @@
             </v-card>
         </v-dialog>
 
-        <AddSubstractPoint v-model="addSubstractPointDialog" :mode="addOrSubstract" :groups="groups" @complete="completeAddSubstract" />
-        <SubstractAllPoint v-model="substractAllPointDialog" :groups="groups" @complete="completeAddSubstract" />
+        <AddSubstractPoint v-model="addSubstractPointDialog" :mode="addOrSubstract" :bank-cards="bankCards" :groups="groups" @complete="completeAddSubstract" />
+        <SubstractAllPoint v-model="substractAllPointDialog" :bank-cards="bankCards" :groups="groups" @complete="completeAddSubstract" />
     </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch, getCurrentInstance  } from 'vue';
-import { GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE, UNDO_OPTION_SCORE } from '../../js/api/player_option';
+import { computed, onMounted, onBeforeUnmount, ref, watch, getCurrentInstance, nextTick } from 'vue';
+import { GET_GROUP_NICKNAME, GET_GROUP_PLAYERS, GET_PLAYER_DETAIL, GET_SCORE_OPTION_RECORD, GET_SCORE_OPTION_TYPE, UNDO_OPTION_SCORE, GET_BANKCARD, PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 import { useUserStore } from '../../stores/user';
 import AddSubstractPoint from '../../components/home/AddSubstractPoint.vue';
 import SubstractAllPoint from '../../components/home/SubstractAllPoint.vue';
 import { useToast } from "vue-toastification";
 import { exportExcel } from '../../js/common';
 import moment from 'moment';
-import { formattedDate } from '../../js/common';
+import { formattedDate, isReachBottom } from '../../js/common';
 
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore();
 const toast = useToast();
+const bankCards = ref([]);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const scoreOptionType = computed(() => userStore.operation_type);
 const options = computed(() => userStore.option1);
 const groups = computed(() => userStore.groups);
 const players = ref([]);
+const searchPlayer = ref('');
 const filters = ref({
-    group_nickname: '',
+    group_nickname: null,
     option_type: null,
     optioner: null,
     start_date: moment().startOf('day').format('YYYY-MM-DD'),
@@ -334,10 +358,11 @@ const headers1 = ref([
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
 ])
 const currentPage1 = ref(1);
-const itemsPerPage1 = ref(5);
+const itemsPerPage1 = ref(10);
 const totalItems1 = ref(0);
 const isReady1 = ref(false);
 const loading1 = ref(false);
+const loadingMore1 = ref(false)
 
 const records2 = ref([]);
 const headers2 = ref([
@@ -354,7 +379,7 @@ const headers2 = ref([
     { title: '操作', key: 'actions', sortable: false, fixed: 'end', minWidth: 100 },
 ]);
 const currentPage2 = ref(1);
-const itemsPerPage2 = ref(5);
+const itemsPerPage2 = ref(10);
 const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);
@@ -368,13 +393,86 @@ const substractAllPointDialog = ref(false);
 const isExportingTable1 = ref(false);
 const isExportingTable2 = ref(false);
 
+let scrollEl1 = null
+let scrollEl2 = null
+const table1Ref = ref(null)
+const table2Ref = ref(null)
+const noMoreData1 = computed(() => {
+    return totalItems1.value > 0 && records1.value.length >= totalItems1.value
+})
+const noMoreData2 = computed(() => {
+    return totalItems2.value > 0 && records2.value.length >= totalItems2.value
+})
+
+const onTable1Scroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading1.value || loadingMore1.value || noMoreData1.value) return
+
+    currentPage1.value += 1
+    await getRecords1()
+}
+
+const bindTable1BodyScroll = () => {
+    unbindTable1BodyScroll()
+
+    const rootEl = table1Ref.value?.$el
+    if (!rootEl) return
+
+    scrollEl1 = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl1) return
+
+    scrollEl1.addEventListener('scroll', onTable1Scroll, { passive: true })
+}
+
+const unbindTable1BodyScroll = () => {
+    if (scrollEl1) {
+        scrollEl1.removeEventListener('scroll', onTable1Scroll)
+        scrollEl1 = null
+    }
+}
+
+const onTable2Scroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading2.value || noMoreData2.value) return
+
+    currentPage2.value += 1
+    await getRecords2()
+}
+
+const bindTable2BodyScroll = () => {
+    unbindTable2BodyScroll()
+
+    const rootEl = table2Ref.value?.$el
+    if (!rootEl) return
+
+    scrollEl2 = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl2) return
+
+    scrollEl2.addEventListener('scroll', onTable2Scroll, { passive: true })
+}
+
+const unbindTable2BodyScroll = () => {
+    if (scrollEl2) {
+        scrollEl2.removeEventListener('scroll', onTable2Scroll)
+        scrollEl2 = null
+    }
+}
+
 const getRecords1 = async () => {
-    if (!isReady1.value) return;
+    // if (!isReady1.value) return;
     loading1.value = true;
     try {
         const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, itemsPerPage1.value, currentPage1.value);
         if (res.code == 200) {
-            records1.value = res.data.list.map((item, index) => ({ ...item, index: index + 1 }));
+            if (currentPage1.value === 1) {
+                records1.value = [];
+                records1.value = res.data.list.map((item, index) => ({ ...item, index: index + 1 }));
+            } else {
+                const newList = res.data.list.map((item, index) => ({ ...item, index: (currentPage1.value - 1) * itemsPerPage1.value + index + 1 }));
+                records1.value = [...records1.value, ...newList];
+            }
             totalItems1.value = res.data.total;
         }
     } finally {
@@ -383,7 +481,7 @@ const getRecords1 = async () => {
 }
 
 const getRecords2 = async () => {
-    if (!isReady2.value) return;
+    // if (!isReady2.value) return;
     loading2.value = true;
     try {
         const res = await GET_SCORE_OPTION_RECORD(
@@ -398,12 +496,21 @@ const getRecords2 = async () => {
             itemsPerPage2.value,
         );
         if (res.code == 200) {
-            records2.value = res.data.list.map((record, index) => ({
-                ...record,
-                index: (currentPage2.value - 1) * itemsPerPage2.value + index + 1,
-            }));
+            if (currentPage2.value === 1) {
+                records2.value = [];
+                    records2.value = res.data.list.map((record, index) => ({
+                    ...record,
+                    index: (currentPage2.value - 1) * itemsPerPage2.value + index + 1,
+                }));
+            } else {
+                const newList = res.data.list.map((record, index) => ({
+                    ...record,
+                    index: (currentPage2.value - 1) * itemsPerPage2.value + index + 1,
+                }));
+                records2.value = [...records2.value, ...newList];
+            }
+            
             totalItems2.value = res.data.total;
-            // currentPage2.value = Math.ceil(totalItems2.value / itemsPerPage2.value);
         }
     } finally {
         loading2.value = false;
@@ -433,9 +540,31 @@ const getPlayers = async () => {
     }
 }
 
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            console.log('searchPlayer changed:', newVal);
+            fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
+
 watch(groups, (newVal) => {
     if (newVal.length > 0) {
-        filters.value.group_nickname = newVal[0].group_nickname;
+        // filters.value.group_nickname = newVal[0].group_nickname;
         userStore.setGroupNickname(newVal[0].group_nickname);
     }
 });
@@ -444,12 +573,12 @@ watch(() => filters.value.group_nickname, async (newVal) => {
     if (newVal) {
         userStore.setGroupNickname(newVal);
         filters.value.player_name = '';
-        getPlayers();
-        isReady1.value = true;
-        isReady2.value = true;
+        // getPlayers();
+        // isReady1.value = true;
+        // isReady2.value = true;
         getRecords1();
-        currentPage2.value = 1;
-        getRecords2();
+        // currentPage2.value = 1;
+        // getRecords2();
     }
 });
 
@@ -560,6 +689,28 @@ const exportTable2 = async () => {
         isExportingTable2.value = false;
     }
 }
+
+const getBankCards = async () => {
+    const res = await GET_BANKCARD();
+    if (res && res.code == 200) {
+        bankCards.value = res.data;
+    }
+}
+
+onMounted(async () => {
+    await getBankCards();
+    getRecords1()
+    getRecords2()
+
+    await nextTick()
+    bindTable1BodyScroll()
+    bindTable2BodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTable1BodyScroll()
+    unbindTable2BodyScroll()
+})
 </script>
 
 <style scoped>

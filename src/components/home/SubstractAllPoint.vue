@@ -39,8 +39,50 @@
                     @input="v$.player_name.$touch"
                     @blur="v$.player_name.$touch"
                 ></v-text-field>
+                <v-select
+                    v-model="obj.option_type"
+                    :items="options"
+                    label="操作类型"
+                    variant="outlined"
+                    density="comfortable"
+                    class="mb-1"    
+                    color="primary"
+                    :error-messages="v$.option_type.$errors.map(e => e.$message)"
+                    @input="v$.option_type.$touch"
+                    @blur="v$.option_type.$touch"
+                >
+                    <template #item="{ props }">
+                        <v-list-item v-bind="props" density="compact" />
+                    </template>
+                </v-select>
+                <v-autocomplete
+                    v-if="obj.option_type === '现金'"
+                    v-model="obj.bank_card"
+                    :items="bankCards"
+                    item-title="card_name"
+                    item-value="card_name"
+                    label="银行卡号"
+                    variant="outlined"
+                    density="comfortable"
+                    color="primary"
+                    :error-messages="v$.bank_card.$errors.map(e => e.$message)"
+                    @input="v$.bank_card.$touch"
+                    @blur="v$.bank_card.$touch"
+                    autocomplete="off"
+                >
+                    <template #item="{ props, item }">
+                        <v-list-item v-bind="props" density="compact">
+                            <v-list-item-subtitle class="text-caption">
+                                {{ item.raw.card_type }}: {{ item.raw.card_code }}
+                            </v-list-item-subtitle>
+                            <template v-slot:append>
+                                <v-list-item-title class="text-primary text-caption">{{ item.raw.remaining_amount }}元</v-list-item-title>
+                            </template>
+                        </v-list-item>
+                    </template>
+                </v-autocomplete>
                 <div class="d-flex justify-end">
-                    <v-btn color="primary" variant="tonal" :disabled="isSaving || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
+                    <v-btn color="primary" variant="tonal" :disabled="isSaving || (obj.option_type === '现金' && !obj.bank_card) || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
             </v-card-text>
         </v-card>
@@ -53,6 +95,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { GET_GROUP_PLAYERS, SCORE_ALL_DOWN } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
+import { useUserStore } from '../../stores/user';
 
 const props = defineProps({
     modelValue: {
@@ -63,21 +106,33 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    bankCards: {
+        type: Array,
+        required: false,
+        default: () => [],
+    },
 });
 
 const emit = defineEmits(['update:modelValue', 'complete']);
 const dialog = ref(props.modelValue);
 const toast = useToast();
+const userStore = useUserStore();
+const options = computed(() => userStore.option1);
 
 const isSaving = ref(false);
 const players = ref([]);
 const obj = ref({
     // group_nickname: '',
     player_name: '',
+    option_type: '',
+    bank_card: '',
 });
 const rules = ref({
     // group_nickname: { required: helpers.withMessage('群昵称不能为空', required) },
     player_name: { required: helpers.withMessage('玩家昵称不能为空', required) },
+    option_type: { required: helpers.withMessage('操作类型不能为空', required) },
+    // bank_card: { required: helpers.withMessage('银行卡号不能为空', required) },
+    bank_card: { },
 })
 const v$ = useVuelidate(rules.value, obj.value);
 
@@ -101,6 +156,8 @@ const closeDialog = () => {
     dialog.value = false;
     obj.value.group_nickname = props.groups.length > 0 ? props.groups[0].group_nickname : '';
     obj.value.player_name = '';
+    obj.value.option_type = '';
+    obj.value.bank_card = '';
     v$.value.$reset();
 }
 

@@ -84,3 +84,11 @@ export const checkResult = (code) => {
         .map(([, name]) => name)
         .join(' ');
 }
+
+export const isReachBottom = (event) => {
+    const el = event.target;
+    const threshold = 20;
+
+    const isBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
+    return isBottom;
+}

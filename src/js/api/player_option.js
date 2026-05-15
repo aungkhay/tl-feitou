@@ -157,11 +157,23 @@ export const UNDO_OPTION_SCORE = async (id, player_name, group_nickname) => {
 
 /**
  * 获取银行卡
- * @param {string} group_nickname 群昵称
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
-export const GET_BANKCARD = async (group_nickname) => {
-    return await API.post(`${prefix}/player_option/get_bankcard`, {
-        group_nickname: group_nickname
+export const GET_BANKCARD = async () => {
+    return await API.post(`${prefix}/player_option/get_bankcard`);
+}
+
+/**
+ * 选手模糊查询
+ * @param {string} player_name 选手昵称
+ * @param {integer} pageSize 每页条数
+ * @param {integer} currentPage 当前页
+ * @returns {Promise<import("axios").AxiosResponse<any>>}
+ */
+export const PLAYER_FUZZY_QUERY = async (player_name, pageSize = 100, currentPage = 1) => {
+    return await API.post(`${prefix}/player_option/player_fuzzy_query`, {
+        player_name: player_name,
+        pageSize: pageSize,
+        currentPage: currentPage
     });
 }

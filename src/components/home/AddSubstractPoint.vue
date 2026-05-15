@@ -143,6 +143,11 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    bankCards: {
+        type: Array,
+        required: false,
+        default: () => [],
+    },
 });
 const emit = defineEmits(['update:modelValue', 'complete']);
 const dialog = ref(props.modelValue);
@@ -151,7 +156,6 @@ const options = computed(() => userStore.option1);
 
 const isSaving = ref(false);
 const players = ref([]);
-const bankCards = ref([]);
 const obj = ref({
     // group_nickname: '',
     player_name: '',
@@ -194,7 +198,7 @@ const save = async () => {
     isSaving.value = true;
     try {
         let res;
-        const card = bankCards.value.find(card => card.card_name === obj.value.bank_card);
+        const card = props.bankCards.find(card => card.card_name === obj.value.bank_card);
         if (props.mode === 'add') {
             res = await ADD_SCORE(
                 obj.value.group_nickname,
@@ -217,7 +221,6 @@ const save = async () => {
         if (res.code == 200) {
             toast.success(res.msg);
             emit('complete');
-            getBankCards();
         } else {
             toast.error(res.msg);
         }
@@ -236,18 +239,10 @@ const getPlayers = async () => {
     }
 }
 
-const getBankCards = async () => {
-    const res = await GET_BANKCARD(obj.value.group_nickname);
-    if (res && res.code == 200) {
-        bankCards.value = res.data;
-    }
-}
-
 watch(() => props.groups, (newVal) => {
     if (newVal) {
         obj.value.group_nickname = props.groups.length > 0 ? props.groups[0].group_nickname : '';
         getPlayers();
-        getBankCards();
     }
 });
 
@@ -257,10 +252,8 @@ watch(() => obj.value.group_nickname, (newVal) => {
         obj.value.bank_card = '';
         v$.value.$reset();
         players.value = [];
-        bankCards.value = [];
         if (props.modelValue) {
             getPlayers();
-            getBankCards();
         }
     }
 });

@@ -41,14 +41,25 @@
                     </div>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-text-field
+                    <v-autocomplete
                         v-model="filters.player_name"
-                        label="洗手昵称"
+                        v-model:search="filterPlayer"
+                        :items="filterPlayers"
+                        item-title="playername"
+                        item-value="playername"
+                        label="选手昵称"
                         variant="outlined"
-                        density="compact"
                         hide-details
+                        color="primary"
+                        density="compact"
+                        autocomplete="off"
                         clearable
-                    ></v-text-field>
+                        @click:clear="filters.player_name = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
@@ -188,11 +199,21 @@
                     <v-btn icon="mdi-close" @click="resetForm" variant="text" density="compact"></v-btn>
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field 
-                        label="玩家昵称" 
+                    <v-autocomplete
                         v-model="obj.player_name"
+                        v-model:search="searchPlayer"
+                        :items="players"
+                        item-title="playername"
+                        item-value="playername"
+                        label="玩家昵称"
                         variant="outlined"
-                    ></v-text-field>
+                        color="primary"
+                        autocomplete="off"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
 
                     <div class="d-flex justify-center">
                         <v-btn color="primary" :disabled="isSaving || !obj.player_name" :loading="isSaving" @click="singlePlayerAllGroupExchange">确认</v-btn>
@@ -288,11 +309,21 @@
                         </template>                    
                     </v-select>
 
-                    <v-text-field 
-                        label="玩家昵称" 
+                    <v-autocomplete
                         v-model="obj.player_name"
+                        v-model:search="searchPlayer"
+                        :items="players"
+                        item-title="playername"
+                        item-value="playername"
+                        label="玩家昵称"
                         variant="outlined"
-                    ></v-text-field>
+                        color="primary"
+                        autocomplete="off"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
 
                     <div class="d-flex justify-center">
                         <v-btn color="primary" :disabled="isSaving || !obj.group_nickname || !obj.player_name" :loading="isSaving" @click="pointsClear">确认</v-btn>
@@ -335,12 +366,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR } from '../../js/api/point_exchange';
 import { useToast } from 'vue-toastification';
 import { exportExcel, formattedDate } from '../../js/common';
 import moment from 'moment';
+import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
 
@@ -368,6 +400,7 @@ const headers = ref([
     { title: '操作时间', value: 'option_time', minWidth: 180 },
     { title: '备注', value: 'memo', minWidth: 200 },
     { title: '兑换/返水类型', value: 'exchange_type', minWidth: 150 },
+    { title: '返水金额', value: 'score_change', minWidth: 150 },
     { title: '庄闲洗码/返水兑换日期', value: 'exchange_date', minWidth: 180 },
     { title: '操作员', value: 'operator', minWidth: 120 },
 ]);
@@ -387,13 +420,18 @@ const filters = ref({
 })
 
 const obj = ref({
-    player_name: '',
-    group_nickname: '',
+    player_name: null,
+    group_nickname: null,
 })
 
+const filterPlayer = ref('');
+const filterPlayers = ref([]);
+const searchPlayer = ref('');
+const players = ref([]);
+
 const resetForm = () => {
-    obj.value.player_name = '';
-    obj.value.group_nickname = '';
+    obj.value.player_name = null;
+    obj.value.group_nickname = null;
     allGroupDialog.value = false;
     singleGroupDialog.value = false;
     allGroupExchangeDialog.value = false;
@@ -568,6 +606,7 @@ const exportTable = async () => {
                     '操作时间': formattedDate(item.option_time),
                     '备注': item.memo || '-',
                     '兑换/返水类型': item.exchange_type || '-',
+                    '返水金额': item.score_change || '-',
                     '庄闲洗码/返水兑换日期': item.exchange_date ? formattedDate(item.exchange_date) : '-',
                     '操作员': item.operator || '-'
                 })
@@ -582,4 +621,47 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+const fuzzyFilterPlayer = async () => {
+    if (!filterPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(filterPlayer.value);
+    if (res && res.code == 200) {
+        filterPlayers.value = res.data.list;
+    }
+}
+
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
+watch(
+    () => filterPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyFilterPlayer();
+        } else {
+            filterPlayers.value = [];
+        }
+    }
+)
+
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
+
 </script>

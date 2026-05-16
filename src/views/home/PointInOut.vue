@@ -554,7 +554,6 @@ watch(
     () => searchPlayer.value,
     (newVal) => {
         if (newVal) {
-            console.log('searchPlayer changed:', newVal);
             fuzzyPlayer();
         } else {
             players.value = [];

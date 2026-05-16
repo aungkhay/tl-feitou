@@ -60,16 +60,25 @@
                     ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="2">
-                    <v-text-field
+                    <v-autocomplete
                         v-model="filters.player_name"
+                        v-model:search="searchPlayer"
+                        :items="players"
+                        item-title="playername"
+                        item-value="playername"
                         label="选手昵称"
-                        density="compact"
                         variant="outlined"
                         hide-details
                         color="primary"
+                        density="compact"
+                        autocomplete="off"
                         clearable
                         @click:clear="filters.player_name = null"
-                    ></v-text-field>
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
                 </v-col>
                 <v-col cols="12" sm="6" md="2">
                     <v-menu v-model="startDateMenu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
@@ -210,7 +219,8 @@
                     </v-autocomplete>
                     <v-autocomplete
                         v-model="obj.source_player_name"
-                        :items="players[obj.source_desk] || []"
+                        v-model:search="searchSourcePlayer"
+                        :items="sourcePlayers"
                         item-title="playername"
                         item-value="playername"
                         label="源玩家昵称"
@@ -247,7 +257,8 @@
                     </v-autocomplete>
                     <v-autocomplete
                         v-model="obj.target_player_name"
-                        :items="players[obj.target_desk] || []"
+                        v-model:search="searchTargetPlayer"
+                        :items="targetPlayers"
                         item-title="playername"
                         item-value="playername"
                         label="目标玩家昵称"
@@ -304,7 +315,7 @@ import { computed, ref, watch } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { GET_GROUP_PLAYERS, GET_SCORE_OPTION_RECORD } from '../../js/api/player_option';
+import { GET_GROUP_PLAYERS, GET_SCORE_OPTION_RECORD, PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
 import { TRANS_SCORE, REVOKE_TRANS_SCORE, TRANS_ALL_SCORE } from '../../js/api/desk_option';
 import { formattedDate } from '../../js/common';
@@ -316,6 +327,11 @@ const userStore = useUserStore();
 
 const groups = computed(() => userStore.groups);
 const players = ref({});
+const sourcePlayers = ref([]);
+const targetPlayers = ref([]);
+const searchPlayer = ref('');
+const searchSourcePlayer = ref('');
+const searchTargetPlayer = ref('');
 const headers = ref([
     { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
     { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
@@ -427,8 +443,8 @@ const getRecords = async () => {
             perPage.value
         );
         if (res && res.code == 200) {
-            records.value = res.data.record.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
-            total.value = res.data.count;
+            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            total.value = res.data.total;
         }
     } catch (error) {
         console.log(error)
@@ -513,24 +529,98 @@ watch(groups, (newVal) => {
     }
 });
 
-watch(() => obj.value.source_desk, async (newVal) => {
-    if (newVal) {
-        if (!players.value[newVal] || players.value[newVal].length == 0) {
-            await getPlayers(newVal);
-        }
-        obj.value.target_desk = '';
-        obj.value.target_player_name = '';
+const sourceFuzzyPlayer = async () => {
+    if (!searchSourcePlayer.value) {
+        return;
     }
-});
+    const res = await PLAYER_FUZZY_QUERY(searchSourcePlayer.value);
+    if (res && res.code == 200) {
+        sourcePlayers.value = res.data.list;
+    }
+}
 
-watch(() => obj.value.target_desk, async (newVal) => {
-    if (newVal) {
-        if (!players.value[newVal] || players.value[newVal].length == 0) {
-            await getPlayers(newVal);
-        }
-        obj.value.target_player_name = '';
+const targetFuzzyPlayer = async () => {
+    if (!searchTargetPlayer.value) {
+        return;
     }
-});
+    const res = await PLAYER_FUZZY_QUERY(searchTargetPlayer.value);
+    if (res && res.code == 200) {
+        targetPlayers.value = res.data.list;
+    }
+}
+
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
+watch(
+    () => searchSourcePlayer.value,
+    (newVal) => {
+        if (newVal) {
+            sourceFuzzyPlayer();
+        } else {
+            sourcePlayers.value = [];
+        }
+    }
+)
+
+watch(
+    () => searchTargetPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            targetFuzzyPlayer();
+        } else {
+            targetPlayers.value = [];
+        }
+    }
+)
+
+watch(
+    () => searchTargetPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            targetFuzzyPlayer();
+        } else {
+            targetPlayers.value = [];
+        }
+    }
+)
+
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
+
+// watch(() => obj.value.source_desk, async (newVal) => {
+//     if (newVal) {
+//         if (!players.value[newVal] || players.value[newVal].length == 0) {
+//             await getPlayers(newVal);
+//         }
+//         obj.value.target_desk = '';
+//         obj.value.target_player_name = '';
+//     }
+// });
+
+// watch(() => obj.value.target_desk, async (newVal) => {
+//     if (newVal) {
+//         if (!players.value[newVal] || players.value[newVal].length == 0) {
+//             await getPlayers(newVal);
+//         }
+//         obj.value.target_player_name = '';
+//     }
+// });
 
 watch(() => isTransAll.value, () => {
     v$.value.$reset();

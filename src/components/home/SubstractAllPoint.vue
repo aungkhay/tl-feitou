@@ -27,18 +27,32 @@
                         <v-list-item v-bind="props" density="compact" />
                     </template>
                 </v-select> -->
-                <v-text-field
+                <v-autocomplete
                     v-model="obj.player_name"
+                    v-model:search="searchPlayer"
+                    :items="players"
+                    label="选手昵称"
                     item-title="playername"
                     item-value="playername"
-                    label="玩家昵称"
                     variant="outlined"
                     density="comfortable"
+                    color="primary"
+                    autocomplete="off"
                     class="mb-1"
                     :error-messages="v$.player_name.$errors.map(e => e.$message)"
                     @input="v$.player_name.$touch"
                     @blur="v$.player_name.$touch"
-                ></v-text-field>
+                >
+                    <template #item="{ props, item }">
+                        <v-list-item v-bind="props" density="compact">
+                            <template #append>
+                                <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
+                                    {{ item.raw.is_hide ? '隐藏' : '显示' }}
+                                </span>
+                            </template>
+                        </v-list-item>
+                    </template>
+                </v-autocomplete>
                 <v-select
                     v-model="obj.option_type"
                     :items="options"
@@ -93,7 +107,7 @@
 import { ref, watch, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { GET_GROUP_PLAYERS, SCORE_ALL_DOWN } from '../../js/api/player_option';
+import { GET_GROUP_PLAYERS, SCORE_ALL_DOWN, PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
 import { useUserStore } from '../../stores/user';
 
@@ -121,9 +135,10 @@ const options = computed(() => userStore.option1);
 
 const isSaving = ref(false);
 const players = ref([]);
+const searchPlayer = ref('');
 const obj = ref({
     // group_nickname: '',
-    player_name: '',
+    player_name: null,
     option_type: '',
     bank_card: '',
 });
@@ -166,9 +181,12 @@ const save = async () => {
     if (v$.value.$invalid) return;
     isSaving.value = true;
     try {
+        const card = props.bankCards.find(card => card.card_name === obj.value.bank_card);
         const res = await SCORE_ALL_DOWN(
             obj.value.group_nickname,
             obj.value.player_name,
+            obj.value.option_type,
+            card ? card.card_code : '',
         );
         if (res.code == 200) {
             toast.success(res.msg);
@@ -184,20 +202,41 @@ const save = async () => {
     }
 }
 
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
 watch(() => props.groups, (newVal) => {
     if (newVal) {
         obj.value.group_nickname = props.groups.length > 0 ? props.groups[0].group_nickname : '';
     }
 });
 
-watch(() => obj.value.group_nickname, (newVal) => {
-    if (newVal) {
-        obj.value.player_name = '';
-        v$.value.$reset();
-        players.value = [];
-        if (props.modelValue) {
-            getPlayers();
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayer();
+        } else {
+            players.value = [];
         }
     }
-});
+)
+
+// watch(() => obj.value.group_nickname, (newVal) => {
+//     if (newVal) {
+//         obj.value.player_name = '';
+//         v$.value.$reset();
+//         players.value = [];
+//         if (props.modelValue) {
+//             getPlayers();
+//         }
+//     }
+// });
 </script>

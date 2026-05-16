@@ -40,15 +40,25 @@
                     </v-select>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-text-field
+                    <v-autocomplete
                         v-model="filters.player_name"
-                        item-title="title"
-                        item-value="value"
+                        v-model:search="searchPlayer"
+                        :items="players"
+                        item-title="playername"
+                        item-value="playername"
                         label="选手名称"
-                        density="compact"
                         variant="outlined"
                         hide-details
-                    ></v-text-field>
+                        color="primary"
+                        density="compact"
+                        autocomplete="off"
+                        clearable
+                        @click:clear="filters.player_name = null"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
@@ -177,13 +187,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { formattedDate, exportExcel } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { GET_PLAYER_BETTING_DETAILS } from '../../js/api/financial_inquiries';
 import { getCurrentInstance } from 'vue'
 import { useToast } from 'vue-toastification';
 import moment from 'moment';
+import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const { appContext } = getCurrentInstance()
 
@@ -248,6 +259,9 @@ const filters = ref({
     end_date: moment().startOf('day').toDate(),
     end_time: '23:59:59',
 });
+
+const searchPlayer = ref('');
+const players = ref([]);
 
 const getRecords = async () => {
     loading.value = true;
@@ -314,4 +328,25 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
 </script>

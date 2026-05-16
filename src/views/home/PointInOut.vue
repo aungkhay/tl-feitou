@@ -340,20 +340,20 @@ const headers1 = ref([
     { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
     { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
     { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 100 },
-    { title: '剩余积分', key: 'score', sortable: false, minWidth: 90 },
-    { title: '冻结积分', key: 'freeze_score', sortable: false, minWidth: 90 },
-    { title: '初始积分', key: 'raw_score', sortable: false, minWidth: 90 },
-    { title: '庄闲洗码', key: 'total_xml_zx', sortable: false, minWidth: 90 },
-    { title: '三宝洗码', key: 'total_xml_sb', sortable: false, minWidth: 90 },
-    { title: '庄闲赢亏', key: 'total_xzyl', sortable: false, minWidth: 90 },
-    { title: '三宝赢亏', key: 'total_sbyl', sortable: false, minWidth: 90 },
-    { title: '有效流水', key: 'total_yxxz', sortable: false, minWidth: 90 },
+    { title: '剩余积分', key: 'score', sortable: false, minWidth: 70 },
+    { title: '冻结积分', key: 'freeze_score', sortable: false, minWidth: 70 },
+    { title: '初始积分', key: 'raw_score', sortable: false, minWidth: 70 },
+    { title: '庄闲洗码', key: 'total_xml_zx', sortable: false, minWidth: 70 },
+    { title: '三宝洗码', key: 'total_xml_sb', sortable: false, minWidth: 70 },
+    { title: '庄闲赢亏', key: 'total_xzyl', sortable: false, minWidth: 70 },
+    { title: '三宝赢亏', key: 'total_sbyl', sortable: false, minWidth: 70 },
+    { title: '有效流水', key: 'total_yxxz', sortable: false, minWidth: 70 },
     { title: '代理商', key: 'reference_name', sortable: false, minWidth: 90 },
-    { title: '日积分', key: 'daily_points', sortable: false, minWidth: 90 },
-    { title: '总积分', key: 'total_points', sortable: false, minWidth: 90 },
+    { title: '日积分', key: 'daily_points', sortable: false, minWidth: 70 },
+    { title: '总积分', key: 'total_points', sortable: false, minWidth: 70 },
     { title: '注册时间', key: 'registTime', sortable: false, minWidth: 170 },
-    { title: '存款', key: 'deposit', sortable: false, minWidth: 90 },
-    { title: '欠积分', key: 'owe_points', sortable: false, minWidth: 90 },
+    { title: '存款', key: 'deposit', sortable: false, minWidth: 70 },
+    { title: '欠积分', key: 'owe_points', sortable: false, minWidth: 70 },
     { title: '状态', key: 'is_hide', sortable: false, minWidth: 70 },
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
 ])
@@ -409,6 +409,9 @@ const onTable1Scroll = async (e) => {
     if (!isBottom) return
     if (loading1.value || loadingMore1.value || noMoreData1.value) return
 
+    if (loading1.value) {
+        return
+    }
     currentPage1.value += 1
     await getRecords1()
 }
@@ -437,6 +440,9 @@ const onTable2Scroll = async (e) => {
     if (!isBottom) return
     if (loading2.value || noMoreData2.value) return
 
+    if (loading2.value) {
+        return
+    }
     currentPage2.value += 1
     await getRecords2()
 }

@@ -25,7 +25,7 @@
                             @click="closeTab(tabMenu.tab)"
                         />
                         <v-list-item
-                            title="关闭其他"
+                            title="关闭其它"
                             :disabled="!tabMenu.tab || tabs.length <= 1"
                             @click="closeOthers(tabMenu.tab)"
                         />

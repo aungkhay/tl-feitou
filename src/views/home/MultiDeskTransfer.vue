@@ -326,7 +326,7 @@ const toast = useToast();
 const userStore = useUserStore();
 
 const groups = computed(() => userStore.groups);
-const players = ref({});
+const players = ref([]);
 const sourcePlayers = ref([]);
 const targetPlayers = ref([]);
 const searchPlayer = ref('');

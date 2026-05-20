@@ -176,13 +176,13 @@ const headers = ref([
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
     { title: '工作日', value: 'stat_date', minWidth: 120 },
     { title: '三宝总投注分', value: 'sb', minWidth: 150 },
-    { title: '三宝洗手赢亏分', value: 'sb_yl', minWidth: 150 },
+    { title: '三宝选手赢亏分', value: 'sb_yl', minWidth: 150 },
     { title: '幸运6(单)总投注分', value: 'l', minWidth: 150 },
     { title: '完美(双)总投注分', value: 'm', minWidth: 150 },
     { title: '任意总投注分', value: 'd', minWidth: 150 },
-    { title: '幸运6(单)洗手赢亏总分', value: 'l_yl', minWidth: 180 },
-    { title: '完美(双)洗手赢亏总分', value: 'm_yl', minWidth: 170 },
-    { title: '任意洗手赢亏总分', value: 'd_yl', minWidth: 150 },
+    { title: '幸运6(单)选手赢亏总分', value: 'l_yl', minWidth: 180 },
+    { title: '完美(双)选手赢亏总分', value: 'm_yl', minWidth: 170 },
+    { title: '任意选手赢亏总分', value: 'd_yl', minWidth: 150 },
     { title: '公司利润总分', value: 'company_yl', minWidth: 150 }
 ]);
 const summary = ref({
@@ -245,13 +245,13 @@ const exportTable = async () => {
                 '台号': item.group_nickname,
                 '工作日': appContext.config.globalProperties.$filters.formatDate(item.stat_date),
                 '三宝总投注分': item.sb,
-                '三宝洗手赢亏分': item.sb_yl,
+                '三宝选手赢亏分': item.sb_yl,
                 '幸运6(单)总投注分': item.l,
                 '完美(双)总投注分': item.m,
                 '任意总投注分': item.d,
-                '幸运6(单)洗手赢亏总分': item.l_yl,
-                '完美(双)洗手赢亏总分': item.m_yl,
-                '任意洗手赢亏总分': item.d_yl,
+                '幸运6(单)选手赢亏总分': item.l_yl,
+                '完美(双)选手赢亏总分': item.m_yl,
+                '任意选手赢亏总分': item.d_yl,
                 '公司利润总分': item.company_yl
             }));
             

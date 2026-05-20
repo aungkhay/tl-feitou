@@ -27,7 +27,7 @@
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-text-field
-                        label="洗手昵称"
+                        label="选手昵称"
                         density="compact"
                         variant="outlined"
                         clearable

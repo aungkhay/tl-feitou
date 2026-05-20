@@ -191,7 +191,7 @@ const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '洗手', value: 'username', fixed: 'start', width: 120 },
+    { title: '选手', value: 'username', fixed: 'start', width: 120 },
     { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
     { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
     { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
@@ -272,7 +272,7 @@ const exportTable = async () => {
         if (res.code == 200) {
             const data = res.data.list.map(item => ({
                 '序列': item.index,
-                '洗手': item.username,
+                '选手': item.username,
                 '代理号': item.reference_name,
                 '庄闲洗码总分': item.xml_zx,
                 '三宝+幸运6+对子洗码总分': item.xml_sb,
@@ -281,7 +281,7 @@ const exportTable = async () => {
                 '有效流水总分': item.yxxz,
                 '日积分总分': item.daily_points
             }));
-            exportExcel(data, `洗手洗码盈亏-${formattedDate(new Date())}`);
+            exportExcel(data, `选手洗码盈亏-${formattedDate(new Date())}`);
         } else {
             toast.error(res.msg || '获取数据失败，无法导出表格');
         }

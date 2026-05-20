@@ -169,7 +169,7 @@ const headers = ref([
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
     { title: '工作日', value: 'stat_date', minWidth: 150 },
     { title: '个人占成总投注分', value: 'g_xz', minWidth: 150 },
-    { title: '个人占成洗手赢亏总分', value: 'g_yl', minWidth: 180 },
+    { title: '个人占成选手赢亏总分', value: 'g_yl', minWidth: 180 },
     { title: '个人占成利润总分', value: 'g_lyzf', minWidth: 150 },
 ]);
 const summary = ref({
@@ -226,7 +226,7 @@ const exportTable = async () => {
                 '台号': item.group_nickname,
                 '工作日': formattedDate(item.stat_date),
                 '个人占成总投注分': item.g_xz,
-                '个人占成洗手赢亏总分': item.g_yl,
+                '个人占成选手赢亏总分': item.g_yl,
                 '个人占成利润总分': item.g_lyzf
             }));
             

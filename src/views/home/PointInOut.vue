@@ -376,6 +376,7 @@ const headers2 = ref([
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
     { title: '操作员', key: 'optioner', sortable: false, minWidth: 100 },
     { title: '操作说明', key: 'demo', sortable: false, minWidth: 100 },
+    { title: '银行卡', key: 'bank_card', sortable: false, minWidth: 100 },
     { title: '操作', key: 'actions', sortable: false, fixed: 'end', minWidth: 100 },
 ]);
 const currentPage2 = ref(1);
@@ -701,6 +702,24 @@ const getBankCards = async () => {
         bankCards.value = res.data;
     }
 }
+
+watch(
+    () => addSubstractPointDialog.value,
+    (newVal) => {
+        if (newVal == false) {
+            getBankCards();
+        }
+    }
+)
+
+watch(
+    () => substractAllPointDialog.value,
+    (newVal) => {
+        if (newVal == false) {
+            getBankCards();
+        }
+    }
+)
 
 onMounted(async () => {
     await getBankCards();

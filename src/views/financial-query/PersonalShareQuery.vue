@@ -29,7 +29,7 @@
                         :items="players"
                         item-title="playername"
                         item-value="playername"
-                        label="洗手昵称"
+                        label="选手昵称"
                         variant="outlined"
                         hide-details
                         color="primary"

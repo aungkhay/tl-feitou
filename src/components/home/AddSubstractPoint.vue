@@ -85,7 +85,7 @@
                 />
                 <v-select
                     v-model="obj.option_type"
-                    :items="options"
+                    :items="mode == 'add'? options.filter(o => !['存款', '还款'].includes(o)) : options.filter(o => !['取款', '借款'].includes(o))"
                     label="操作类型"
                     variant="outlined"
                     density="comfortable"
@@ -114,6 +114,9 @@
                     @blur="v$.bank_card.$touch"
                     autocomplete="off"
                 >
+                    <template v-slot:chip="{ props, item }">
+                        <div>{{ item.raw.card_name }} <span class="text-primary" v-if="item.raw">{{ item.raw.remaining_amount }}元</span></div>
+                    </template>
                     <template #item="{ props, item }">
                         <v-list-item v-bind="props" density="compact">
                             <v-list-item-subtitle class="text-caption">
@@ -125,6 +128,11 @@
                         </v-list-item>
                     </template>
                 </v-autocomplete>
+                <div v-if="selectedPlayer" class="mb-5 text-primary text-right">
+                    <div>剩余积分: <span class="font-weight-bold">{{ selectedPlayer.score }}</span></div>
+                    <div>初始积分: <span class="font-weight-bold">{{ selectedPlayer.raw_score }}</span></div>
+                    <div>存款金额：<span class="font-weight-bold">{{ selectedPlayer.deposit }}</span></div>
+                </div>
                 <div class="d-flex justify-end">
                     <v-btn color="primary" variant="tonal" :disabled="isSaving || (obj.option_type === '现金' && !obj.bank_card) || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
@@ -170,6 +178,7 @@ const options = computed(() => userStore.option1);
 const isSaving = ref(false);
 const players = ref([]);
 const searchPlayer = ref('');
+const selectedPlayer = ref(null);
 const obj = ref({
     // group_nickname: '',
     player_name: null,
@@ -291,5 +300,9 @@ watch(() => obj.value.group_nickname, (newVal) => {
             // getPlayers();
         }
     }
+});
+
+watch(() => obj.value.player_name, (newVal) => {
+    selectedPlayer.value = players.value.find(player => player.playername === newVal);
 });
 </script>

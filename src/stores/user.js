@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', {
         operation_type: [],
         player_detail: [],
         groups: [],
-        option1: ['现金', '红包', '活动', '返水', '借款', '还款', '纠错', '初始化', '存款', '取款'],
+        option1: ['现金', '红包', '活动', '返水', '借款', '还款', '纠错', '初始化', '存款', '取款', '积分'],
         tablePageSize: [5, 10, 20, 50],
         appTitle: {
             parent: '首页',

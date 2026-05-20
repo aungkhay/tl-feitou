@@ -146,7 +146,7 @@ const drawerItems = ref([
         isSelected: false,
         children: [
             {
-                title: '洗手下注明细',
+                title: '选手下注明细',
                 icon: 'mdi-file-document-outline',
                 routeName: 'WashHandBetDetails',
                 isSelected: false,
@@ -158,7 +158,7 @@ const drawerItems = ref([
                 isSelected: false,
             },
             {
-                title: '洗手洗码盈亏',
+                title: '选手洗码盈亏',
                 icon: 'mdi-file-document-outline',
                 routeName: 'WashHandCodeProfitLoss',
                 isSelected: false,
@@ -190,9 +190,9 @@ const drawerItems = ref([
                 routeName: 'CashRechargeDetails',
                 isSelected: false,
             },
-            // { key: 'wash-hand-data-error-check', routeName: 'WashHandDataErrorCheck', title: '洗手数据查错' },
+            // { key: 'wash-hand-data-error-check', routeName: 'WashHandDataErrorCheck', title: '选手数据查错' },
             // { key: 'reconciliation-analysis-difference', routeName: 'ReconciliationAnalysisDifference', title: '对账分析差额' },
-            // { key: 'wash-hand-flow-analysis', routeName: 'WashHandFlowAnalysis', title: '洗手流水分析' },
+            // { key: 'wash-hand-flow-analysis', routeName: 'WashHandFlowAnalysis', title: '选手流水分析' },
         ]
     },
     {

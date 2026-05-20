@@ -89,7 +89,7 @@ const routes = [
                 path: 'wash-hand-bet-details',
                 name: 'WashHandBetDetails',
                 component: () => import('../views/financial-query/WashHandBetDetail.vue'),
-                meta: { title: '洗码下注明细' }
+                meta: { title: '选手下注明细' }
             },
             {
                 path: 'query-bureau-details',
@@ -101,7 +101,7 @@ const routes = [
                 path: 'wash-hand-code-profit-loss',
                 name: 'WashHandCodeProfitLoss',
                 component: () => import('../views/financial-query/WashHandCodeProfitLoss.vue'),
-                meta: { title: '洗手洗码盈亏' }
+                meta: { title: '选手洗码盈亏' }
             },
             {
                 path: 'feipai-query',

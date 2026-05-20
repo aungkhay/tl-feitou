@@ -28,6 +28,7 @@
                                 <v-list-item v-bind="props" density="compact" />
                             </template>
                         </v-autocomplete>
+                        <v-progress-linear v-if="loadingPlayerData" color="primary" indeterminate></v-progress-linear>
                     </v-col>
                 </v-row>
                 <div class="mt-4 font-weight-bold text-red">没有<v-icon size="20">mdi-star-outline</v-icon>号为隐藏选择</div>
@@ -39,6 +40,7 @@
                                     <v-list-item-title>
                                         <v-icon class="mr-3" :class="player.is_hide ? 'text-grey-lighten-2' : 'text-red'">mdi-star-outline</v-icon>
                                         <span>{{ player.playername }}</span>
+                                        <v-progress-circular indeterminate v-if="loading && obj.player_name == player.playername" color="red" size="x-small" :width="2" class="ml-2"></v-progress-circular>
                                     </v-list-item-title>
                                 </v-list-item>
                             </v-list>
@@ -252,6 +254,8 @@ import { PERSONAL_EXCHANGE_RATIO, GET_PERSONAL_EXCHANGE_RATIO } from '../../js/a
 const toast = useToast();
 const userStore = useUserStore();
 const dialog = ref(false);
+const loadingPlayerData = ref(false);
+const loading = ref(false);
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -296,13 +300,16 @@ const rules = ref({
 const v$ = useVuelidate(rules.value, obj.value);
 
 const getPlayers = async () => {
+    loadingPlayerData.value = true;
     const res = await GET_GROUP_PLAYERS(obj.value.group_nickname);
     if (res.code == 200) {
         players.value = res.data;
     }
+    loadingPlayerData.value = false;
 }
 
 const getPersonalExchangeRatio = async () => {
+    loading.value = true;
     try {
         const res = await GET_PERSONAL_EXCHANGE_RATIO(obj.value.group_nickname, obj.value.player_name);
         if (res && res.code === 200) {
@@ -319,6 +326,8 @@ const getPersonalExchangeRatio = async () => {
         }
     } catch (error) {
         toast.error('获取个人兑换比例失败');
+    } finally {
+        loading.value = false;
     }
 }
 
@@ -440,6 +449,16 @@ watch(() => obj.value.group_nickname, (newVal) => {
 });
 watch(() => obj.value.player_name, (newVal) => {
     if (newVal) {
+        obj.value.bp_personal_share = null;
+        obj.value.bp_personal_share_upperlimit = null;
+        obj.value.sb_personal_share = null;
+        obj.value.redemption_type = null;
+        obj.value.rebate_ratio = null;
+        obj.value.personal_points_redemption_ratio = null;
+        obj.value.redemption_start_time = new Date();
+        obj.value.rebate_type = null;
+        obj.value.rebate_pair_start_time = new Date();
+        obj.value.start_exchange = null;
         getPersonalExchangeRatio();
     }
 });

@@ -166,6 +166,14 @@
                 <v-btn color="success" variant="tonal" size="small" @click="editRecord(item)" class="mr-2"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
                 <v-btn color="error" variant="tonal" size="small" @click="deleteRecord(item)"><v-icon>mdi-delete</v-icon> 删除</v-btn>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="2">总计：{{ summary.net_total }}</td>
+                    <td colspan="2">总加：{{ summary.total_add }}</td>
+                    <td colspan="2">总减：{{ summary.total_subtract }}</td>
+                    <td colspan="4"></td>
+                </tr>
+            </template>
         </v-data-table-server>
 
         <v-dialog
@@ -281,6 +289,11 @@ const headers = ref([
     { title: '备注', value: 'memo', minWidth: 200 },
     { title: '操作', value: 'actions', fixed: 'end', minWidth: 180 }
 ]);
+const summary = ref({
+    net_total: 0,
+    total_add: 0,
+    total_subtract: 0
+});
 
 const groups = computed(() => userStore.groups);
 const fromDateMenu = ref(false);
@@ -330,6 +343,7 @@ const getRecords = async () => {
         if (res.code == 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
+            summary.value = res.data.summary;
         }
     } catch (error) {
         console.error('Error fetching records:', error);

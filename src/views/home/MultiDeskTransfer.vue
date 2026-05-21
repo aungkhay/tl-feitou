@@ -194,6 +194,13 @@
             <template #item.actions="{ item }">
                 <v-btn color="error" size="small" variant="tonal" v-if="item.trans_id" :disabled="item.is_revoke == 1" @click="selectedRecord = item; revokeDialog = true"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3">{{ summary.playername }}</td>
+                    <td>{{ summary.score }}</td>
+                    <td colspan="7"></td>
+                </tr>
+            </template>
         </v-data-table-server>
 
         <v-dialog v-model="dialog" max-width="400" persistent>
@@ -345,6 +352,10 @@ const headers = ref([
     { title: '备注', key: 'memo', sortable: false, minWidth: 200 },
     { title: '操作', key: 'actions', sortable: false, minWidth: 150 },
 ]);
+const summary = ref({
+    playername: '合计',
+    score: 0
+});
 const records = ref([]);
 const total = ref(0);
 const page = ref(1);
@@ -445,6 +456,7 @@ const getRecords = async () => {
         if (res && res.code == 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
+            summary.value = res.data.summary;
         }
     } catch (error) {
         console.log(error)

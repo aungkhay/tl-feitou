@@ -48,7 +48,7 @@
             hover
             fixed-header
             hide-default-footer
-            height="300"
+            :height="records1.length ? 300 : null"
         >
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -69,8 +69,27 @@
                 </tr>
             </template>
         </v-data-table-server>
+        <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
+            <tbody>
+                <tr>
+                    <td>{{ playerSummary.playername }}:</td>
+                    <td>剩余积分: {{ playerSummary.score }}</td>
+                    <td>冻结积分: {{ playerSummary.freeze_score }}</td>
+                    <td>原始积分: {{ playerSummary.raw_score }}</td>
+                    <td>庄闲洗码: {{ playerSummary.total_xml_zx }}</td>
+                    <td>三宝洗码: {{ playerSummary.total_xml_sb }}</td>
+                    <td>庄闲赢亏: {{ playerSummary.total_xzyl }}</td>
+                    <td>三宝赢亏: {{ playerSummary.total_sbyl }}</td>
+                    <td>有效流水: {{ playerSummary.total_yxxz }}</td>
+                    <td>日积分: {{ playerSummary.daily_points }}</td>
+                    <td>总积分: {{ playerSummary.total_points }}</td>
+                    <td>存款: {{ playerSummary.deposit }}</td>
+                    <td>欠分: {{ playerSummary.owe_points }}</td>
+                </tr>
+            </tbody>
+        </v-table>
         
-        <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-10">
+        <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-2">
             <v-row dense>
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <div class="w-50">
@@ -235,7 +254,7 @@
             hover
             :items-per-page-options="pageSizeOptions"
             hide-default-footer
-            height="300"
+            :height="records2.length ? 300 : null"
         >
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -258,6 +277,14 @@
                 </tr>
             </template>
         </v-data-table-server>
+        <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
+            <tbody>
+                <tr>
+                    <td style="width: 150px;">{{ scoreSummary.playername }}: </td>
+                    <td>操作金额: {{ scoreSummary.score }}</td>
+                </tr>
+            </tbody>
+        </v-table>
 
         <v-dialog
             v-model="cancelAddSubstractDialog"
@@ -394,6 +421,26 @@ const substractAllPointDialog = ref(false);
 const isExportingTable1 = ref(false);
 const isExportingTable2 = ref(false);
 
+const playerSummary = ref({
+    daily_points: 0,
+    deposit: 0,
+    freeze_score: 0,
+    owe_points: 0,
+    playername: "合计",
+    raw_score: 0,
+    score: 0,
+    total_points: 0,
+    total_sbyl: 0,
+    total_xml_sb: 0,
+    total_xml_zx: 0,
+    total_xzyl: 0,
+    total_yxxz: 0
+})
+const scoreSummary = ref({
+    playername: '合计',
+    score: 0,
+})
+
 let scrollEl1 = null
 let scrollEl2 = null
 const table1Ref = ref(null)
@@ -481,6 +528,7 @@ const getRecords1 = async () => {
                 records1.value = [...records1.value, ...newList];
             }
             totalItems1.value = res.data.total;
+            playerSummary.value = res.data.summary;
         }
     } finally {
         loading1.value = false;
@@ -518,6 +566,7 @@ const getRecords2 = async () => {
             }
             
             totalItems2.value = res.data.total;
+            scoreSummary.value = res.data.summary;
         }
     } finally {
         loading2.value = false;

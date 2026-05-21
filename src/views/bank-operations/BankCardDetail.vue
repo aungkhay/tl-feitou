@@ -164,6 +164,13 @@
             <template #item.create_at="{ item }">
                 {{ $filters.formatFullDate(item.create_at) }}
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="5">{{ summary.card_type }}</td>
+                    <td>{{ summary.option_amount }}</td>
+                    <td colspan="4"></td>
+                </tr>
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -203,6 +210,10 @@ const headers = ref([
     { title: '台号', value: 'desk_number', minWidth: 120 },
     // { title: '备注', value: 'remark', minWidth: 200 },
 ]);
+const summary = ref({
+    card_type: '合计',
+    option_amount: 0
+});
 
 const filters = ref({
     card_type: null,
@@ -230,7 +241,8 @@ const getRecords = async () => {
         );
         if (res && res.code == 200) {
             records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
-            total.value = res.data.count;
+            total.value = res.data.total || 0;
+            summary.value = res.data.summary;
         }
     } catch (error) {
         console.error('查询失败:', error);

@@ -154,6 +154,13 @@
                 <v-btn size="small" color="success" variant="tonal" class="mr-2" @click="editRecord(item)"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
                 <v-btn size="small" color="error" variant="tonal" @click="deleteDialog = true; selectedRecord = item;"><v-icon>mdi-delete</v-icon> 删除</v-btn>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3">合计</td>
+                    <td>{{ summary.total_money }}</td>
+                    <td colspan="9"></td>
+                </tr>
+            </template>
         </v-data-table-server>
 
         <v-dialog
@@ -310,6 +317,10 @@ const headers = ref([
     { title: '备注', value: 'remark', minWidth: 150 },
     { title: '操作', value: 'actions', fixed: 'end', minWidth: 180 },
 ]);
+const summary = ref({
+    total_count: 0,
+    total_money: 0
+});
 const isExporting = ref(false);
 const filters = ref({
     expense_type: null,
@@ -358,6 +369,7 @@ const getRecords = async () => {
         if (res.code == 200) {
             records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.count;
+            summary.value = res.data.summary;
         }
     } catch (error) {
         console.error('获取记录失败:', error);

@@ -241,7 +241,7 @@ const getRecords = async () => {
         );
         if (res && res.code == 200) {
             records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
-            total.value = res.data.total || 0;
+            total.value = res.data.count || 0;
             summary.value = res.data.summary;
         }
     } catch (error) {

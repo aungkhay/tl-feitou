@@ -230,7 +230,12 @@ const routes = [
                 path: 'user-management',
                 name: 'UserManagement',
                 component: () => import('../views/UserManagement.vue'),
-            }
+            },
+            {
+                path: 'agent-business',
+                name: 'AgentBusiness',
+                component: () => import('../views/AgentBusiness.vue'),
+            },
         ],
     },
 ]

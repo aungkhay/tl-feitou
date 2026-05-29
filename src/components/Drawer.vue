@@ -243,6 +243,12 @@ const drawerItems = ref([
     //     ],
     // },
     {
+        title: '代理业务',
+        icon: 'mdi-account-group',
+        routeName: 'AgentBusiness',
+        isSelected: false,
+    },
+    {
         title: '系统设置',
         icon: 'mdi-cog',
         routeName: 'SystemSettings',

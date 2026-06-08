@@ -234,7 +234,14 @@ const routes = [
             {
                 path: 'agent-business',
                 name: 'AgentBusiness',
-                component: () => import('../views/AgentBusiness.vue'),
+                component: () => import('../views/agent-management/AgentBusiness.vue'),
+                meta: { title: '代理业务' }
+            },
+            {
+                path: 'agent-member-detail',
+                name: 'AgentMemberDetail',
+                component: () => import('../views/agent-management/AgentMemberDetail.vue'),
+                meta: { title: '代理会员明细' }
             },
         ],
     },

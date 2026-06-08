@@ -9,7 +9,7 @@
             theme="dark"
             width="200"
         >
-            <v-list-item height="64" class="text-primary font-weight-bold"><v-icon>mdi-finance</v-icon><span v-if="isDrawerOpen < 2"> 财务端</span></v-list-item>
+            <!-- <v-list-item height="64" class="text-primary font-weight-bold"><v-icon>mdi-finance</v-icon><span v-if="isDrawerOpen < 2"> 财务端</span></v-list-item> -->
 
             <v-list nav slim :opened="open">
                 <div v-for="(item, index) in drawerItems" :key="index">
@@ -46,8 +46,12 @@
                 </div>
             </v-list>
 
+            <template v-slot:prepend>
+                <v-btn variant="text" color="primary" block size="x-large" rounded="0"><v-icon>mdi-finance</v-icon><span v-if="isDrawerOpen < 2"> 财务端</span></v-btn>
+            </template>
+
             <template v-slot:append>
-                <div class="px-2 py-3">
+                <div class="pa-2">
                     <v-btn block color="red-darken-4" variant="flat" @click="showLogoutDialog = true"><v-icon>mdi-logout</v-icon><span v-if="isDrawerOpen < 2">退出</span></v-btn>
                 </div>
             </template>
@@ -243,10 +247,23 @@ const drawerItems = ref([
     //     ],
     // },
     {
-        title: '代理业务',
-        icon: 'mdi-account-group',
-        routeName: 'AgentBusiness',
+        title: '代理管理',
+        icon: 'mdi-account-tie',
         isSelected: false,
+        children: [
+            {
+                title: '代理业务',
+                icon: 'mdi-account-group',
+                routeName: 'AgentBusiness',
+                isSelected: false,
+            },
+            {
+                title: '代理会员明细',
+                icon: 'mdi-account-group',
+                routeName: 'AgentMemberDetail',
+                isSelected: false,
+            },
+        ]
     },
     {
         title: '系统设置',

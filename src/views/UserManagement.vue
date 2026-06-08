@@ -114,7 +114,7 @@ const closeDialog = () => {
 const getUsers = async () => {
     loading.value = true;
     try {
-        const res = await GET_USER_LIST(filters.value.name, filters.value.is_virtual, filters.value.is_hide, page.value, perPage.value);
+        const res = await GET_USER_LIST(filters.value.name ?? '小明', filters.value.is_virtual, filters.value.is_hide, page.value, perPage.value);
         if (res.code == 200) {
             users.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;

@@ -13,7 +13,7 @@
                         label="代理商名称"
                         variant="outlined"
                         clearable
-                        @click:clear="filters.agent_name = null"
+                        @click:clear="filters.agent_name = null; getAgents()"
                         density="compact"
                         hide-details
                     />
@@ -36,7 +36,6 @@
             :items-per-page-options="pageSizeOptions"
             @update:options="getAgents"
             hover
-            @click:row="handleRowClick"
         >
             <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -48,6 +47,7 @@
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
             <template #item.actions="{ item }">
+                <v-btn size="small" color="error" variant="tonal" @click.stop="getSubOrdinates(item)" class="mr-1"><v-icon>mdi-account-multiple</v-icon> 下级</v-btn>
                 <v-btn size="small" color="primary" variant="tonal" @click.stop="memberObj.agent_name = item.username; dialog2 = true"><v-icon>mdi-plus</v-icon> 新增会员</v-btn>
             </template>
             <template #body.append>
@@ -65,7 +65,7 @@
         </v-data-table-server>
 
         <v-divider class="my-4"></v-divider>
-        <div class="mb-2 text-h6">会员列表</div>
+        <div class="mb-2 text-h6">会员列表 <span v-if="selectedAgent" class="text-error">代理：{{ selectedAgent.username }}</span></div>
         <v-data-table-server
             v-model:page="page2"
             v-model:items-per-page="perPage2"
@@ -131,15 +131,25 @@
                         readonly
                     />
 
-                    <v-text-field
+                    <v-autocomplete
                         v-model="memberObj.player_name"
+                        v-model:search="searchPlayer"
+                        :items="players"
                         label="会员名称"
+                        item-title="playername"
+                        item-value="playername"
                         variant="outlined"
                         class="mb-2"
+                        color="primary"
+                        autocomplete="off"
                         :error-messages="v2$.player_name.$errors.map(e => e.$message)"
                         @input="v2$.player_name.$touch"
                         @blur="v2$.player_name.$touch"
-                    />
+                    >
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
 
                     <div class="d-flex justify-end">
                         <v-btn text="取消" variant="tonal" :disabled="savingMember" @click="closeMemberDialog" color="red" class="mr-2"></v-btn>
@@ -153,12 +163,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useToast } from 'vue-toastification';
-import { useUserStore } from '../stores/user';
-import { GET_AGENT, GET_MEMBER, ADD_AGENT, ADD_MEMBER } from '../js/api/agent_business';
+import { useUserStore } from '../../stores/user';
+import { GET_AGENT, GET_MEMBER, ADD_AGENT, ADD_MEMBER } from '../../js/api/agent_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
+import { PLAYER_FUZZY_QUERY } from "../../js/api/player_option";
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -187,7 +198,7 @@ const headers1 = [
     { title: '结算时间', value: 'Settlement', minWidth: 170 },
     { title: '操作人', value: 'optioner', minWidth: 100 },
     { title: '操作时间', value: 'option_time', minWidth: 170 },
-    { title: '操作', value: 'actions' }
+    { title: '操作', value: 'actions', minWidth: 200, fixed: 'end' },
 ];
 const summary1 = ref({
     total_agent: 0,
@@ -212,6 +223,8 @@ const perPage2 = ref(10);
 const total2 = ref(0);
 const loading2 = ref(false);
 const members = ref([]);
+const players = ref([]);
+const searchPlayer = ref('');
 const headers2 = [
     { title: '序列', value: 'index' },
     { title: '代理名称', value: 'reference_name' },
@@ -271,6 +284,12 @@ const getAgents = async () => {
 const handleRowClick = (event, raw) => {
     console.log('点击了代理行：', raw.item);
     selectedAgent.value = raw.item;
+    getMembers();
+}
+
+const getSubOrdinates = async (agent) => {
+    if (!agent) return;
+    selectedAgent.value = agent;
     getMembers();
 }
 
@@ -336,5 +355,24 @@ const addMember = async () => {
     }
 }
 
-onMounted(() => {});
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
 </script>

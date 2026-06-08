@@ -1,32 +1,14 @@
 <template>
     <div class="px-2 py-3">
+
         <div class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-autocomplete
-                        v-model="filters.group_nickname"
-                        :items="groups"
-                        item-title="group_nickname"
-                        item-value="group_nickname"
-                        label="选择操作台"
-                        density="compact"
-                        variant="outlined"
-                        hide-details
-                        clearable
-                        @click:append-inner="filters.group_nickname = null"
-                        autocomplete="off"
-                    >
-                        <template #item="{ props }">
-                            <v-list-item v-bind="props" density="compact" />
-                        </template>                    
-                    </v-autocomplete>
-                </v-col>
-                <v-col>
-                    <v-autocomplete
-                        v-model="filters.player_name"
+                        v-model="filters.agent_name"
                         v-model:search="searchPlayer"
                         :items="players"
-                        label="选手昵称"
+                        label="代理名称"
                         density="compact"
                         item-title="playername"
                         item-value="playername"
@@ -35,37 +17,13 @@
                         class="ml-1"
                         color="primary"
                         clearable
-                        @click:clear="filters.player_name = null"
+                        @click:clear="filters.agent_name = null"
                         autocomplete="off"
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact" />
                         </template>
                     </v-autocomplete>
-                </v-col>
-                <v-col cols="12" sm="2" class="d-flex">
-                    <div class="w-50 pr-1">
-                        <v-text-field
-                            v-model="filters.shoe"
-                            label="靴号"
-                            variant="outlined"
-                            density="compact"
-                            hide-details
-                            clearable
-                            @click:clear="filters.shoe = null"
-                        />
-                    </div>
-                    <div class="w-50 pl-1">
-                        <v-text-field 
-                            v-model="filters.round"
-                            label="局号"
-                            variant="outlined"
-                            density="compact"
-                            hide-details
-                            clearable
-                            @click:clear="filters.round = null"
-                        />
-                    </div>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-menu
@@ -150,44 +108,47 @@
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-checkbox v-model="filters.is_contains_virtual" color="primary" label="是否包含虚拟" hide-details density="compact"></v-checkbox>
-                </v-col>
-                <v-col cols="12" sm="2">
                     <div class="d-flex">
                         <div class="w-50 pr-1">
-                            <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                            <v-btn color="primary" @click="getMembers" :disabled="!filters.agent_name" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
-                            <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+                            <v-btn color="success" block @click="exportTable" :loading="isExporting" :disabled="!members.length"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
                         </div>
                     </div>
                 </v-col>
             </v-row>
         </div>
+
         <v-data-table-server
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
-            :items="records"
+            :items="members"
             :items-length="total"
             :loading="loading"
             density="compact"
             class="table1"
             :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords"
+            @update:options="getMembers"
             hover
         >
             <template #loading>
-                <v-skeleton-loader type="table-row@8"/>
+                <v-skeleton-loader type="table-row@3"/>
             </template>
-             <template #body.append>
+            <template #item.option_time="{ item }">
+                {{ $filters.formatFullDate(item.option_time) }}
+            </template>
+            <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计</td>
-                    <td>{{ summary.total_xml_zx }}</td>
-                    <td>{{ summary.total_xml_sb }}</td>
-                    <td>{{ summary.total_zx_yl }}</td> 
-                    <td>{{ summary.total_sb_yl }}</td> 
-                    <td>{{ summary.total_yxxz }}</td> 
+                    <td colspan="3">合计({{ summary.total_users }})</td>
+                    <td>{{ summary.sum_yxxz }}</td>
+                    <td>{{ summary.sum_zx_yl }}</td>
+                    <td>{{ summary.sum_xml_sb }}</td>
+                    <td>{{ summary.sum_sb_yl }}</td>
+                    <td>{{ summary.sum_yxxz }}</td>
+                    <td>{{ summary.sum_daily_points }}</td>
+                    <td>{{ summary.sum_total_points }}</td>
                     <td></td>
                 </tr>
             </template>
@@ -196,127 +157,89 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useUserStore } from '../../stores/user';
-import { GET_PLAYER_DETAILS_QUERY} from '../../js/api/financial_inquiries';
-import { formattedDate, exportExcel } from '../../js/common';
+import { ref, computed, onMounted, watch } from "vue";
 import { useToast } from 'vue-toastification';
+import { useUserStore } from '../../stores/user';
+import { GET_MEMBER_DETAILS } from '../../js/api/agent_business';
 import moment from 'moment';
+import { formattedDate, exportExcel } from '../../js/common';
 import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
 const userStore = useUserStore();
-const records = ref([]);
+const pageSizeOptions = computed(() => userStore.tablePageSize);
+const isExporting = ref(false);
+
 const page = ref(1);
 const perPage = ref(10);
 const total = ref(0);
+const members = ref([]);
 const loading = ref(false);
-const pageSizeOptions = computed(() => userStore.tablePageSize);
-const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '选手', value: 'username', fixed: 'start', width: 120 },
-    { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
-    { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
-    { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
-    { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120 },
-    { title: '三宝+幸运6+对子总分', value: 'sb_yl', minWidth: 200 },
-    { title: '有效流水总分', value: 'yxxz', minWidth: 120 },
-    { title: '日积分总分', value: 'daily_points', minWidth: 110 },
-    // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
-    // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
-]);
-const isExporting = ref(false);
-const groups = computed(() => userStore.groups);
+const headers = [
+    { title: '序列', value: 'index', minWidth: 100 },
+    { title: '代理', value: 'reference_name', minWidth: 150 },
+    { title: '玩家昵称', value: 'username', minWidth: 150 },
+    { title: '庄闲(龙虎)洗码', value: 'total_xml_zx', minWidth: 150 },
+    { title: '庄闲(龙虎)赢亏', value: 'total_zx_yl', minWidth: 150 },
+    { title: '四宝洗码', value: 'total_xml_sb', minWidth: 150 },
+    { title: '四宝赢亏', value: 'total_sb_yl', minWidth: 150 },
+    { title: '有效流水', value: 'total_yxxz', minWidth: 150 },
+    { title: '日积分总分', value: 'daily_points', minWidth: 150 },
+    { title: '总积分总分', value: 'total_points', minWidth: 150 },
+    { title: '操作时间', value: 'option_time', minWidth: 180 },
+];
+const summary = ref({
+    sum_daily_points: 0,
+    sum_sb_yl: 0,
+    sum_total_points: 0,
+    sum_xml_sb: 0,
+    sum_xml_zx: 0,
+    sum_yxxz: 0,
+    sum_zx_yl: 0,
+    total_users: 0,
+})
+
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const players = ref([]);
 const searchPlayer = ref('');
 const filters = ref({
-    player_name: null,
-    shoe: null,
-    round: null,
+    agent_name: null,
     start_date: moment().startOf('day').toDate(),
     start_time: '00:00:00',
     end_date: moment().startOf('day').toDate(),
     end_time: '23:59:59',
-    is_contains_virtual: true,
-    group_nickname: null
 });
 
-const summary = ref({
-    total_sb_yl: 0,
-    total_xml_sb: 0,
-    total_xml_zx: 0,
-    total_yxxz: 0,
-    total_zx_yl: 0
-})
+const getMembers = async () => {
+    if (!filters.value.agent_name) {
+        return;
+    }
 
-const getRecords = async () => {
     loading.value = true;
     try {
-        const { player_name, shoe, round, start_date, start_time, end_date, end_time, is_contains_virtual, group_nickname } = filters.value;
-        const res = await GET_PLAYER_DETAILS_QUERY(
-            player_name, 
-            shoe, 
-            round, 
+        const { start_date, start_time, end_date, end_time } = filters.value;
+
+        const res = await GET_MEMBER_DETAILS(
+            filters.value.agent_name,
             start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
             end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
-            is_contains_virtual, 
-            group_nickname, 
-            page.value, 
+            page.value,
             perPage.value
         );
         if (res.code == 200) {
-            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            members.value = res.data.list.map((member, index) => ({ ...member, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
-            summary.value = res.data.summary
+            summary.value = res.data.summary;
+        } else {
+            toast.error(res.msg || '获取成员详情失败');
         }
     } catch (error) {
-        console.error('Error fetching records:', error);
-        toast.error('获取记录失败，请稍后再试');
+        toast.error(error.message || '获取成员详情失败');
     } finally {
         loading.value = false;
     }
-}
-
-const exportTable = async () => {
-    isExporting.value = true;
-    try {
-        const { name, shoe, round, start_date, start_time, end_date, end_time, is_contains_virtual, group_nickname } = filters.value;
-        const res = await GET_PLAYER_DETAILS_QUERY(
-            name, 
-            shoe, 
-            round, 
-            start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
-            end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
-            is_contains_virtual, 
-            group_nickname, 
-            1, 
-            total.value || 10000
-        );
-        if (res.code == 200) {
-            const data = res.data.list.map(item => ({
-                '序列': item.index,
-                '选手': item.username,
-                '代理号': item.reference_name,
-                '庄闲洗码总分': item.xml_zx,
-                '三宝+幸运6+对子洗码总分': item.xml_sb,
-                '庄闲赢亏总分': item.zx_yl,
-                '三宝+幸运6+对子总分': item.sb_yl,
-                '有效流水总分': item.yxxz,
-                '日积分总分': item.daily_points
-            }));
-            exportExcel(data, `选手洗码盈亏-${formattedDate(new Date())}`);
-        } else {
-            toast.error(res.msg || '获取数据失败，无法导出表格');
-        }
-    } catch (error) {
-        console.error('Error exporting records:', error);
-        toast.error('导出失败，请稍后再试');
-    } finally {
-        isExporting.value = false;
-    }
-}
+};
 
 const fuzzyPlayer = async () => {
     if (!searchPlayer.value) {
@@ -338,4 +261,42 @@ watch(
         }
     }
 )
+
+const exportTable = async () => {
+    isExporting.value = true;
+    try {
+        const { start_date, start_time, end_date, end_time } = filters.value;
+
+        const res = await GET_MEMBER_DETAILS(
+            filters.value.agent_name,
+            start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
+            end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
+            1,
+            total.value || 10000
+        );
+        if (res.code == 200) {
+            const data = res.data.list.map(item => ({
+                '序列': item.index,
+                '代理': item.reference_name,
+                '玩家昵称': item.username,
+                '庄闲(龙虎)洗码': item.total_xml_zx,
+                '庄闲(龙虎)赢亏': item.total_zx_yl,
+                '四宝洗码': item.total_xml_sb,
+                '四宝赢亏': item.total_sb_yl,
+                '有效流水': item.valid_turnover,
+                '日积分总分': item.daily_points,
+                '总积分总分': item.total_points,
+                '操作时间': item.option_time,
+            }));
+            exportExcel(data, `代理会员明细-${filters.value.agent_name}-${formattedDate(new Date())}`);
+        } else {
+            toast.error(res.msg || '获取数据失败，无法导出表格');
+        }
+    } catch (error) {
+        console.error('Error exporting records:', error);
+        toast.error('导出失败，请稍后再试');
+    } finally {
+        isExporting.value = false;
+    }
+}
 </script>

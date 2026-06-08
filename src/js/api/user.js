@@ -88,3 +88,17 @@ export const SET_USER_PERMISSIONS = async (username, permissions_id) => {
     })
     return res;
 }
+
+/**
+ * 
+ * @param {integer} page 页码（可选，默认1）
+ * @param {integer} perPage 每页数量（可选，默认10）
+ * @returns 
+ */
+export const GET_USER_INFO = async (page, perPage) => {
+    const res = await API.post(`${prefix}/user/get_user_info`, {
+        currentPage: page,
+        pageSize: perPage
+    })
+    return res;
+}

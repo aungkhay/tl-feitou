@@ -255,6 +255,7 @@ const getRecords = async () => {
         if (res.code === 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.count;
+            summary.value = res.data.summary || summary.value;
         }
     } catch (error) {
         console.error('获取记录失败:', error);

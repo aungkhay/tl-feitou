@@ -182,7 +182,7 @@
             </template>
              <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计</td>
+                    <td colspan="4">合计</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 
@@ -212,25 +212,7 @@ const perPage = ref(10);
 const total = ref(0);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
-const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '选手', value: 'username', fixed: 'start', width: 120 },
-    { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
-    { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
-    { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
-    { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120 },
-    { title: '三宝+幸运6+对子总分', value: 'sb_yl', minWidth: 200 },
-    { title: '有效流水总分', value: 'yxxz', minWidth: 120 },
-    { title: '日积分总分', value: 'daily_points', minWidth: 110 },
-    // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
-    // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
-]);
-const isExporting = ref(false);
-const groups = computed(() => userStore.groups);
-const fromDateMenu = ref(false);
-const toDateMenu = ref(false);
-const players = ref([]);
-const searchPlayer = ref('');
+
 const filters = ref({
     player_name: null,
     shoe: null,
@@ -242,6 +224,38 @@ const filters = ref({
     is_contains_virtual: true,
     group_nickname: null
 });
+
+const allHeaders = ref([
+    { title: '序列', value: 'index', fixed: 'start', width: 80 },
+    { title: '选手', value: 'username', fixed: 'start', width: 120 },
+    { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
+    { title: '日期', value: 'stat_date', minWidth: 120},
+    { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
+    { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
+    { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120 },
+    { title: '三宝+幸运6+对子总分', value: 'sb_yl', minWidth: 200 },
+    { title: '有效流水总分', value: 'yxxz', minWidth: 120 },
+    { title: '日积分总分', value: 'daily_points', minWidth: 110 },
+    // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
+    // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
+]);
+const headers = computed(() => {
+    // hide username and reference_name columns filters'player_name is empty, otherwise show them
+    if (!filters.value.player_name) {
+        allHeaders.value.find(header => header.value === 'username').hidden = true;
+        allHeaders.value.find(header => header.value === 'reference_name').hidden = true;
+    } else {
+        allHeaders.value.find(header => header.value === 'username').hidden = false;
+        allHeaders.value.find(header => header.value === 'reference_name').hidden = false;
+    }
+    return allHeaders.value.filter(header => !header.hidden);
+});
+const isExporting = ref(false);
+const groups = computed(() => userStore.groups);
+const fromDateMenu = ref(false);
+const toDateMenu = ref(false);
+const players = ref([]);
+const searchPlayer = ref('');
 
 const summary = ref({
     total_sb_yl: 0,

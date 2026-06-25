@@ -171,7 +171,7 @@ const pageSizeOptions = computed(() => userStore.tablePageSize);
 const isExporting = ref(false);
 
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const total = ref(0);
 const members = ref([]);
 const loading = ref(false);

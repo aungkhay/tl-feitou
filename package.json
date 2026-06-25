@@ -1,7 +1,7 @@
 {
   "name": "weitou-caiwu",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.5",
   "type": "module",
   "author": {
     "name": "Xiaoyang"
@@ -18,8 +18,20 @@
   "main": "electron/main.cjs",
   "build": {
     "appId": "com.xiaoyang.weitoucaiwu",
+    "asar": true,
     "productName": "微投财务",
-    "files": ["dist/**", "electron/**", "build/**", "package.json"],
+    "files": [
+      "dist/**",
+      "electron/**",
+      "package.json",
+      "!**/*.map",
+      "!**/.DS_Store",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+    ],
     "directories": {
       "buildResources": "build"
     },

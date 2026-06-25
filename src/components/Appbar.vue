@@ -8,7 +8,7 @@
                 <v-tabs v-model="active" show-arrows density="compact" color="primary" bg-color="grey-lighten-3" variant="text">
                     <v-tab density="compact" v-for="t in tabs" :key="t.key" :value="t.key" @click="goTab(t)" @contextmenu.prevent="openTabMenu($event, t)">
                         <span class="mr-2 text-caption">{{ t.title }}</span>
-                        <v-btn v-if="tabs.length > 1" icon="mdi-close" variant="text" size="x-small" @click.stop="closeTab(t)"/>
+                        <v-btn v-if="tabs.length > 1" icon variant="text" size="20" @click.stop="closeTab(t)"><v-icon size="x-small">mdi-close</v-icon></v-btn>
                     </v-tab>
                 </v-tabs>
 

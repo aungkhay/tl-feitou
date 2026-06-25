@@ -5,6 +5,9 @@ import vuetify from 'vite-plugin-vuetify'
 export default ({ mode }) => {
     const env = loadEnv(mode, process.cwd());
     return defineConfig({
+      build: {
+        sourcemap: true,
+      },
       plugins: [
         vue(),
         vuetify({ autoImport: true }),

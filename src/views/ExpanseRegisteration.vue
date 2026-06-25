@@ -299,7 +299,7 @@ const userStore = useUserStore();
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const records = ref([]);
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const total = ref(0);
 const loading = ref(false);
 const headers = ref([

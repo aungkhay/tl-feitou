@@ -31,10 +31,25 @@
                         <v-progress-linear v-if="loadingPlayerData" color="primary" indeterminate></v-progress-linear>
                     </v-col>
                 </v-row>
+                
                 <div class="mt-4 font-weight-bold text-red">没有<v-icon size="20">mdi-star-outline</v-icon>号为隐藏选择</div>
                 <v-row class="pa-0">
                     <v-col cols="12" sm="3">
-                        <div class="border rounded px-1 bg-grey-lighten-4" style="height: 375px; overflow-y: auto;">
+                        <div class="border rounded px-1 bg-grey-lighten-4" style="position: relative; height: 375px; overflow-y: auto;">
+                            <div class="bg-white" style="position: sticky; top: 0; z-index: 1;">
+                                <v-text-field
+                                    v-model="searchPlayer"
+                                    item-title="playername"
+                                    item-value="playername"
+                                    label="选手昵称"
+                                    hide-details
+                                    color="primary"
+                                    density="compact"
+                                    clearable
+                                    class="mt-1"
+                                    @change="fuzzyPlayer"
+                                />
+                            </div>
                             <v-list density="compact" class="bg-grey-lighten-4">
                                 <v-list-item v-for="player in players" :key="player.id" :active="obj.player_name == player.playername" active-class="bg-red-lighten-4 text-red rounded" @click="obj.player_name = player.playername">
                                     <v-list-item-title>
@@ -253,6 +268,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
 import { PERSONAL_EXCHANGE_RATIO, GET_PERSONAL_EXCHANGE_RATIO } from '../../js/api/business_settings';
+import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -267,6 +283,7 @@ const props = defineProps({
 });
 const groups = computed(() => userStore.groups);
 const players = ref([]);
+const searchPlayer = ref('');
 const exchangeStartDateMenu = ref(false);
 const fanshuiStartDateMenu = ref(false);
 const obj = ref({
@@ -465,4 +482,25 @@ watch(() => obj.value.player_name, (newVal) => {
         getPersonalExchangeRatio();
     }
 });
+
+const fuzzyPlayer = async () => {
+    if (!searchPlayer.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayer.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
+watch(
+    () => searchPlayer.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
 </script>

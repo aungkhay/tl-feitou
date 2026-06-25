@@ -359,7 +359,7 @@ const summary = ref({
 const records = ref([]);
 const total = ref(0);
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const loading = ref(false);
 const isExporting = ref(false);

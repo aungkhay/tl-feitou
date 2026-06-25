@@ -16,3 +16,22 @@
 .table1 td:last-child {
     border-right: 1px solid #e0e0e0;
 }
+
+.v-data-table__td {
+    height: 18px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+.v-data-table-header__content {
+    font-size: 12px !important;
+}
+.v-data-table__td {
+    font-size: 12px !important;
+}
+
+/* .v-input .v-field__input {
+    font-size: 14px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: 32px !important;
+} */

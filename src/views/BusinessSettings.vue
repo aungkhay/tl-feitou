@@ -11,8 +11,6 @@
             <v-btn @click="showPointExchangeRateDialog = true" color="primary" variant="tonal" size="x-large" class="mr-2 mb-2">积分兑换比率</v-btn>
             <v-btn @click="showPersonalExchangeRateDialog = true" color="primary" variant="tonal" size="x-large" class="mr-2 mb-2">个人兑换比率</v-btn>
             <!-- <v-btn @click="showQuickPullShortcutDialog = true" color="primary" variant="tonal" size="x-large" class="mr-2 mb-2">设置拉取端快捷方式</v-btn> -->
-        </div>
-        <div class="d-flex flex-wrap">
             <!-- <v-btn @click="showQuickBankcardShortcutDialog = true" color="primary" variant="tonal" size="x-large" class="mr-2 mb-2">设置银行卡快捷方式</v-btn> -->
             <v-btn @click="showPlayerCopyDialog = true" color="primary" variant="tonal" size="x-large" class="mr-2 mb-2"><v-icon>mdi-content-copy</v-icon> 玩家复制</v-btn>
             <v-btn @click="showDeleteDataDialog = true" color="error" variant="tonal" size="x-large" class="mr-2 mb-2"><v-icon>mdi-trash-can</v-icon> 删除数据</v-btn>

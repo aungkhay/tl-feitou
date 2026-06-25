@@ -155,13 +155,13 @@
         </div>
 
         <div class="d-flex flex-wrap">
-            <v-btn color="primary" class="mr-2 mb-2" @click="allGroupDialog = true">单个玩家兑换(所有群)</v-btn>
-            <v-btn color="primary" class="mr-2 mb-2" @click="singleGroupDialog = true">一键兑换(一个群玩家)</v-btn>
-            <v-btn color="primary" class="mr-2 mb-2" @click="allGroupExchangeDialog = true">一键兑换(所有群玩家)</v-btn>
-            <v-btn color="error" class="mr-2 mb-2" @click="cancelExchangeDialog = true"><v-icon>mdi-undo</v-icon> 撤销兑换</v-btn>
-            <v-btn color="primary" class="mr-2 mb-2" @click="clearPointDialog = true">清零</v-btn>
-            <v-btn color="primary" class="mr-2 mb-2" @click="clearVirtualPlayerDialog = true">虚拟选手整台清零</v-btn>
-            <v-btn color="success" class="mb-2" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
+            <v-btn size="small" color="primary" class="mr-2 mb-2" @click="allGroupDialog = true">单个玩家兑换(所有群)</v-btn>
+            <v-btn size="small" color="primary" class="mr-2 mb-2" @click="singleGroupDialog = true">一键兑换(一个群玩家)</v-btn>
+            <v-btn size="small" color="primary" class="mr-2 mb-2" @click="allGroupExchangeDialog = true">一键兑换(所有群玩家)</v-btn>
+            <v-btn size="small" color="error" class="mr-2 mb-2" @click="cancelExchangeDialog = true"><v-icon>mdi-undo</v-icon> 撤销兑换</v-btn>
+            <v-btn size="small" color="primary" class="mr-2 mb-2" @click="clearPointDialog = true">清零</v-btn>
+            <v-btn size="small" color="primary" class="mr-2 mb-2" @click="clearVirtualPlayerDialog = true">虚拟选手整台清零</v-btn>
+            <v-btn size="small" color="success" class="mb-2" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
         </div>
 
         <v-data-table-server
@@ -387,7 +387,7 @@ const isExporting = ref(false);
 
 const userStore = useUserStore();
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const total = ref(0);
 const records = ref([]);
 const loading = ref(false);

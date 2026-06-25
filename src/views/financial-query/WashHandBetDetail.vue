@@ -205,7 +205,7 @@ const toDateMenu = ref(false);
 
 const records = ref([]);
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const total = ref(0);
 const loading = ref(false);
 const isExporting = ref(false);

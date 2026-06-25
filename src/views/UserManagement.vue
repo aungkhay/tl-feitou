@@ -112,7 +112,7 @@ const toast = useToast();
 const userStore = useUserStore();
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const total = ref(0);
 const users = ref([]);
 const loading = ref(false);

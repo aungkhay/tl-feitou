@@ -195,7 +195,7 @@ const isExporting = ref(false);
 const loading = ref(false);
 const records = ref([]);
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(15);
 const total = ref(0);
 const headers = ref([
     { title: '列', value: 'index', fixed: 'start', width: 60 },

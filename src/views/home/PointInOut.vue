@@ -71,7 +71,7 @@
         </v-data-table-server>
         <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
             <tbody>
-                <tr>
+                <tr class="text-caption">
                     <td>{{ playerSummary.playername }}:</td>
                     <td>剩余积分: {{ playerSummary.score }}</td>
                     <td>冻结积分: {{ playerSummary.freeze_score }}</td>
@@ -89,7 +89,7 @@
             </tbody>
         </v-table>
         
-        <v-card elevation="0" class="border px-2 pt-3 pb-2 rounded mt-2">
+        <v-card elevation="0" class="border px-1 pt-2 pb-1 rounded mt-2">
             <v-row dense>
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <div class="w-50">
@@ -269,7 +269,7 @@
                 {{ item.demo ? item.demo : '-' }}
             </template>
             <template #item.actions="{ item }">
-                <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
+                <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="x-small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
             <template #body.append>
                 <tr v-if="noMoreData2">
@@ -279,7 +279,7 @@
         </v-data-table-server>
         <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
             <tbody>
-                <tr>
+                <tr class="text-caption">
                     <td style="width: 150px;">{{ scoreSummary.playername }}: </td>
                     <td>操作金额: {{ scoreSummary.score }}</td>
                 </tr>
@@ -385,7 +385,7 @@ const headers1 = ref([
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
 ])
 const currentPage1 = ref(1);
-const itemsPerPage1 = ref(10);
+const itemsPerPage1 = ref(15);
 const totalItems1 = ref(0);
 const isReady1 = ref(false);
 const loading1 = ref(false);
@@ -407,7 +407,7 @@ const headers2 = ref([
     { title: '操作', key: 'actions', sortable: false, fixed: 'end', minWidth: 100 },
 ]);
 const currentPage2 = ref(1);
-const itemsPerPage2 = ref(10);
+const itemsPerPage2 = ref(15);
 const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);

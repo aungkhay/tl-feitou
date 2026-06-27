@@ -13,22 +13,29 @@ let API = axios.create({
     }
 });
 
+const logout = () => {
+    const userStore = useUserStore();
+    // Unauthorized
+    localStorage.removeItem('_token_');
+    userStore.setIsLoggedIn(false);
+    userStore.setToken('');
+    router.push({ name: 'login' });
+}
+
 API.interceptors.response.use(
     response => {
         var res = response.data;
 
         if(res.status == 403) {
-            const userStore = useUserStore();
-            // Unauthorized
-            localStorage.removeItem('_token_');
-            userStore.setIsLoggedIn(false);
-            userStore.setToken('');
-            router.push({ name: 'login' });
+            logout();
         }
 
         return Promise.resolve(res);
     },
     error => {
+        if (error.response?.status == 403) {
+            logout();
+        }
         console.log(error);
         return Promise.resolve(error.response);
     }

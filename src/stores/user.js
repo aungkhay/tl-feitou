@@ -15,7 +15,8 @@ export const useUserStore = defineStore('user', {
             parent: '首页',
             child: '上下分',
             key: ''
-        }
+        },
+        virtualPlayer: []
     }),
     actions: {
         setToken(token) {
@@ -58,8 +59,17 @@ export const useUserStore = defineStore('user', {
             this.setToken('');
             this.setIsLoggedIn(false);
             this.setProfile(null);
+            this.setVirtualPlayer([]);
+        },
+        setVirtualPlayer(virtualPlayer) {
+            this.virtualPlayer = virtualPlayer;
         }
     },
     getters: {
+        isVirtualPlayer: (state) => {
+            return (playername) => {
+                return state.virtualPlayer.some(v => v.playername === playername);
+            }
+        }
     }
 });

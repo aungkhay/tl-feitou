@@ -154,6 +154,9 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
+            <template #item.nickname="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.nickname) }">{{ item.nickname }}</span>
+            </template>
             <template #item.stat_date="{ item }">
                 {{ $filters.formatDate(item.stat_date) }}
             </template>
@@ -181,6 +184,7 @@ import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
 const userStore = useUserStore();
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const records = ref([]);
 const total = ref(0);
 const page = ref(1);

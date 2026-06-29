@@ -56,6 +56,9 @@
             <template #item.registTime="{ item }">
                 {{ $filters.formatFullDate(item.registTime) }}
             </template>
+            <template #item.playername="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+            </template>
             <template #item.is_hide="{ item }">
                 <span v-if="item.is_hide" class="text-red">隐藏</span>
                 <span v-else class="text-green">显示</span>
@@ -259,6 +262,9 @@
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
             </template> -->
+            <template #item.playername="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+            </template>
             <template #item.working_date="{ item }">
                 {{ $filters.formatDate(item.working_date) }}
             </template>
@@ -348,6 +354,8 @@ const scoreOptionType = computed(() => userStore.operation_type);
 const options = computed(() => userStore.option1);
 const groups = computed(() => userStore.groups);
 const players = ref([]);
+const virtualPlayers = computed(() => userStore.virtualPlayer);
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const searchPlayer = ref('');
 const filters = ref({
     group_nickname: null,
@@ -627,10 +635,11 @@ watch(groups, (newVal) => {
 watch(() => filters.value.group_nickname, async (newVal) => {
     if (newVal) {
         userStore.setGroupNickname(newVal);
-        filters.value.player_name = '';
+        // filters.value.player_name = '';
         // getPlayers();
         // isReady1.value = true;
         // isReady2.value = true;
+        records1.value = [];
         getRecords1();
         // currentPage2.value = 1;
         // getRecords2();

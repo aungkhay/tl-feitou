@@ -180,6 +180,9 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
+            <template #item.player_name="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.player_name) }">{{ item.player_name }}</span>
+            </template>
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
@@ -386,6 +389,7 @@ const isSaving = ref(false);
 const isExporting = ref(false);
 
 const userStore = useUserStore();
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const page = ref(1);
 const perPage = ref(15);
 const total = ref(0);

@@ -170,6 +170,9 @@
             <template #item.bet_time="{ item }">
                 {{ $filters.formatFullDate(item.bet_time) }}
             </template>
+            <template #item.palyer_nickname="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.palyer_nickname) }">{{ item.palyer_nickname }}</span>
+            </template>
             <template #item.result_time="{ item }">
                 {{ $filters.formatFullDate(item.result_time) }}
             </template>
@@ -203,6 +206,7 @@ const userStore = useUserStore();
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const records = ref([]);
 const page = ref(1);
 const perPage = ref(15);

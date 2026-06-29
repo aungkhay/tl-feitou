@@ -152,6 +152,9 @@
             <template #item.shoe_round="{ item }">
                 <span>{{ item.cc }} - {{ item.jc }}</span>
             </template>
+            <template #item.playername="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+            </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="2">总充值: {{ summary.total_add }}</td>
@@ -174,6 +177,7 @@ import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const records = ref([]);
 const total = ref(0);
 const page = ref(1);

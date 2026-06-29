@@ -182,7 +182,7 @@
             </template>
              <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="4">合计</td>
+                    <td colspan="2">合计</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 

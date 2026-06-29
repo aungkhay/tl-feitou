@@ -185,6 +185,9 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
+            <template #item.playername="{ item }">
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+            </template>
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
@@ -332,6 +335,7 @@ import moment from 'moment';
 const toast = useToast();
 const userStore = useUserStore();
 
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const groups = computed(() => userStore.groups);
 const players = ref([]);
 const sourcePlayers = ref([]);

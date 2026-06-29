@@ -37,6 +37,11 @@ export const GET_USER_LIST = async (name, is_virtual, is_hide, page, perPage) =>
     return res;
 }
 
+export const GET_ALL_PLAYER = async () => {
+    const res = await API.post(`${prefix}/player/get_player`)
+    return res;
+}
+
 /**
  * 增加权限
  * @param {string} permission_name 权限名称

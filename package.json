@@ -12,8 +12,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "electron:pack": "vite build && electron-builder --dir",
-    "electron:dist": "vite build && electron-builder"
+    "electron:pack": "SET VITE_IS_ELECTRON=true&& vite build && electron-builder --dir",
+    "electron:dist": "SET VITE_IS_ELECTRON=true&& vite build && electron-builder"
   },
   "main": "electron/main.cjs",
   "build": {

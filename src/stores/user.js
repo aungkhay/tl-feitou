@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
     state: () => ({
+        isElectron: import.meta.env.VITE_IS_ELECTRON === 'true' ? true : false,
         token: localStorage.getItem('_token_') ?? '',
         profile: localStorage.getItem('_profile_') ? JSON.parse(localStorage.getItem('_profile_')) : null,
         isLoggedIn: localStorage.getItem('_token_') ? true : false,

@@ -48,7 +48,7 @@
             hover
             fixed-header
             hide-default-footer
-            :height="records1.length ? 300 : null"
+            :height="isElectron ? 350 : records1.length ? 300 : null"
         >
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -257,7 +257,7 @@
             hover
             :items-per-page-options="pageSizeOptions"
             hide-default-footer
-            :height="records2.length ? 300 : null"
+            :height="isElectron ? 350 : records2.length ? 300 : null"
         >
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -271,8 +271,8 @@
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
-            <template #item.demo="{ item }">
-                {{ item.demo ? item.demo : '-' }}
+            <template #item.memo="{ item }">
+                {{ item.memo ? item.memo : '-' }}
             </template>
             <template #item.actions="{ item }">
                 <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="x-small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
@@ -347,6 +347,7 @@ import { formattedDate, isReachBottom } from '../../js/common';
 
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore();
+const isElectron = computed(() => userStore.isElectron);
 const toast = useToast();
 const bankCards = ref([]);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
@@ -410,7 +411,7 @@ const headers2 = ref([
     { title: '工作日', key: 'working_date', sortable: false, minWidth: 140 },
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
     { title: '操作员', key: 'optioner', sortable: false, minWidth: 100 },
-    { title: '操作说明', key: 'demo', sortable: false, minWidth: 100 },
+    { title: '操作说明', key: 'memo', sortable: false, minWidth: 100 },
     { title: '银行卡', key: 'bank_card', sortable: false, minWidth: 100 },
     { title: '操作', key: 'actions', sortable: false, fixed: 'end', minWidth: 100 },
 ]);

@@ -39,7 +39,9 @@
                         autocomplete="off"
                     >
                         <template #item="{ props, item }">
-                            <v-list-item v-bind="props" density="compact" />
+                            <v-list-item v-bind="props" density="compact" title="" subtitle="">
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw.playername)}">{{ item.raw.playername }}</v-list-item-title>
+                            </v-list-item>
                         </template>
                     </v-autocomplete>
                 </v-col>
@@ -188,7 +190,7 @@
                     <td>{{ summary.total_zx_yl }}</td> 
                     <td>{{ summary.total_sb_yl }}</td> 
                     <td>{{ summary.total_yxxz }}</td> 
-                    <td></td>
+                    <td>{{ summary.total_points }}</td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -206,6 +208,7 @@ import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
 const userStore = useUserStore();
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const records = ref([]);
 const page = ref(1);
 const perPage = ref(15);
@@ -235,7 +238,7 @@ const allHeaders = ref([
     { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120 },
     { title: '三宝+幸运6+对子总分', value: 'sb_yl', minWidth: 200 },
     { title: '有效流水总分', value: 'yxxz', minWidth: 120 },
-    { title: '日积分总分', value: 'daily_points', minWidth: 110 },
+    { title: '日积分总分', value: 'total_points', minWidth: 110 },
     // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
     // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
 ]);
@@ -262,7 +265,8 @@ const summary = ref({
     total_xml_sb: 0,
     total_xml_zx: 0,
     total_yxxz: 0,
-    total_zx_yl: 0
+    total_zx_yl: 0,
+    total_points: 0
 })
 
 const getRecords = async () => {

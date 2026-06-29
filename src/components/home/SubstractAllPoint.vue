@@ -44,7 +44,8 @@
                     @blur="v$.player_name.$touch"
                 >
                     <template #item="{ props, item }">
-                        <v-list-item v-bind="props" density="compact">
+                        <v-list-item v-bind="props" density="compact" title="" subtitle="">
+                            <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw.playername)}">{{ item.raw.playername }}</v-list-item-title>
                             <template #append>
                                 <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
                                     {{ item.raw.is_hide ? '隐藏' : '显示' }}
@@ -139,6 +140,7 @@ const emit = defineEmits(['update:modelValue', 'complete']);
 const dialog = ref(props.modelValue);
 const toast = useToast();
 const userStore = useUserStore();
+const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const options = computed(() => userStore.option1);
 
 const isSaving = ref(false);

@@ -136,14 +136,14 @@
             <template #item.date="{ item }">
                 {{ $filters.formatDate(item.date) }}
             </template>
-            <!-- <template #body.append>
+            <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="3">合计</td>
                     <td>{{ summary.g_xz }}</td>
                     <td>{{ summary.g_yl }}</td>
                     <td>{{ summary.g_lyzf }}</td> 
                 </tr>
-            </template> -->
+            </template>
         </v-data-table-server>
     </div>
 </template>

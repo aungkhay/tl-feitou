@@ -136,7 +136,7 @@
             <template #item.date="{ item }">
                 {{ $filters.formatDate(item.date) }}
             </template>
-            <!-- <template #body.append>
+            <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="2">合计</td>
                     <td>{{ summary.xzspyk }}</td>
@@ -148,7 +148,7 @@
                     <td>{{ summary.zxtmzcxm }}</td>
                     <td>{{ summary.lyhs }}</td>
                 </tr>
-            </template> -->
+            </template>
         </v-data-table-server>
     </div>
 </template>
@@ -171,7 +171,7 @@ const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '日期', value: 'date', fixed: 'start', minWidth: 120 },
+    { title: '日期', value: 'stat_date', fixed: 'start', minWidth: 120 },
     { title: '庄闲/龙虎上盘输赢', value: 'xzspyk', minWidth: 150 },
     { title: '上盘洗码汇总', value: 'spxm', minWidth: 150 },
     { title: '上盘抽水赢亏', value: 'spzsyk', minWidth: 150 },
@@ -206,6 +206,7 @@ const filters = ref({
 const getRecords = async () => {
     loading.value = true;
     try {
+        console.log(filters.value)
         const res = await GET_DAILY_QUERY_SUMMARY(
             filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
             filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,

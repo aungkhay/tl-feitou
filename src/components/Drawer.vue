@@ -282,7 +282,13 @@ const drawerItems = ref([
         icon: 'mdi-account-group',
         routeName: 'UserManagement',
         isSelected: false,
-    }
+    },
+    {
+        title: 'IP白名单',
+        icon: 'mdi-shield-account',
+        routeName: 'IPWhiteList',
+        isSelected: false,
+    },
 ]);
 
 function setDrawerActive(parentIndex, childIndex) {

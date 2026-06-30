@@ -243,6 +243,12 @@ const routes = [
                 component: () => import('../views/agent-management/AgentMemberDetail.vue'),
                 meta: { title: '代理会员明细' }
             },
+            {
+                path: 'ip-white-list',
+                name: 'IPWhiteList',
+                component: () => import('../views/IPWhiteList.vue'),
+                meta: { title: 'IP白名单' }
+            }
         ],
     },
 ]

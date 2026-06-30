@@ -184,7 +184,7 @@
             </template>
              <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计</td>
+                    <td :colspan="filters.player_name ? 3 : 2">合计</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 
@@ -231,7 +231,7 @@ const filters = ref({
 const allHeaders = ref([
     { title: '序列', value: 'index', fixed: 'start', width: 80 },
     { title: '选手', value: 'username', fixed: 'start', width: 120 },
-    { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
+    // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
     { title: '日期', value: 'stat_date', minWidth: 120},
     { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
     { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
@@ -246,10 +246,10 @@ const headers = computed(() => {
     // hide username and reference_name columns filters'player_name is empty, otherwise show them
     if (!filters.value.player_name) {
         allHeaders.value.find(header => header.value === 'username').hidden = true;
-        allHeaders.value.find(header => header.value === 'reference_name').hidden = true;
+        // allHeaders.value.find(header => header.value === 'reference_name').hidden = true;
     } else {
         allHeaders.value.find(header => header.value === 'username').hidden = false;
-        allHeaders.value.find(header => header.value === 'reference_name').hidden = false;
+        // allHeaders.value.find(header => header.value === 'reference_name').hidden = false;
     }
     return allHeaders.value.filter(header => !header.hidden);
 });
@@ -316,7 +316,7 @@ const exportTable = async () => {
             const data = res.data.list.map(item => ({
                 '序列': item.index,
                 '选手': item.username,
-                '代理号': item.reference_name,
+                // '代理号': item.reference_name,
                 '庄闲洗码总分': item.xml_zx,
                 '三宝+幸运6+对子洗码总分': item.xml_sb,
                 '庄闲赢亏总分': item.zx_yl,

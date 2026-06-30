@@ -107,3 +107,24 @@ export const GET_USER_INFO = async (page, perPage) => {
     })
     return res;
 }
+
+/**
+ * 获取ip白名单信息
+ * @returns 
+ */
+export const GET_WHITE_LIST = async () => {
+    const res = await API.post(`${prefix}/user/get_while_list`)
+    return res;
+}
+
+/**
+ * 设置ip白名单
+ * @param {string} ip_list 
+ * @returns 
+ */
+export const SET_WHITE_LIST = async (ip_list) => {
+    const res = await API.post(`${prefix}/user/set_while_list`, {
+        ip_list: ip_list
+    })
+    return res;
+}

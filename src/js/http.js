@@ -33,11 +33,10 @@ API.interceptors.response.use(
         return Promise.resolve(res);
     },
     error => {
-        if (error.response?.status == 403) {
+        if (error.response?.data?.status == 403) {
             logout();
         }
-        console.log(error);
-        return Promise.resolve(error.response);
+        return Promise.resolve(error.response?.data || { code: 500, message: '网络异常，请稍后再试' });
     }
 );
 

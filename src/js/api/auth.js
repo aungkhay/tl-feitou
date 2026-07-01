@@ -10,7 +10,7 @@ const prefix = '/api';
  * @returns {Promise<{ userId: integer, token: string, account: string, enable: integer }>} 登录成功返回
  */
 export const LOGIN = async (username, password) => {
-    const res = await API.post(`${prefix}/user/login`, {
+    const res = await API.post(`${prefix}/user/agent_login`, {
         username: username,
         password: md5(password)
     })

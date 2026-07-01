@@ -6,7 +6,19 @@ export default ({ mode }) => {
     const env = loadEnv(mode, process.cwd());
     return defineConfig({
       build: {
-        sourcemap: true,
+        sourcemap: false,
+        // chunkSizeWarningLimit: 1000,
+        minify: 'esbuild',
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              vue: ['vue', 'vue-router', 'pinia'],
+              ui: ['vuetify'],
+              network: ['axios'],
+              export: ['xlsx', 'file-saver', 'html2canvas'],
+            }
+          }
+        }
       },
       plugins: [
         vue(),
@@ -34,30 +46,3 @@ export default ({ mode }) => {
       }
     })
 }
-
-// https://vite.dev/config/
-// export default defineConfig({
-//   plugins: [
-//     vue(),
-//     vuetify({ autoImport: true }),
-//   ],
-//   resolve: {
-//     alias: {
-//       '@': '/src',
-//     },
-//   },
-//   server: {
-//     open: false,
-//     https: false,
-//     hot: true,
-//     host: false, // ************  npm run dev -- --host ************
-//     proxy: {
-//       '/api': {
-//           target: import.meta.env.VITE_BASE_URL,
-//           changeOrigin: true,
-//           ws: true,
-//           rewrite: (path) => path.replace(/^\/api/, '')
-//       }
-//     }
-//   }
-// })

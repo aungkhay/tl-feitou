@@ -24,6 +24,34 @@
                         </template>
                     </v-autocomplete>
                 </div>
+                <div class="d-flex align-center" style="width: 200px;">
+                    <v-autocomplete
+                        v-model="filters.search_player_name"
+                        v-model:search="searchPlayername"
+                        :items="players"
+                        label="选手昵称"
+                        density="compact"
+                        item-title="playername"
+                        item-value="playername"
+                        variant="outlined"
+                        color="primary"
+                        hide-details
+                        class="mr-2"
+                        autocomplete="off"
+                        clearable
+                        @click:clear="filters.search_player_name = null; currentPage1 = 1; getRecords1();"
+                    >
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact">
+                                <template #append>
+                                    <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
+                                        {{ item.raw.is_hide ? '隐藏' : '显示' }}
+                                    </span>
+                                </template>
+                            </v-list-item>
+                        </template>
+                    </v-autocomplete>
+                </div>
                 <v-btn color="primary" @click="addSubstractPointDialog = true; addOrSubstract = 'add'"><v-icon>mdi-arrow-up</v-icon> 上分</v-btn>
                 <v-btn color="primary" class="mx-2" @click="addSubstractPointDialog = true; addOrSubstract = 'substract'"><v-icon>mdi-arrow-down</v-icon> 下分</v-btn>
                 <v-btn color="primary" @click="substractAllPointDialog = true"><v-icon>mdi-arrow-collapse-down</v-icon> 积分全下</v-btn>
@@ -358,6 +386,7 @@ const players = ref([]);
 const virtualPlayers = computed(() => userStore.virtualPlayer);
 const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const searchPlayer = ref('');
+const searchPlayername = ref('');
 const filters = ref({
     group_nickname: null,
     option_type: null,
@@ -367,6 +396,7 @@ const filters = ref({
     end_date: moment().startOf('day').format('YYYY-MM-DD'),
     end_time: '23:59:59',
     player_name: null,
+    search_player_name: null,
     is_virtual: 1,
 })
 const startDateMenu = ref(false);
@@ -527,7 +557,7 @@ const getRecords1 = async () => {
     // if (!isReady1.value) return;
     loading1.value = true;
     try {
-        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, itemsPerPage1.value, currentPage1.value);
+        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, filters.value.search_player_name, itemsPerPage1.value, currentPage1.value);
         if (res.code == 200) {
             if (currentPage1.value === 1) {
                 records1.value = [];
@@ -615,11 +645,32 @@ const fuzzyPlayer = async () => {
     }
 }
 
+const fuzzyPlayername = async () => {
+    if (!searchPlayername.value) {
+        return;
+    }
+    const res = await PLAYER_FUZZY_QUERY(searchPlayername.value);
+    if (res && res.code == 200) {
+        players.value = res.data.list;
+    }
+}
+
 watch(
     () => searchPlayer.value,
     (newVal) => {
         if (newVal) {
             fuzzyPlayer();
+        } else {
+            players.value = [];
+        }
+    }
+)
+
+watch(
+    () => searchPlayername.value,
+    (newVal) => {
+        if (newVal) {
+            fuzzyPlayername();
         } else {
             players.value = [];
         }
@@ -646,6 +697,13 @@ watch(() => filters.value.group_nickname, async (newVal) => {
         // getRecords2();
     }
 });
+
+watch(() => filters.value.search_player_name, async (newVal) => {
+    if (newVal) {
+        records1.value = [];
+        getRecords1();
+    }
+})
 
 const cancelAddSubstract = (item) => {
     selectedRecord2.value = item;

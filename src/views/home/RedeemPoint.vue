@@ -191,6 +191,14 @@
             <template #item.exchange_date="{ item }">
                 {{ $filters.formatDate(item.exchange_date) }}
             </template>
+             <template #body.append>
+                <tr>
+                    <td colspan="12" class="py-2">
+                        <span class="mr-5">总积分数量: {{ summary.total_points_change }}</span>
+                        <span>返水金额: {{ summary.total_score_change }}</span>
+                    </td>
+                </tr>
+             </template>
         </v-data-table-server>
 
         <v-dialog
@@ -402,11 +410,12 @@ const headers = ref([
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
     { title: '会员昵称', value: 'player_name', minWidth: 150 },
     { title: '兑换积分/庄闲洗码/返水', value: 'option_type', minWidth: 200 },
-    { title: '兑换/返水金额', value: 'exchange_money', minWidth: 150 },
+    { title: '兑换比例', value: 'personal_points_redemption_ratio', minWidth: 150 },
+    { title: '积分数量', value: 'redeem_points', minWidth: 150 },
     { title: '操作时间', value: 'option_time', minWidth: 180 },
     { title: '备注', value: 'memo', minWidth: 200 },
     { title: '兑换/返水类型', value: 'exchange_type', minWidth: 150 },
-    { title: '返水金额', value: 'score_change', minWidth: 150 },
+    { title: '返水金额', value: 'rebate_amount', minWidth: 150 },
     { title: '庄闲洗码/返水兑换日期', value: 'exchange_date', minWidth: 180 },
     { title: '操作员', value: 'operator', minWidth: 120 },
 ]);
@@ -423,6 +432,10 @@ const filters = ref({
     player_name: null,
     option_type: '兑换',
     is_virtual: 0
+})
+const summary = ref({
+    total_points_change: 0,
+    total_score_change: 0
 })
 
 const obj = ref({
@@ -462,6 +475,7 @@ const getRecords = async () => {
         if (res.code == 200) {
             records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
             total.value = res.data.total;
+            summary.value = res.data.summary || { total_points_change: 0, total_score_change: 0 };
         }
     } catch (error) {
         console.error('查询失败:', error);
@@ -608,11 +622,12 @@ const exportTable = async () => {
                     '台号': item.group_nickname,
                     '会员昵称': item.player_name,
                     '兑换积分/庄闲洗码/返水': item.option_type,
-                    '兑换/返水金额': item.exchange_money,
+                    '兑换比例': item.personal_points_redemption_ratio,
+                    '积分数量': item.redeem_points,
                     '操作时间': formattedDate(item.option_time),
                     '备注': item.memo || '-',
                     '兑换/返水类型': item.exchange_type || '-',
-                    '返水金额': item.score_change || '-',
+                    '返水金额': item.rebate_amount || '-',
                     '庄闲洗码/返水兑换日期': item.exchange_date ? formattedDate(item.exchange_date) : '-',
                     '操作员': item.operator || '-'
                 })

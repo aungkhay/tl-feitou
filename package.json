@@ -18,6 +18,7 @@
   "main": "electron/main.cjs",
   "build": {
     "appId": "com.xiaoyang.weitoucaiwu",
+    "compression": "maximum",
     "asar": true,
     "productName": "微投财务",
     "files": [

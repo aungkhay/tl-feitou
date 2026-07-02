@@ -184,7 +184,7 @@
             </template>
              <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td :colspan="filters.player_name ? 3 : 2">合计</td>
+                    <td :colspan="3">合计</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 
@@ -193,10 +193,69 @@
                     <td>{{ summary.total_points }}</td>
                 </tr>
             </template>
+            <template #item="{ item, columns, toggleExpand, isExpanded }">
+                <tr @dblclick="onRowDblClick(item)">
+                    <td v-for="column in columns" :key="column.key" style="font-size: 12px;">
+                        {{ item[column.key] }}
+                    </td>
+                </tr>
+            </template>
         </v-data-table-server>
+
+        <v-dialog v-model="editDialog" max-width="450" persistent>
+            <v-card>
+                <v-card-title class="headline">选手盈亏详情</v-card-title>
+                <v-card-text>
+                    <div v-if="selectedRow">
+                        <!-- <p><strong>选手昵称:</strong> {{ selectedRow.username }}</p>
+                        <p><strong>庄闲洗码总分:</strong> {{ selectedRow.xml_zx }}</p>
+                        <p><strong>三宝+幸运6+对子洗码总分:</strong> {{ selectedRow.xml_sb }}</p>
+                        <p><strong>庄闲赢亏总分:</strong> {{ selectedRow.zx_yl }}</p>
+                        <p><strong>三宝+幸运6+对子总分:</strong> {{ selectedRow.sb_yl }}</p>
+                        <p><strong>有效流水总分:</strong> {{ selectedRow.yxxz }}</p>
+                        <p><strong>日积分总分:</strong> {{ selectedRow.total_points }}</p> -->
+
+                        <v-text-field
+                            v-model="selectedRow.username"
+                            label="选手昵称"
+                            readonly
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.xml_zx"
+                            label="庄闲洗码总分"
+                        />
+                        <v-text-field
+                            v-model="selectedRow.xml_sb"
+                            label="三宝+幸运6+对子洗码总分"
+                        />
+                        <v-text-field
+                            v-model="selectedRow.zx_yl"
+                            label="庄闲赢亏总分"
+                        />
+                        <v-text-field
+                            v-model="selectedRow.sb_yl"
+                            label="三宝+幸运6+对子总分"
+                        />
+                        <v-text-field
+                            v-model="selectedRow.yxxz"
+                            label="有效流水总分"
+                        />
+                        <v-text-field
+                            v-model="selectedRow.total_points"
+                            label="日积分总分"
+                        />
+                    </div>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="editRow">关闭</v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
     </div>
 </template>
-
+    
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { useUserStore } from '../../stores/user';
@@ -215,6 +274,8 @@ const perPage = ref(15);
 const total = ref(0);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
+const selectedRow = ref(null);
+const editDialog = ref(false);
 
 const filters = ref({
     player_name: null,
@@ -229,8 +290,8 @@ const filters = ref({
 });
 
 const allHeaders = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 80 },
-    { title: '选手', value: 'username', fixed: 'start', width: 120 },
+    { title: '序列', value: 'index', fixed: 'start', width: 70 },
+    { title: '选手', value: 'username', fixed: 'start', minWidth: 120 },
     // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
     { title: '日期', value: 'stat_date', minWidth: 120},
     { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
@@ -245,10 +306,10 @@ const allHeaders = ref([
 const headers = computed(() => {
     // hide username and reference_name columns filters'player_name is empty, otherwise show them
     if (!filters.value.player_name) {
-        allHeaders.value.find(header => header.value === 'username').hidden = true;
+        // allHeaders.value.find(header => header.value === 'username').hidden = true;
         // allHeaders.value.find(header => header.value === 'reference_name').hidden = true;
     } else {
-        allHeaders.value.find(header => header.value === 'username').hidden = false;
+        // allHeaders.value.find(header => header.value === 'username').hidden = false;
         // allHeaders.value.find(header => header.value === 'reference_name').hidden = false;
     }
     return allHeaders.value.filter(header => !header.hidden);
@@ -356,4 +417,18 @@ watch(
         }
     }
 )
+
+const onRowDblClick = (item) => {
+    selectedRow.value = item;
+    editDialog.value = true;
+}
+const editRow = () => {
+    const index = records.value.findIndex(record => record.index === selectedRow.value.index);
+    if (index !== -1) {
+        records.value[index] = { ...selectedRow.value };
+        editDialog.value = false;
+    } else {
+        toast.error('修改失败，未找到对应记录');
+    }
+}
 </script>

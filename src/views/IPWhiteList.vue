@@ -4,7 +4,7 @@
             <v-btn color="primary" class="mr-2" @click="dialog = true"><v-icon>mdi-plus</v-icon> 新增</v-btn>
         </div>
         <v-row dense>
-            <v-col cols="12" sm="4" md="2" v-for="(ip, index) in ipList" :key="index">
+            <v-col cols="12" sm="4" md="3" lg="2" v-for="(ip, index) in ipList" :key="index">
                 <v-card variant="outlined" color="grey-lighten-2" class="mb-2">
                     <v-card-text class="d-flex justify-space-between align-center">
                         <div class="text-black">{{ ip }}</div>

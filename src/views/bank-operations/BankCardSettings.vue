@@ -104,7 +104,7 @@
 
         <v-dialog
             v-model="dialog"
-            max-width="400"
+            max-width="450"
             persistent
         >
             <v-card>
@@ -153,6 +153,51 @@
                             @input="v$.initial_amount.$touch"
                             @blur="v$.initial_amount.$touch"
                         ></v-text-field>
+                        <v-text-field
+                            v-model="obj.bonus_amount"
+                            label="上分金额"
+                            density="compact"
+                            variant="outlined"
+                            :error-messages="v$.bonus_amount.$errors.map(e => e.$message)"
+                            @input="v$.bonus_amount.$touch"
+                            @blur="v$.bonus_amount.$touch"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="obj.deduction_amount"
+                            label="下分金额"
+                            density="compact"
+                            variant="outlined"
+                            :error-messages="v$.deduction_amount.$errors.map(e => e.$message)"
+                            @input="v$.deduction_amount.$touch"
+                            @blur="v$.deduction_amount.$touch"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="obj.transfer_in_amount"
+                            label="转入金额"
+                            density="compact"
+                            variant="outlined"
+                            :error-messages="v$.transfer_in_amount.$errors.map(e => e.$message)"
+                            @input="v$.transfer_in_amount.$touch"
+                            @blur="v$.transfer_in_amount.$touch"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="obj.transfer_out_amount"
+                            label="转出金额"
+                            density="compact"
+                            variant="outlined"
+                            :error-messages="v$.transfer_out_amount.$errors.map(e => e.$message)"
+                            @input="v$.transfer_out_amount.$touch"
+                            @blur="v$.transfer_out_amount.$touch"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="obj.handling_fee"
+                            label="手续费"
+                            density="compact"
+                            variant="outlined"
+                            :error-messages="v$.handling_fee.$errors.map(e => e.$message)"
+                            @input="v$.handling_fee.$touch"
+                            @blur="v$.handling_fee.$touch"
+                        />
                         <v-select
                             v-model="obj.card_status"
                             :items="cardStatuses"
@@ -230,14 +275,24 @@ const obj = ref({
     card_name: null,
     card_code: null,
     initial_amount: null,
+    bonus_amount: 0,
+    deduction_amount: 0,
+    transfer_in_amount: 0,
+    transfer_out_amount: 0,
     card_status: null,
+    handling_fee: 0,
 });
 const rules = ref({
     card_type: { required: helpers.withMessage('卡类型不能为空', required) },
     card_name: { required: helpers.withMessage('姓名不能为空', required) },
     card_code: { required: helpers.withMessage('卡号不能为空', required) },
     initial_amount: { required: helpers.withMessage('初始金额不能为空', required) },
+    bonus_amount: { required: helpers.withMessage('上分金额不能为空', required) },
+    deduction_amount: { required: helpers.withMessage('下分金额不能为空', required) },  
+    transfer_in_amount: { required: helpers.withMessage('转入金额不能为空', required) },
+    transfer_out_amount: { required: helpers.withMessage('转出金额不能为空', required) },
     card_status: { required: helpers.withMessage('卡状态不能为空', required) },
+    handling_fee: { required: helpers.withMessage('手续费不能为空', required) },
 })
 const v$ = useVuelidate(rules.value, obj.value);
 
@@ -270,6 +325,11 @@ const closeDialog = () => {
     obj.value.card_name = null;
     obj.value.card_code = null;
     obj.value.initial_amount = null;
+    obj.value.bonus_amount = 0;
+    obj.value.deduction_amount = 0;
+    obj.value.transfer_in_amount = 0;
+    obj.value.transfer_out_amount = 0;
+    obj.value.handling_fee = 0;
     obj.value.card_status = null;
     v$.value.$reset();
 }
@@ -288,6 +348,11 @@ const saveCard = async () => {
                 obj.value.card_name,
                 obj.value.card_code,
                 obj.value.initial_amount,
+                obj.value.bonus_amount,
+                obj.value.deduction_amount,
+                obj.value.transfer_in_amount,
+                obj.value.transfer_out_amount,
+                obj.value.handling_fee,
                 obj.value.card_status
             );
         } else {
@@ -296,6 +361,11 @@ const saveCard = async () => {
                 obj.value.card_name,
                 obj.value.card_code,
                 obj.value.initial_amount,
+                obj.value.bonus_amount,
+                obj.value.deduction_amount,
+                obj.value.transfer_in_amount,
+                obj.value.transfer_out_amount,
+                obj.value.handling_fee,
                 obj.value.card_status
             );
         }
@@ -360,6 +430,11 @@ const editCard = async (card) => {
     obj.value.card_name = card.card_name;
     obj.value.card_code = card.card_code;
     obj.value.initial_amount = card.initial_amount;
+    obj.value.bonus_amount = card.bonus_amount;
+    obj.value.deduction_amount = card.deduction_amount;
+    obj.value.transfer_in_amount = card.transfer_in_amount;
+    obj.value.transfer_out_amount = card.transfer_out_amount;
+    obj.value.handling_fee = card.handling_fee;
     obj.value.card_status = card.card_status;
     dialog.value = true;
 }

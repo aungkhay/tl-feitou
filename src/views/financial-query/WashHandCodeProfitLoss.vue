@@ -182,6 +182,19 @@
             <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
             </template>
+            <template
+                v-for="header in headers.filter(h => h.copyable)"
+                :key="header.value"
+                #[`header.${header.value}`]="{ column }"
+            >
+                 <v-tooltip text="点击复制">
+                    <template v-slot:activator="{ props }">
+                        <span v-bind="props" style="cursor: pointer;" @click="copyColumn(column.value)">
+                            {{ column.title }}
+                        </span>
+                    </template>
+                </v-tooltip>
+            </template>
              <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td :colspan="3">合计</td>
@@ -207,14 +220,6 @@
                 <v-card-title class="headline">选手盈亏详情</v-card-title>
                 <v-card-text>
                     <div v-if="selectedRow">
-                        <!-- <p><strong>选手昵称:</strong> {{ selectedRow.username }}</p>
-                        <p><strong>庄闲洗码总分:</strong> {{ selectedRow.xml_zx }}</p>
-                        <p><strong>三宝+幸运6+对子洗码总分:</strong> {{ selectedRow.xml_sb }}</p>
-                        <p><strong>庄闲赢亏总分:</strong> {{ selectedRow.zx_yl }}</p>
-                        <p><strong>三宝+幸运6+对子总分:</strong> {{ selectedRow.sb_yl }}</p>
-                        <p><strong>有效流水总分:</strong> {{ selectedRow.yxxz }}</p>
-                        <p><strong>日积分总分:</strong> {{ selectedRow.total_points }}</p> -->
-
                         <v-text-field
                             v-model="selectedRow.username"
                             label="选手昵称"
@@ -243,6 +248,7 @@
                         <v-text-field
                             v-model="selectedRow.total_points"
                             label="日积分总分"
+                            hide-details
                         />
                     </div>
                 </v-card-text>
@@ -260,7 +266,7 @@
 import { computed, ref, watch } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_PLAYER_DETAILS_QUERY} from '../../js/api/financial_inquiries';
-import { formattedDate, exportExcel } from '../../js/common';
+import { formattedDate, exportExcel, copyData } from '../../js/common';
 import { useToast } from 'vue-toastification';
 import moment from 'moment';
 import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
@@ -290,16 +296,16 @@ const filters = ref({
 });
 
 const allHeaders = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 70 },
-    { title: '选手', value: 'username', fixed: 'start', minWidth: 120 },
-    // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120 },
-    { title: '日期', value: 'stat_date', minWidth: 120},
-    { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120 },
-    { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200 },
-    { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120 },
-    { title: '三宝+幸运6+对子总分', value: 'sb_yl', minWidth: 200 },
-    { title: '有效流水总分', value: 'yxxz', minWidth: 120 },
-    { title: '日积分总分', value: 'total_points', minWidth: 110 },
+    { title: '序列', value: 'index', fixed: 'start', width: 70, copyable: false },
+    { title: '选手', value: 'username', fixed: 'start', minWidth: 120, copyable: false },
+    // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120, copyable: false },
+    { title: '日期', value: 'stat_date', minWidth: 120, copyable: false },
+    { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120, copyable: true },
+    { title: '三宝+幸运6+对子洗码总分', value: 'xml_sb', minWidth: 200, copyable: true },
+    { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120, copyable: true },
+    { title: '三宝+幸运6+对子总分', value: 'sb_yl', minWidth: 200, copyable: true },
+    { title: '有效流水总分', value: 'yxxz', minWidth: 120, copyable: true },
+    { title: '日积分总分', value: 'total_points', minWidth: 110, copyable: true },
     // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
     // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
 ]);
@@ -427,8 +433,24 @@ const editRow = () => {
     if (index !== -1) {
         records.value[index] = { ...selectedRow.value };
         editDialog.value = false;
+
+        // Update the summary after editing the row
+        summary.value.total_xml_zx = records.value.reduce((sum, record) => sum + (parseFloat(record.xml_zx) || 0), 0);
+        summary.value.total_xml_sb = records.value.reduce((sum, record) => sum + (parseFloat(record.xml_sb) || 0), 0);
+        summary.value.total_zx_yl = records.value.reduce((sum, record) => sum + (parseFloat(record.zx_yl) || 0), 0);
+        summary.value.total_sb_yl = records.value.reduce((sum, record) => sum + (parseFloat(record.sb_yl) || 0), 0);
+        summary.value.total_yxxz = records.value.reduce((sum, record) => sum + (parseFloat(record.yxxz) || 0), 0);
+        summary.value.total_points = records.value.reduce((sum, record) => sum + (parseFloat(record.total_points) || 0), 0);
     } else {
         toast.error('修改失败，未找到对应记录');
     }
+}
+
+const copyColumn = async (key) => {
+    const text = records.value.map(item => item[key]).join('\n')
+    // console.log(text)
+    copyData(text).then(msg => {
+        toast.success(msg);
+    })
 }
 </script>

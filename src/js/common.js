@@ -1,6 +1,16 @@
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import moment from 'moment'
+import ClipboardCopy from "clipboard-copy";
+
+export const copyData = async (content) => {
+    try {
+        await ClipboardCopy(content)
+        return '复制成功'
+    } catch (err) {
+        return '复制失败'
+    }
+}
 
 export const formattedDate = (date, time) => {
     if (!date) return ''

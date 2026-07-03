@@ -289,16 +289,16 @@ const fanshuiStartDateMenu = ref(false);
 const obj = ref({
     player_name: null,
     group_nickname: null,
-    bp_personal_share: null,
-    bp_personal_share_upperlimit: null,
-    sb_personal_share: null,
-    redemption_type: null,
-    rebate_ratio: null,
-    personal_points_redemption_ratio: null,
+    bp_personal_share: 0,
+    bp_personal_share_upperlimit: 0,
+    sb_personal_share: 0,
+    redemption_type: '积分',
+    rebate_ratio: 0,
+    personal_points_redemption_ratio: 0,
     redemption_start_time: new Date(),
-    rebate_type: null,
+    rebate_type: '庄闲输赢',
     rebate_pair_start_time: new Date(),
-    start_exchange: null,
+    start_exchange: 1,
 })
 const isSaving = ref(false);
 const isSavingIndividualShare = ref(false);
@@ -469,16 +469,16 @@ watch(() => obj.value.group_nickname, (newVal) => {
 });
 watch(() => obj.value.player_name, (newVal) => {
     if (newVal) {
-        obj.value.bp_personal_share = null;
-        obj.value.bp_personal_share_upperlimit = null;
-        obj.value.sb_personal_share = null;
-        obj.value.redemption_type = null;
-        obj.value.rebate_ratio = null;
-        obj.value.personal_points_redemption_ratio = null;
+        obj.value.bp_personal_share = 0;
+        obj.value.bp_personal_share_upperlimit = 0;
+        obj.value.sb_personal_share = 0;
+        obj.value.redemption_type = '积分';
+        obj.value.rebate_ratio = 0;
+        obj.value.personal_points_redemption_ratio = 0;
         obj.value.redemption_start_time = new Date();
-        obj.value.rebate_type = null;
+        obj.value.rebate_type = '庄闲输赢';
         obj.value.rebate_pair_start_time = new Date();
-        obj.value.start_exchange = null;
+        obj.value.start_exchange = 1;
         getPersonalExchangeRatio();
     }
 });

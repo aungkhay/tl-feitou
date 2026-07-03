@@ -45,7 +45,9 @@
     "icon": "build/icon",
     "win": {
       "icon": "build/icon.ico",
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "nsis": {
       "installerIcon": "build/icon.ico",
@@ -54,8 +56,10 @@
       "allowToChangeInstallationDirectory": true,
       "perMachine": false,
       "displayLanguageSelector": true,
-      "installerLanguages": ["zh_CN", "en_US"],
-
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
       "artifactName": "${productName} ${version}.${ext}",
       "shortcutName": "${productName}",
       "uninstallDisplayName": "${productName} 卸载程序"
@@ -66,6 +70,7 @@
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "axios": "^1.13.5",
+    "clipboard-copy": "^4.0.1",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "md5": "^2.3.0",

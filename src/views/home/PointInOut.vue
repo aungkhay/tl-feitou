@@ -122,6 +122,24 @@
         
         <v-card elevation="0" class="border px-1 pt-2 pb-1 rounded mt-2">
             <v-row dense>
+                <v-col cols="12" md="1" class="d-flex align-center">
+                    <v-autocomplete
+                        v-model="filters.record2_group_nickname"
+                        :items="groups"
+                        label="群昵称"
+                        density="compact"
+                        item-title="group_nickname"
+                        item-value="group_nickname"
+                        variant="outlined"
+                        color="primary"
+                        hide-details
+                        autocomplete="off"
+                    >
+                        <template #item="{ props }">
+                            <v-list-item v-bind="props" density="compact" />
+                        </template>
+                    </v-autocomplete>
+                </v-col>
                 <v-col cols="12" md="3" class="d-flex align-center">
                     <div class="w-50">
                         <v-text-field
@@ -265,7 +283,7 @@
                         </div>
                     </v-menu>
                 </v-col>
-                <v-col cols="12" md="2">
+                <v-col cols="12" md="1">
                     <v-btn color="primary" block @click="getRecords2"><v-icon>mdi-magnify</v-icon> 搜索</v-btn>
                 </v-col>
             </v-row>
@@ -285,7 +303,7 @@
             hover
             :items-per-page-options="pageSizeOptions"
             hide-default-footer
-            :height="isElectron ? 350 : records2.length ? 300 : null"
+            :height="isElectron && records2.length >= 10 ? 350 : records2.length >= 10 ? 300 : null"
         >
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -389,6 +407,7 @@ const searchPlayer = ref('');
 const searchPlayername = ref('');
 const filters = ref({
     group_nickname: null,
+    record2_group_nickname: null,
     option_type: null,
     optioner: null,
     start_date: moment().startOf('day').format('YYYY-MM-DD'),
@@ -579,7 +598,7 @@ const getRecords2 = async () => {
     loading2.value = true;
     try {
         const res = await GET_SCORE_OPTION_RECORD(
-            filters.value.group_nickname,
+            filters.value.record2_group_nickname,
             filters.value.option_type,
             filters.value.optioner,
             filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,

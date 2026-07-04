@@ -52,7 +52,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计</td>
+                    <td>合计</td>
                     <td>{{ summary1.total_agent }}</td>
                     <td>{{ summary1.total_points }}</td>
                     <td>{{ summary1.total_yl }}</td>
@@ -87,7 +87,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计</td>
+                    <td colspan="2">合计</td>
                     <td>{{ summary2.sum_fyje }}</td>
                     <td>{{ summary2.sum_points }}</td>
                     <td>{{ summary2.sum_yl }}</td>
@@ -187,7 +187,7 @@ const loading1 = ref(false);
 const agents = ref([]);
 const selectedAgent = ref(null);
 const headers1 = [
-    { title: '序列', value: 'index', minWidth: 100 },
+    // { title: '序列', value: 'index', minWidth: 100 },
     { title: '用户名', value: 'username', fixed: 'start', minWidth: 120 },
     { title: '代理人数', value: 'member_count', minWidth: 100 },
     { title: '总积分', value: 'total_points', minWidth: 100 },
@@ -226,7 +226,7 @@ const members = ref([]);
 const players = ref([]);
 const searchPlayer = ref('');
 const headers2 = [
-    { title: '序列', value: 'index' },
+    // { title: '序列', value: 'index' },
     { title: '代理名称', value: 'reference_name' },
     { title: '会员名称', value: 'username' },
     { title: '返佣金额', value: 'fyje' },

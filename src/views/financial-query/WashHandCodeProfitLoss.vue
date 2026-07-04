@@ -197,7 +197,7 @@
             </template>
              <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td :colspan="3">合计</td>
+                    <td :colspan="2">合计</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 
@@ -296,7 +296,7 @@ const filters = ref({
 });
 
 const allHeaders = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 70, copyable: false },
+    // { title: '序列', value: 'index', fixed: 'start', width: 70, copyable: false },
     { title: '选手', value: 'username', fixed: 'start', minWidth: 120, copyable: false },
     // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120, copyable: false },
     { title: '日期', value: 'stat_date', minWidth: 120, copyable: false },

@@ -2,16 +2,40 @@
     <div class="px-2 py-3">
         <div class="mb-2 border px-2 pt-3 pb-2 rounded">
             <v-row dense>
-                <v-col cols="12" sm="2">
-                    <v-text-field
-                        v-model="filters.optioner"
-                        label="操作人"
-                        density="compact"
-                        variant="outlined"
-                        hide-details
-                        clearable
-                        @click:clear="filters.optioner = null"
-                    ></v-text-field>
+                <v-col cols="12" sm="3" class="d-flex items-center">
+                    <div class="w-50">
+                        <v-autocomplete
+                            v-model="filters.group_nickname"
+                            :items="groups"
+                            label="群昵称"
+                            density="compact"
+                            item-title="group_nickname"
+                            item-value="group_nickname"
+                            variant="outlined"
+                            color="primary"
+                            hide-details
+                            autocomplete="off"
+                            class="mr-1"
+                            clearable
+                            @click:clear="filters.group_nickname = null;"
+                        >
+                            <template #item="{ props }">
+                                <v-list-item v-bind="props" density="compact" />
+                            </template>
+                        </v-autocomplete>
+                    </div>
+                    <div class="w-50">
+                        <v-text-field
+                            v-model="filters.optioner"
+                            label="操作人"
+                            density="compact"
+                            variant="outlined"
+                            hide-details
+                            clearable
+                            @click:clear="filters.optioner = null"
+                            class="ml-1"
+                        ></v-text-field>
+                    </div>
                 </v-col>
                 <v-col cols="12" sm="2">
                     <v-select
@@ -60,7 +84,7 @@
                         @click:clear="filters.sort_name = null"
                     ></v-select>
                 </v-col>
-                <v-col cols="12" sm="2">
+                <v-col cols="12" sm="1">
                     <v-btn class="mr-2" color="primary" block @click="getCards"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
@@ -235,6 +259,7 @@ const dialog = ref(false);
 const cardTypes = ref(['上分卡', '下分卡', '存储卡', '中转卡', '财务卡', '第三方']);
 const cardStatuses = ref(['正常', '冻结', '隐藏']);
 const sortOptions = ref(['姓名', '类型', '状态']);
+const groups = computed(() => userStore.groups);
 const page = ref(1);
 const perPage = ref(15);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
@@ -243,7 +268,7 @@ const loading = ref(false);
 const cards = ref([]);
 const selectedCardId = ref(0);
 const headers = ref([
-    { title: '列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '列', value: 'index', fixed: 'start', width: 60 },
     { title: '卡类型', value: 'card_type', fixed: 'start', width: 100 },
     { title: '姓名', value: 'card_name', fixed: 'start', minWidth: 100 },
     { title: '卡号', value: 'card_code', minWidth: 150 },
@@ -261,6 +286,7 @@ const headers = ref([
 ]);
 
 const filters = ref({
+    group_nickname: null,
     card_type: null,
     card_status: null,
     optioner: null,

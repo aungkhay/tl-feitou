@@ -141,7 +141,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计({{ summary.total_users }})</td>
+                    <td colspan="2">合计({{ summary.total_users }})</td>
                     <td>{{ summary.sum_yxxz }}</td>
                     <td>{{ summary.sum_zx_yl }}</td>
                     <td>{{ summary.sum_xml_sb }}</td>
@@ -176,7 +176,7 @@ const total = ref(0);
 const members = ref([]);
 const loading = ref(false);
 const headers = [
-    { title: '序列', value: 'index', minWidth: 100 },
+    // { title: '序列', value: 'index', minWidth: 100 },
     { title: '代理', value: 'reference_name', minWidth: 150 },
     { title: '玩家昵称', value: 'username', minWidth: 150 },
     { title: '庄闲(龙虎)洗码', value: 'total_xml_zx', minWidth: 150 },

@@ -35,6 +35,7 @@
         </template>
 
         <v-spacer></v-spacer>
+        <div class="text-error">【汇总:{{ score.zyk }}, N宝:{{ score.sblyk }}, 零钱:{{ score.ltyk }}, 对冲:{{ score.dcyk }}, 个占:{{ score.gyk }}】【剩余:{{ score.total_score }}, 初始:{{ score.total_raw_score }}】</div>
         <v-btn :icon="isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" color="primary" @click="toggleFullScreen"></v-btn>
         <v-btn color="primary" @click="refreshPage" variant="tonal"><v-icon>mdi-refresh</v-icon> 刷新</v-btn>
     </v-app-bar>
@@ -45,6 +46,7 @@ import { computed, onMounted, onUnmounted, ref, reactive, watch } from 'vue';
 import { useDrawerStore } from '../stores/drawer';
 import { useTabsStore } from '../stores/tabs';
 import { useRouter } from 'vue-router';
+import { GET_PROFIT_SCORE } from '../js/api/player_option';
 
 const drawerStore = useDrawerStore();
 const tabsStore = useTabsStore();
@@ -56,6 +58,15 @@ const active = computed({
 });
 const router = useRouter();
 const isFullScreen = ref(false);
+const score = ref({
+    total_score: 0,
+    total_raw_score: 0,
+    zyk: 0,
+    sblyk: 0,
+    ltyk: 0,
+    dcyk: 0,
+    gyk: 0
+});
 
 const tabMenu = reactive({
     open: false,
@@ -116,7 +127,19 @@ const checkFullscreen = () => {
     isFullScreen.value = !isFullScreen.value;
 };
 
+const getScore = async () => {
+    try {
+        const response = await GET_PROFIT_SCORE();
+        if (response && response.data) {
+            score.value = response.data[0];
+        }
+    } catch (error) {
+        console.error('Error fetching profit score:', error);
+    }
+};
+
 onMounted(() => {
     window.addEventListener('resize', checkFullscreen);
+    getScore();
 });
 </script>

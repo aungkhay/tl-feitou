@@ -99,7 +99,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3" style="position: sticky; left: 0; background-color: #d4d4d4; z-index: 1;">合计: {{ summary.total_count }}</td>
+                    <td colspan="2" style="position: sticky; left: 0; background-color: #d4d4d4; z-index: 1;">合计: {{ summary.total_count }}</td>
                     <td>{{ summary.total_x }}</td>
                     <td>{{ summary.total_z }}</td>
                     <td>{{ summary.total_xd }}</td>
@@ -155,7 +155,7 @@ const total = ref(0);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', width: 120 },
     { title: '局', value: 'cc', fixed: 'start', minWidth: 80 },
     { title: '闲', value: 'x', minWidth: 80 },

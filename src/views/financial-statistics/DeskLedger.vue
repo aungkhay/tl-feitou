@@ -138,7 +138,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计</td>
+                    <td colspan="1">合计</td>
                     <td>{{ summary.xzspyk }}</td>
                     <td>{{ summary.spxm }}</td>
                     <td>{{ summary.spzsyk }}</td>
@@ -170,7 +170,7 @@ const perPage = ref(15);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '日期', value: 'stat_date', fixed: 'start', minWidth: 120 },
     { title: '庄闲/龙虎上盘输赢', value: 'xzspyk', minWidth: 150 },
     { title: '上盘洗码汇总', value: 'spxm', minWidth: 150 },

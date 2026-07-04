@@ -138,7 +138,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计</td>
+                    <td colspan="2">合计</td>
                     <td>{{ summary.g_xz }}</td>
                     <td>{{ summary.g_yl }}</td>
                     <td>{{ summary.g_lyzf }}</td> 
@@ -165,7 +165,7 @@ const perPage = ref(15);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
     { title: '工作日', value: 'stat_date', minWidth: 150 },
     { title: '个人占成总投注分', value: 'g_xz', minWidth: 150 },

@@ -184,7 +184,7 @@
                     <td colspan="2">总数: {{ summary.total_count }}</td>
                     <td colspan="2">总下注: {{ summary.total_xz }}</td>
                     <td colspan="2">总盈亏: {{ summary.total_yl }}</td>
-                    <td colspan="6"></td>
+                    <td colspan="5"></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -217,7 +217,7 @@ const loading = ref(false);
 const isExporting = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', minWidth: 70 },
+    // { title: '序列', value: 'index', fixed: 'start', minWidth: 70 },
     { title: '会员昵称', value: 'palyer_nickname', minWidth: 120 },
     { title: '靴局', value: 'round', minWidth: 100 },
     { title: '下注金额', value: 'bet', minWidth: 120 },

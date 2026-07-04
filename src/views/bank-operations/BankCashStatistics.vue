@@ -178,7 +178,7 @@ const perPage = ref(15);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '列', value: 'index', fixed: 'start', width: 60 },
     { title: '上分', value: 'deposit_amount', width: 100 },
     { title: '下分', value: 'withdraw_amount', width: 100 },
     { title: '转入', value: 'transfer_in_amount', width: 100 },

@@ -166,7 +166,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="5">{{ summary.card_type }}</td>
+                    <td colspan="4">{{ summary.card_type }}</td>
                     <td>{{ summary.option_amount }}</td>
                     <td colspan="4"></td>
                 </tr>
@@ -198,7 +198,7 @@ const page = ref(1);
 const perPage = ref(15);
 const total = ref(0);
 const headers = ref([
-    { title: '列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '列', value: 'index', fixed: 'start', width: 60 },
     { title: '卡类型', value: 'card_type', fixed: 'start', width: 100 },
     { title: '卡姓名', value: 'card_name', fixed: 'start', minWidth: 120 },
     { title: '卡号', value: 'card_code', minWidth: 150 },

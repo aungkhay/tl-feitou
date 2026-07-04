@@ -40,7 +40,7 @@ export const ADD_OFFICE_EXPENSE = async (project_name, card_name, amount, is_ini
     return await API.post(`${prefix}/office_business/add_office_expenses`, {
         project_name: project_name,
         card_name: card_name,
-        amount: amount,
+        amount: Number(amount),
         is_initial_card: is_initial_card ? 1 : 0,
         optioner: optioner,
         remark: remark
@@ -62,7 +62,7 @@ export const EDIT_OFFICE_EXPENSE = async (id, project_name, card_name, amount, o
         id: id,
         project_name: project_name,
         card_name: card_name,
-        amount: amount,
+        amount: Number(amount),
         optioner: optioner,
         remark: remark
     });

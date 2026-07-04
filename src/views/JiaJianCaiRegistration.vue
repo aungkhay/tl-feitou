@@ -171,7 +171,7 @@
                     <td colspan="2">总计：{{ summary.net_total }}</td>
                     <td colspan="2">总加：{{ summary.total_add }}</td>
                     <td colspan="2">总减：{{ summary.total_subtract }}</td>
-                    <td colspan="4"></td>
+                    <td colspan="3"></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -278,7 +278,7 @@ const perPage = ref(15);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 70 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 70 },
     { title: '拉取端', value: 'pull_end', fixed: 'start', minWidth: 120 },
     { title: '当前金额', value: 'money', minWidth: 120 },
     { title: '操作金额', value: 'option_money', minWidth: 120 },

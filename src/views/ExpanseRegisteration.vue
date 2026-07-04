@@ -156,7 +156,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计</td>
+                    <td colspan="2">合计</td>
                     <td>{{ summary.total_money }}</td>
                     <td colspan="9"></td>
                 </tr>
@@ -303,7 +303,7 @@ const perPage = ref(15);
 const total = ref(0);
 const loading = ref(false);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '项目名称', value: 'project_name', fixed: 'start', width: 120 },
     { title: '经手人', value: 'optioner', fixed: 'start', minWidth: 120 },
     { title: '操作金额', value: 'option_money', minWidth: 100 },

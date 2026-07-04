@@ -201,7 +201,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">{{ summary.playername }}</td>
+                    <td colspan="2">{{ summary.playername }}</td>
                     <td>{{ summary.score }}</td>
                     <td colspan="7"></td>
                 </tr>
@@ -346,7 +346,7 @@ const searchPlayer = ref('');
 const searchSourcePlayer = ref('');
 const searchTargetPlayer = ref('');
 const headers = ref([
-    { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
+    // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
     { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
     { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 100 },
     { title: '操作金额', key: 'score', sortable: false, minWidth: 120 },

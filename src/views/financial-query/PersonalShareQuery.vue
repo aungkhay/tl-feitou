@@ -164,7 +164,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="4">合计</td>
+                    <td colspan="3">合计</td>
                     <td>{{ summary.zxzcxm }}</td>
                     <td>{{ summary.zxyl }}</td>
                     <td>{{ summary.xml_sb }}</td>
@@ -194,7 +194,7 @@ const perPage = ref(15);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
     { title: '日期', value: 'stat_date', width: 120 },
     { title: '昵称', value: 'nickname', minWidth: 100 },

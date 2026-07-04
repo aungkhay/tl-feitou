@@ -182,3 +182,7 @@ export const PLAYER_FUZZY_QUERY = async (player_name, pageSize = 100, currentPag
         currentPage: currentPage
     });
 }
+
+export const GET_PROFIT_SCORE = async () => {
+    return await API.post(`${prefix}/player_option/get_profit_score`);
+}

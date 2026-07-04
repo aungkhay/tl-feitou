@@ -422,7 +422,7 @@ const startDateMenu = ref(false);
 const endDateMenu = ref(false);
 const records1 = ref([]);
 const headers1 = ref([
-    { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
+    // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
     { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
     { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 100 },
     { title: '剩余积分', key: 'score', sortable: false, minWidth: 70 },
@@ -451,7 +451,7 @@ const loadingMore1 = ref(false)
 
 const records2 = ref([]);
 const headers2 = ref([
-    { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
+    // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
     { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
     { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 100 },
     { title: '操作金额', key: 'score', sortable: false, minWidth: 100 },

@@ -313,7 +313,7 @@ const page = ref(1);
 const perPage = ref(15);
 const total = ref(0);
 const headers = ref([
-    { title: '列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '列', value: 'index', fixed: 'start', width: 60 },
     { title: '操作人', value: 'optioner', fixed: 'start', minWidth: 100 },
     { title: '操作时间', value: 'option_time', minWidth: 170 },
     { title: '操作金额', value: 'option_amount', minWidth: 120 },

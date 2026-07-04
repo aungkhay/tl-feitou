@@ -193,7 +193,7 @@
             </template>
              <template #body.append>
                 <tr>
-                    <td colspan="12" class="py-2">
+                    <td colspan="11" class="py-2">
                         <span class="mr-5">总积分数量: {{ summary.total_points_change }}</span>
                         <span>返水金额: {{ summary.total_score_change }}</span>
                     </td>
@@ -406,7 +406,7 @@ const total = ref(0);
 const records = ref([]);
 const loading = ref(false);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
     { title: '会员昵称', value: 'player_name', minWidth: 150 },
     { title: '兑换积分/庄闲洗码/返水', value: 'option_type', minWidth: 200 },

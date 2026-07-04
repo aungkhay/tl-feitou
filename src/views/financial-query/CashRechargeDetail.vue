@@ -160,7 +160,7 @@
                     <td colspan="2">总充值: {{ summary.total_add }}</td>
                     <td colspan="2">总取款: {{ summary.total_subtract }}</td>
                     <td colspan="2">净总额: {{ summary.net_total }}</td>
-                    <td colspan="5"></td>
+                    <td colspan="4"></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -185,7 +185,7 @@ const perPage = ref(15);
 const loading = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
-    { title: '序列', value: 'index', fixed: 'start', width: 60 },
+    // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
     { title: '会员昵称', value: 'playername', minWidth: 120 },
     { title: '操作金额', value: 'score', minWidth: 120 },

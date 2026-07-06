@@ -94,16 +94,16 @@
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
-            <template #body.append>
+            <!-- <template #body.append>
                 <tr v-if="noMoreData1">
                     <td :colspan="headers1.length" class="text-center py-2">没有更多数据</td>
                 </tr>
-            </template>
+            </template> -->
         </v-data-table-server>
         <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
             <tbody>
                 <tr class="text-caption">
-                    <td>{{ playerSummary.playername }}:</td>
+                    <td colspan="2">{{ playerSummary.playername }}:</td>
                     <td>剩余积分: {{ playerSummary.score }}</td>
                     <td>冻结积分: {{ playerSummary.freeze_score }}</td>
                     <td>原始积分: {{ playerSummary.raw_score }}</td>
@@ -134,6 +134,8 @@
                         color="primary"
                         hide-details
                         autocomplete="off"
+                        clearable
+                        @click:clear="filters.record2_group_nickname = null;"
                     >
                         <template #item="{ props }">
                             <v-list-item v-bind="props" density="compact" />
@@ -284,7 +286,7 @@
                     </v-menu>
                 </v-col>
                 <v-col cols="12" md="1">
-                    <v-btn color="primary" block @click="getRecords2"><v-icon>mdi-magnify</v-icon> 搜索</v-btn>
+                    <v-btn color="primary" block @click="isSearchTable2 = true; getRecords2();"><v-icon>mdi-magnify</v-icon> 搜索</v-btn>
                 </v-col>
             </v-row>
         </v-card>
@@ -323,16 +325,17 @@
             <template #item.actions="{ item }">
                 <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="x-small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
-            <template #body.append>
+            <!-- <template #body.append>
                 <tr v-if="noMoreData2">
                     <td :colspan="headers2.length" class="text-center py-2">没有更多数据</td>
                 </tr>
-            </template>
+            </template> -->
         </v-data-table-server>
         <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
             <tbody>
                 <tr class="text-caption">
                     <td style="width: 150px;">{{ scoreSummary.playername }}: </td>
+                    <td style="width: 250px;">操作前金额: {{ scoreSummary.before_score }}</td>
                     <td>操作金额: {{ scoreSummary.score }}</td>
                 </tr>
             </tbody>
@@ -416,7 +419,7 @@ const filters = ref({
     end_time: '23:59:59',
     player_name: null,
     search_player_name: null,
-    is_virtual: 1,
+    is_virtual: 0,
 })
 const startDateMenu = ref(false);
 const endDateMenu = ref(false);
@@ -470,6 +473,7 @@ const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);
 const selectedRecord2 = ref(null);
+const isSearchTable2 = ref(false);
 const cancelAddSubstractDialog = ref(false);
 const isCanceling = ref(false);
 
@@ -497,6 +501,7 @@ const playerSummary = ref({
 const scoreSummary = ref({
     playername: '合计',
     score: 0,
+    before_score: 0
 })
 
 let scrollEl1 = null
@@ -597,6 +602,10 @@ const getRecords2 = async () => {
     // if (!isReady2.value) return;
     loading2.value = true;
     try {
+        if (isSearchTable2.value) {
+            currentPage2.value = 1;
+            records2.value = [];
+        }
         const res = await GET_SCORE_OPTION_RECORD(
             filters.value.record2_group_nickname,
             filters.value.option_type,
@@ -611,10 +620,11 @@ const getRecords2 = async () => {
         if (res.code == 200) {
             if (currentPage2.value === 1) {
                 records2.value = [];
-                    records2.value = res.data.list.map((record, index) => ({
+                records2.value = res.data.list.map((record, index) => ({
                     ...record,
                     index: (currentPage2.value - 1) * itemsPerPage2.value + index + 1,
                 }));
+                isSearchTable2.value = false;
             } else {
                 const newList = res.data.list.map((record, index) => ({
                     ...record,
@@ -753,7 +763,7 @@ const exportTable1 = async () => {
     isExportingTable1.value = true;
 
     try {
-        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, 1, totalItems1.value);
+        const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, filters.value.player_name, totalItems1.value, 1);
         if (res.code == 200) {
             const data = res.data.list.map(item => ({
                     '台号': item.group_nickname,
@@ -776,7 +786,7 @@ const exportTable1 = async () => {
                     '操作时间': proxy.$filters.formatFullDate(item.option_time)
                 })
             );
-            exportExcel(data, `${filters.value.group_nickname}-上下分-表格1-${formattedDate(new Date())}`);
+            exportExcel(data, `上下分-表格1-${formattedDate(new Date())}`);
         } else {
             toast.error(res.msg || '获取数据失败，无法导出表格1');
         }
@@ -816,7 +826,7 @@ const exportTable2 = async () => {
                     '操作说明': item.demo ? item.demo : '-'
                 })
             );
-            exportExcel(data, `${filters.value.group_nickname}-上下分-表格2-${formattedDate(new Date())}`);
+            exportExcel(data, `上下分-表格2-${formattedDate(new Date())}`);
         } else {
             toast.error(res.msg || '获取数据失败，无法导出表格2');
             isExportingTable2.value = false;
@@ -876,6 +886,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .table2 :deep(.v-data-table__thead th) {
     background-color: #d4d4d4 !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
 }
 .table2 :deep(.v-data-table__thead th:first-child) {
     border-radius: 5px 0 0 0 !important;

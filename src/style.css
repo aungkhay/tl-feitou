@@ -3,6 +3,8 @@
 }
 .table1 .v-data-table__thead th {
     background-color: #d4d4d4 !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
 }
 .table1 .v-data-table__thead th:first-child {
     border-radius: 5px 0 0 0 !important;

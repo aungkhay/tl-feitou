@@ -186,7 +186,7 @@ import moment from 'moment';
 const toast = useToast();
 const userStore = useUserStore();
 const pageSizeOptions = computed(() => userStore.tablePageSize);
-const actionTypes = ref(['上分', '下分', '转入', '转出', '办公费', '办公费', '手续费', '借款', '还款']);
+const actionTypes = ref(['上分', '下分', '转入', '转出', '办公费', '手续费', '借款', '还款']);
 const cardTypes = ref(['上分卡', '下分卡', '存储卡', '中转卡', '财务卡', '第三方']);
 const fromDateMenu = ref(false);
 const toDateMenu = ref(false);

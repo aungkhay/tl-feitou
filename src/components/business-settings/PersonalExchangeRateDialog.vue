@@ -305,7 +305,8 @@ const isSavingIndividualShare = ref(false);
 const isSavingIndividualExchange = ref(false);
 const rules = ref({
     player_name: { required: helpers.withMessage('玩家昵称不能为空', required) },
-    group_nickname: { required: helpers.withMessage('操作台不能为空', required) },
+    // group_nickname: { required: helpers.withMessage('操作台不能为空', required) },
+    group_nickname: { required: false },
     bp_personal_share: { required: helpers.withMessage('闲庄个人占成比率不能为空', required) },
     bp_personal_share_upperlimit: { required: helpers.withMessage('闲庄个人占成上限不能为空', required) },
     sb_personal_share: { required: helpers.withMessage('三宝个人占成比率不能为空', required) },
@@ -393,6 +394,7 @@ const saveRecord = async (record) => {
 
 const save = async () => {
     v$.value.$touch();
+    console.log('v$.value.$invalid:', v$.value);
     if (v$.value.$invalid) return;
 
     isSaving.value = true;

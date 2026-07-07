@@ -110,11 +110,12 @@ export const GET_PLAYER_DETAIL = async (group_nickname, player_name, pageSize, c
  * @param {string} end_time 结束时间(默认当天)
  * @param {string} player_name 选手昵称
  * @param {integer} is_virtual 是否包括虚拟( 1 包括 0 不包括) 可选 ,默认0
+ * @param {integer} is_transfer_score 是否属于转分(0 是，1 不是）
  * @param {integer} currentPage 当前页
  * @param {integer} pageSize 每页条数
  * @returns 
  */
-export const GET_SCORE_OPTION_RECORD = async (group_nickname, option_type, optioner, start_time, end_time, player_name, is_virtual, currentPage, pageSize) => {
+export const GET_SCORE_OPTION_RECORD = async (group_nickname, option_type, optioner, start_time, end_time, player_name, is_virtual, is_transfer_score, currentPage, pageSize) => {
     return await API.post(`${prefix}/player_option/get_score_option_record`, {
         group_nickname: group_nickname,
         option_type: option_type,
@@ -123,6 +124,7 @@ export const GET_SCORE_OPTION_RECORD = async (group_nickname, option_type, optio
         end_time: end_time ? end_time : '',
         player_name: player_name,
         is_virtual: is_virtual ? 1 : 0,
+        is_transfer_score: is_transfer_score ? 1 : 0,
         currentPage: currentPage,
         pageSize: pageSize
     });

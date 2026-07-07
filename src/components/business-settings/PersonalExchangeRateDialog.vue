@@ -414,8 +414,8 @@ const save = async () => {
 };
 
 const saveIndividualShare = async () => {
-    v$.value.$touch();
-    if (v$.value.$invalid) return;
+    // v$.value.$touch();
+    // if (v$.value.$invalid) return;
 
     isSavingIndividualShare.value = true;
     try {
@@ -435,8 +435,8 @@ const saveIndividualShare = async () => {
 };
 
 const saveIndividualExchange = async () => {
-    v$.value.$touch();
-    if (v$.value.$invalid) return;
+    // v$.value.$touch();
+    // if (v$.value.$invalid) return;
 
     isSavingIndividualExchange.value = true;
     try {

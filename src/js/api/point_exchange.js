@@ -22,7 +22,7 @@ export const GET_POINTS_EXCHANGE_INFO = async (group_nickname, startTime, endTim
         endTime: endTime ? endTime : '',
         player_name: player_name,
         option_type: option_type,
-        is_virtual: is_virtual,
+        is_virtual: is_virtual ? 1 : 0,
         currentPage: currentPage,
         pageSize: pageSize
     });

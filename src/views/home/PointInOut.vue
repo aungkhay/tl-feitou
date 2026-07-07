@@ -76,7 +76,7 @@
             hover
             fixed-header
             hide-default-footer
-            :height="isElectron ? 350 : records1.length ? 300 : null"
+            :height="isElectron ? 350 : records1.length ? 350 : null"
         >
             <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -99,8 +99,25 @@
                     <td :colspan="headers1.length" class="text-center py-2">没有更多数据</td>
                 </tr>
             </template> -->
+            <template #body.append style="position: sticky; bottom: 0;">
+                <tr class="text-caption bg-grey-lighten-2 rounded-b-lg">
+                    <td colspan="2">{{ playerSummary.playername }}:</td>
+                    <td>{{ playerSummary.score }}</td>
+                    <td>{{ playerSummary.freeze_score }}</td>
+                    <td>{{ playerSummary.raw_score }}</td>
+                    <td>{{ playerSummary.total_xml_zx }}</td>
+                    <td>{{ playerSummary.total_xml_sb }}</td>
+                    <td>{{ playerSummary.total_xzyl }}</td>
+                    <td>{{ playerSummary.total_sbyl }}</td>
+                    <td colspan="2">{{ playerSummary.total_yxxz }}</td>
+                    <td>{{ playerSummary.daily_points }}</td>
+                    <td colspan="2">{{ playerSummary.total_points }}</td>
+                    <td>{{ playerSummary.deposit }}</td>
+                    <td colspan="3">{{ playerSummary.owe_points }}</td>
+                </tr>
+            </template>
         </v-data-table-server>
-        <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
+        <!-- <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
             <tbody>
                 <tr class="text-caption">
                     <td colspan="2">{{ playerSummary.playername }}:</td>
@@ -118,7 +135,7 @@
                     <td>欠分: {{ playerSummary.owe_points }}</td>
                 </tr>
             </tbody>
-        </v-table>
+        </v-table> -->
         
         <v-card elevation="0" class="border px-1 pt-2 pb-1 rounded mt-2">
             <v-row dense>
@@ -546,6 +563,17 @@ const unbindTable1BodyScroll = () => {
     }
 }
 
+const scrollTable1ToBottom = async () => {
+    await nextTick()
+
+    const el = table1Ref.value?.$el
+    const wrapper = el?.querySelector('.v-table__wrapper')
+
+    if (wrapper) {
+        wrapper.scrollTop = wrapper.scrollHeight
+    }
+}
+
 const onTable2Scroll = async (e) => {
     const isBottom = isReachBottom(e)
     if (!isBottom) return
@@ -592,9 +620,14 @@ const getRecords1 = async () => {
             }
             totalItems1.value = res.data.total;
             playerSummary.value = res.data.summary;
+            if (records1.value.length < totalItems1.value) {
+                currentPage1.value ++;
+                await getRecords1();
+            }
         }
     } finally {
         loading1.value = false;
+        scrollTable1ToBottom();
     }
 }
 
@@ -642,7 +675,9 @@ const getRecords2 = async () => {
 }
 
 const completeAddSubstract = () => {
+    currentPage1.value = 1;
     getRecords1();
+    isSearchTable2.value = true;
     getRecords2();
 }
 
@@ -730,6 +765,7 @@ watch(() => filters.value.group_nickname, async (newVal) => {
 watch(() => filters.value.search_player_name, async (newVal) => {
     if (newVal) {
         records1.value = [];
+        currentPage1.value = 1;
         getRecords1();
     }
 })

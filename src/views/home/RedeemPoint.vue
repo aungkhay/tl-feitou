@@ -194,7 +194,7 @@
              <template #body.append>
                 <tr>
                     <td colspan="11" class="py-2">
-                        <span class="mr-5">总积分数量: {{ summary.total_points_change }}</span>
+                        <!-- <span class="mr-5">总积分数量: {{ summary.total_points_change }}</span> -->
                         <span>返水金额: {{ summary.total_score_change }}</span>
                     </td>
                 </tr>
@@ -431,7 +431,7 @@ const filters = ref({
     end_time: '23:59:59',
     player_name: null,
     option_type: '兑换',
-    is_virtual: 0
+    is_virtual: false
 })
 const summary = ref({
     total_points_change: 0,

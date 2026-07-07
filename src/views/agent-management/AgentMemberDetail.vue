@@ -110,7 +110,7 @@
                 <v-col cols="12" sm="2">
                     <div class="d-flex">
                         <div class="w-50 pr-1">
-                            <v-btn color="primary" @click="getMembers" :disabled="!filters.agent_name" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                            <v-btn color="primary" @click="getMembers" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
                             <v-btn color="success" block @click="exportTable" :loading="isExporting" :disabled="!members.length"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
@@ -212,9 +212,9 @@ const filters = ref({
 });
 
 const getMembers = async () => {
-    if (!filters.value.agent_name) {
-        return;
-    }
+    // if (!filters.value.agent_name) {
+    //     return;
+    // }
 
     loading.value = true;
     try {

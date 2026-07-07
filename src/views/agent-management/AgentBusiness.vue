@@ -19,7 +19,7 @@
                     />
                 </v-col>
                 <v-col cols="12" sm="1">
-                    <v-btn color="primary" @click="getAgents" block :disabled="!filters.agent_name"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn color="primary" @click="getAgents" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>

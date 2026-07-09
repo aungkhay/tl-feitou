@@ -99,8 +99,8 @@
                     <td :colspan="headers1.length" class="text-center py-2">没有更多数据</td>
                 </tr>
             </template> -->
-            <template #body.append style="position: sticky; bottom: 0;">
-                <tr class="text-caption bg-grey-lighten-2 rounded-b-lg">
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2 rounded-b-lg">
                     <td colspan="2">{{ playerSummary.playername }}:</td>
                     <td>{{ playerSummary.score }}</td>
                     <td>{{ playerSummary.freeze_score }}</td>
@@ -342,13 +342,15 @@
             <template #item.actions="{ item }">
                 <v-btn :disabled="!$filters.check10MinuteAgo(item.option_time)" size="x-small" color="error" variant="tonal" @click="cancelAddSubstract(item)"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
-            <!-- <template #body.append>
-                <tr v-if="noMoreData2">
-                    <td :colspan="headers2.length" class="text-center py-2">没有更多数据</td>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2 rounded-b-lg">
+                    <td colspan="2">{{ scoreSummary.playername }}</td>
+                    <td>{{ scoreSummary.score }}</td>
+                    <td colspan="8">{{ scoreSummary.before_score }}</td>
                 </tr>
-            </template> -->
+            </template>
         </v-data-table-server>
-        <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
+        <!-- <v-table density="compact" class="bg-grey-lighten-2 rounded-b-lg">
             <tbody>
                 <tr class="text-caption">
                     <td style="width: 150px;">{{ scoreSummary.playername }}: </td>
@@ -356,7 +358,7 @@
                     <td>操作金额: {{ scoreSummary.score }}</td>
                 </tr>
             </tbody>
-        </v-table>
+        </v-table> -->
 
         <v-dialog
             v-model="cancelAddSubstractDialog"
@@ -647,6 +649,7 @@ const getRecords2 = async () => {
             filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             filters.value.player_name,
             filters.value.is_virtual,
+            false, // is_transfer_score
             currentPage2.value,
             itemsPerPage2.value,
         );

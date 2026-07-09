@@ -142,7 +142,7 @@
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="2">合计({{ summary.total_users }})</td>
-                    <td>{{ summary.sum_yxxz }}</td>
+                    <td>{{ summary.sum_xml_zx }}</td>
                     <td>{{ summary.sum_zx_yl }}</td>
                     <td>{{ summary.sum_xml_sb }}</td>
                     <td>{{ summary.sum_sb_yl }}</td>

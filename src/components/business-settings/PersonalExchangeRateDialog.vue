@@ -269,6 +269,7 @@ import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
 import { PERSONAL_EXCHANGE_RATIO, GET_PERSONAL_EXCHANGE_RATIO } from '../../js/api/business_settings';
 import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
+import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -342,7 +343,7 @@ const getPersonalExchangeRatio = async () => {
             obj.value.personal_points_redemption_ratio = res.data.personal_points_redemption_ratio;
             obj.value.redemption_start_time = new Date(res.data.redemption_start_time);
             obj.value.rebate_type = res.data.rebate_type;
-            obj.value.rebate_pair_start_time = new Date(res.data.rebate_pair_start_time);
+            obj.value.rebate_pair_start_time = res.data.rebate_pair_start_time ? new Date(res.data.rebate_pair_start_time) : new Date();
             obj.value.start_exchange = res.data.start_exchange;
         }
     } catch (error) {
@@ -352,31 +353,36 @@ const getPersonalExchangeRatio = async () => {
     }
 }
 
-const resetForm = () => {
-    obj.value.player_name = null;
+const resetForm = (isCloseDialog = 0) => {
+    // obj.value.player_name = null;
     // obj.value.group_nickname = null;
-    obj.value.bp_personal_share = null;
-    obj.value.bp_personal_share_upperlimit = null;
-    obj.value.sb_personal_share = null;
-    obj.value.redemption_type = null;
-    obj.value.rebate_ratio = null;
-    obj.value.personal_points_redemption_ratio = null;
+    obj.value.bp_personal_share = 0;
+    obj.value.bp_personal_share_upperlimit = 0;
+    obj.value.sb_personal_share = 0;
+    obj.value.redemption_type = '积分';
+    obj.value.rebate_ratio = 0;
+    obj.value.personal_points_redemption_ratio = 0;
     obj.value.redemption_start_time = new Date();
-    obj.value.rebate_type = null;
+    obj.value.rebate_type = '庄闲输赢';
     obj.value.rebate_pair_start_time = new Date();
-    obj.value.start_exchange = null;
+    obj.value.start_exchange = 1;
+
+    if (!isCloseDialog) {
+        getPersonalExchangeRatio();
+    }
     v$.value.$reset();
 }
 
 const closeDialog = () => {
     if (isSaving.value) return;
-    resetForm();
+    resetForm(1);
     dialog.value = false;
 };
 
 const saveRecord = async (record) => {
     // 这里可以根据需要调整传入的参数
     return await PERSONAL_EXCHANGE_RATIO(
+        record.option_type,
         record.player_name,
         record.group_nickname,
         record.bp_personal_share,
@@ -399,7 +405,8 @@ const save = async () => {
 
     isSaving.value = true;
     try {
-        const res = await saveRecord(obj.value);
+        const param = { option_type: 1, ...obj.value };
+        const res = await saveRecord(param);
         if (res && res.code === 200) {
             toast.success('设置保存成功');
         } else {
@@ -409,18 +416,22 @@ const save = async () => {
         toast.error('设置保存失败');
     } finally {
         isSaving.value = false;
-        resetForm();
+        resetForm(0);
     }
 };
 
 const saveIndividualShare = async () => {
     // v$.value.$touch();
     // if (v$.value.$invalid) return;
+    if (!obj.value.player_name) {
+        toast.error('请先选择玩家昵称');
+        return;
+    }
 
     isSavingIndividualShare.value = true;
     try {
-        const param = {...obj.value};
-        param.player_name = '全部占成';
+        const param = { option_type: 2, ...obj.value };
+        // param.player_name = '全部占成';
         const res = await saveRecord(param);
         if (res && res.code === 200) {
             toast.success('个人占成设置保存成功');
@@ -437,11 +448,15 @@ const saveIndividualShare = async () => {
 const saveIndividualExchange = async () => {
     // v$.value.$touch();
     // if (v$.value.$invalid) return;
+    if (!obj.value.player_name) {
+        toast.error('请先选择玩家昵称');
+        return;
+    }
 
     isSavingIndividualExchange.value = true;
     try {
-        const param = {...obj.value};
-        param.player_name = '全部兑换';
+        const param = { option_type: 3, ...obj.value };
+        // param.player_name = '全部兑换';
         const res = await saveRecord(param);
         if (res && res.code === 200) {
             toast.success('个人兑换设置保存成功');
@@ -470,17 +485,17 @@ watch(() => obj.value.group_nickname, (newVal) => {
     }
 });
 watch(() => obj.value.player_name, (newVal) => {
+    obj.value.bp_personal_share = 0;
+    obj.value.bp_personal_share_upperlimit = 0;
+    obj.value.sb_personal_share = 0;
+    obj.value.redemption_type = '积分';
+    obj.value.rebate_ratio = 0;
+    obj.value.personal_points_redemption_ratio = 0;
+    obj.value.redemption_start_time = new Date();
+    obj.value.rebate_type = '庄闲输赢';
+    obj.value.rebate_pair_start_time = new Date();
+    obj.value.start_exchange = 1;
     if (newVal) {
-        obj.value.bp_personal_share = 0;
-        obj.value.bp_personal_share_upperlimit = 0;
-        obj.value.sb_personal_share = 0;
-        obj.value.redemption_type = '积分';
-        obj.value.rebate_ratio = 0;
-        obj.value.personal_points_redemption_ratio = 0;
-        obj.value.redemption_start_time = new Date();
-        obj.value.rebate_type = '庄闲输赢';
-        obj.value.rebate_pair_start_time = new Date();
-        obj.value.start_exchange = 1;
         getPersonalExchangeRatio();
     }
 });

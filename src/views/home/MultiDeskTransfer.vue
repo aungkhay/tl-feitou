@@ -159,9 +159,6 @@
                 <v-col cols="12" sm="2">
                     <v-checkbox v-model="filters.is_virtual" color="primary" label="是否包含虚拟" hide-details density="compact"></v-checkbox>
                 </v-col>
-                <v-col cols="12" sm="2">
-                    <v-checkbox v-model="filters.is_transfer_score" color="primary" label="是否属于转分" hide-details density="compact"></v-checkbox>
-                </v-col>
                 <v-col cols="12" sm="6" md="2" class="d-flex align-center">
                     <v-btn text color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
@@ -384,7 +381,7 @@ const filters = ref({
     end_date: moment().startOf('day').format('YYYY-MM-DD'),
     end_time: '23:59:59',
     is_virtual: false,
-    is_transfer_score: false,
+    is_transfer_score: true,
     action_type: null,
     optioner: null,
     player_name: null

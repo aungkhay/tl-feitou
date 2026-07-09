@@ -43,6 +43,7 @@ export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname, player_name) =
 
 /**
  * 个人兑换比例
+ * @param {string} option_type 操作类型 1. 正常  2.全部个人占成 3.全部个人兑换
  * @param {string} player_name 
  * @param {string} group_nickname 操作台
  * @param {number} bp_personal_share 庄闲个人占成比例
@@ -57,8 +58,9 @@ export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname, player_name) =
  * @param {number} start_exchange 是否启动兑换
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
-export const PERSONAL_EXCHANGE_RATIO = async (player_name, group_nickname, bp_personal_share, bp_personal_share_upperlimit, sb_personal_share, redemption_type, rebate_ratio, personal_points_redemption_ratio, redemption_start_time, rebate_type, rebate_pair_start_time, start_exchange) => {
+export const PERSONAL_EXCHANGE_RATIO = async (option_type, player_name, group_nickname, bp_personal_share, bp_personal_share_upperlimit, sb_personal_share, redemption_type, rebate_ratio, personal_points_redemption_ratio, redemption_start_time, rebate_type, rebate_pair_start_time, start_exchange) => {
     return await API.post(`${prefix}/bussioness_setup/persional_echange_ratio`, {
+        option_type: option_type,
         player_name: player_name,
         group_nickname: group_nickname,
         bp_personal_share: bp_personal_share,

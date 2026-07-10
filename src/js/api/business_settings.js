@@ -59,9 +59,8 @@ export const GET_PERSONAL_EXCHANGE_RATIO = async (group_nickname, player_name) =
  * @returns {Promise<import("axios").AxiosResponse<any>>}
  */
 export const PERSONAL_EXCHANGE_RATIO = async (option_type, player_name, group_nickname, bp_personal_share, bp_personal_share_upperlimit, sb_personal_share, redemption_type, rebate_ratio, personal_points_redemption_ratio, redemption_start_time, rebate_type, rebate_pair_start_time, start_exchange) => {
-    return await API.post(`${prefix}/bussioness_setup/persional_echange_ratio`, {
-        option_type: option_type,
-        player_name: player_name,
+    
+    let body = {
         group_nickname: group_nickname,
         bp_personal_share: bp_personal_share,
         bp_personal_share_upperlimit: bp_personal_share_upperlimit,
@@ -73,7 +72,24 @@ export const PERSONAL_EXCHANGE_RATIO = async (option_type, player_name, group_ni
         rebate_type: rebate_type,
         rebate_pair_start_time: moment(rebate_pair_start_time).format('YYYY-MM-DD HH:mm:ss'),
         start_exchange: start_exchange
-    });
+    }
+    if (Number(option_type) === 2) {
+        body = {
+            bp_personal_share: bp_personal_share,
+            bp_personal_share_upperlimit: bp_personal_share_upperlimit,
+            sb_personal_share: sb_personal_share,
+        }
+    } else if (Number(option_type) === 3) {
+        body = {
+            redemption_type: redemption_type,
+            personal_points_redemption_ratio: personal_points_redemption_ratio,
+            redemption_start_time: moment(redemption_start_time).format('YYYY-MM-DD HH:mm:ss'),
+        }
+    }
+    body.option_type = Number(option_type);
+    body.player_name = player_name || '';
+    
+    return await API.post(`${prefix}/bussioness_setup/persional_echange_ratio`, body);
 }
 
 /**

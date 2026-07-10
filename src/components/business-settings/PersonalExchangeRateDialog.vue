@@ -399,6 +399,10 @@ const saveRecord = async (record) => {
 }
 
 const save = async () => {
+    if (!obj.value.group_nickname) {
+        toast.error('请先选择操作台');
+        return;
+    }
     v$.value.$touch();
     console.log('v$.value.$invalid:', v$.value);
     if (v$.value.$invalid) return;

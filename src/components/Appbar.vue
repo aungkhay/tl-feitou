@@ -35,7 +35,7 @@
         </template>
 
         <v-spacer></v-spacer>
-        <div class="text-error">【汇总:{{ score.zyk }}, N宝:{{ score.sblyk }}, 零钱:{{ score.ltyk }}, 对冲:{{ score.dcyk }}, 个占:{{ score.gyk }}】【剩余:{{ score.total_score }}, 初始:{{ score.total_raw_score }}】</div>
+        <div class="text-error">【汇总:{{ score.zyk }}, N宝:{{ score.sblyk }}, 零钱:{{ score.ltyk }}, 对冲:{{ score.dcyk }}, 个占:{{ score.gyk }}, 台占:{{ score.xztyk }}】【剩余:{{ score.total_score }}, 初始:{{ score.total_raw_score }}】</div>
         <v-btn :icon="isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" color="primary" @click="toggleFullScreen"></v-btn>
         <v-btn color="primary" @click="refreshPage" variant="tonal"><v-icon>mdi-refresh</v-icon> 刷新</v-btn>
     </v-app-bar>
@@ -65,7 +65,8 @@ const score = ref({
     sblyk: 0,
     ltyk: 0,
     dcyk: 0,
-    gyk: 0
+    gyk: 0,
+    xztyk: 0,
 });
 
 const tabMenu = reactive({

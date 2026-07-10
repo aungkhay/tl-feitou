@@ -180,11 +180,15 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">下注前金额: {{ summary.total_before_bet_ye }}</td>
+                    <td colspan="2">合计</td>
+                    <td>{{ summary.total_xz }}</td>
+                    <td colspan="8">{{ summary.total_yl }}</td>
+                    <td colspan="3">{{ summary.total_before_bet_ye }}</td>
+                    <!-- <td colspan="3">下注前金额: {{ summary.total_before_bet_ye }}</td>
                     <td colspan="2">总数: {{ summary.total_count }}</td>
                     <td colspan="2">总下注: {{ summary.total_xz }}</td>
                     <td colspan="2">总盈亏: {{ summary.total_yl }}</td>
-                    <td colspan="5"></td>
+                    <td colspan="5"></td> -->
                 </tr>
             </template>
         </v-data-table-server>

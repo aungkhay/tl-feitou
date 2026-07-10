@@ -613,17 +613,43 @@ const getRecords1 = async () => {
     try {
         const res = await GET_PLAYER_DETAIL(filters.value.group_nickname, filters.value.search_player_name, itemsPerPage1.value, currentPage1.value);
         if (res.code == 200) {
+            // if (currentPage1.value === 1) {
+            //     records1.value = [];
+            //     records1.value = res.data.list.map((item, index) => ({ ...item, index: index + 1 }));
+            // } else {
+            //     const newList = res.data.list.map((item, index) => ({ ...item, index: (currentPage1.value - 1) * itemsPerPage1.value + index + 1 }));
+            //     records1.value = [...records1.value, ...newList];
+            // }
+            // totalItems1.value = res.data.total;
+            // playerSummary.value = res.data.summary;
+            // if (records1.value.length < totalItems1.value) {
+            //     currentPage1.value ++;
+            //     await getRecords1();
+            // }
+
+            const list = res.data?.list || [];
+            const total = res.data?.total || 0;
+
             if (currentPage1.value === 1) {
                 records1.value = [];
-                records1.value = res.data.list.map((item, index) => ({ ...item, index: index + 1 }));
-            } else {
-                const newList = res.data.list.map((item, index) => ({ ...item, index: (currentPage1.value - 1) * itemsPerPage1.value + index + 1 }));
-                records1.value = [...records1.value, ...newList];
             }
-            totalItems1.value = res.data.total;
+
+            const newList = list.map((item, index) => ({
+                ...item,
+                index: (currentPage1.value - 1) * itemsPerPage1.value + index + 1
+            }));
+
+            records1.value = [...records1.value, ...newList];
+            totalItems1.value = total;
             playerSummary.value = res.data.summary;
-            if (records1.value.length < totalItems1.value) {
-                currentPage1.value ++;
+
+            const noMoreData =
+                list.length === 0 ||
+                list.length < itemsPerPage1.value ||
+                records1.value.length >= totalItems1.value;
+
+            if (!noMoreData) {
+                currentPage1.value++;
                 await getRecords1();
             }
         }

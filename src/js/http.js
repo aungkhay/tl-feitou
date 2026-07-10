@@ -3,8 +3,14 @@ import { useUserStore } from "../stores/user";
 import router from "../router";
 
 const isElectron = import.meta.env.VITE_IS_ELECTRON === 'true';
+const isProd = import.meta.env.VITE_IS_PROD === 'true';
 
-let BASEURL = isElectron ? import.meta.env.VITE_BASE_URL : '/';
+let BASEURL = '/';
+if (isProd && isElectron) {
+    BASEURL = import.meta.env.VITE_PROD_BASE_URL;
+} else if (isElectron) {
+    BASEURL = import.meta.env.VITE_BASE_URL;
+}
 let API = axios.create({
     baseURL: BASEURL,
     timeout: 20000,

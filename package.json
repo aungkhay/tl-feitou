@@ -1,7 +1,7 @@
 {
   "name": "weitou-caiwu",
   "private": true,
-  "version": "0.0.5",
+  "version": "0.0.1",
   "type": "module",
   "author": {
     "name": "Xiaoyang"
@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:pack": "SET VITE_IS_ELECTRON=true&& vite build && electron-builder --dir",
-    "electron:dist": "SET VITE_IS_ELECTRON=true&& vite build && electron-builder"
+    "electron:dist": "SET VITE_IS_ELECTRON=true&& vite build && electron-builder",
+    "electron:prod": "SET VITE_IS_ELECTRON=true&& SET VITE_IS_PROD=true&& vite build && electron-builder"
   },
   "main": "electron/main.cjs",
   "build": {

@@ -784,6 +784,7 @@ watch(() => filters.value.group_nickname, async (newVal) => {
         // getPlayers();
         // isReady1.value = true;
         // isReady2.value = true;
+        currentPage1.value = 1;
         records1.value = [];
         getRecords1();
         // currentPage2.value = 1;
@@ -818,7 +819,8 @@ const confirmCancelAddSubstract = async () => {
     } catch (error) {
         toast.error('操作失败，请稍后再试');
     } finally {
-        await getRecords2();
+        completeAddSubstract();
+        // await getRecords2();
         isCanceling.value = false;
         cancelAddSubstractDialog.value = false;
     }

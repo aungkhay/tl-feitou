@@ -141,6 +141,7 @@ const getScore = async () => {
 
 onMounted(() => {
     window.addEventListener('resize', checkFullscreen);
-    getScore();
+    getScore(); // Initial fetch
+    setInterval(getScore, 10000); // Refresh score every 10 seconds
 });
 </script>

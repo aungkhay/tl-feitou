@@ -191,14 +191,14 @@
             <template #item.exchange_date="{ item }">
                 {{ $filters.formatDate(item.exchange_date) }}
             </template>
-             <template #body.append>
+             <!-- <template #body.append>
                 <tr>
                     <td colspan="11" class="py-2">
-                        <!-- <span class="mr-5">总积分数量: {{ summary.total_points_change }}</span> -->
+                        <span class="mr-5">总积分数量: {{ summary.total_points_change }}</span>
                         <span>返水金额: {{ summary.total_score_change }}</span>
                     </td>
                 </tr>
-             </template>
+             </template> -->
         </v-data-table-server>
 
         <v-dialog
@@ -227,6 +227,23 @@
                             <v-list-item v-bind="props" density="compact" />
                         </template>
                     </v-autocomplete>
+
+                    <v-skeleton-loader type="paragraph" v-if="isLoadingPlayerScore"></v-skeleton-loader>
+
+                    <div v-if="playerScore && !isLoadingPlayerScore">
+                        <div class="d-flex justify-space-between">
+                            <div>比例:</div>
+                            <div>{{ playerScore.default_ratio }}</div>
+                        </div>
+                        <div class="d-flex justify-space-between">
+                            <div>可兑换积分:</div>
+                            <div>{{ playerScore.total_points }}</div>
+                        </div>
+                        <div class="d-flex justify-space-between">
+                            <div>可兑换分数:</div>
+                            <div>{{ playerScore.total_score }}</div>
+                        </div>
+                    </div>
 
                     <div class="d-flex justify-center">
                         <v-btn color="primary" :disabled="isSaving || !obj.player_name" :loading="isSaving" @click="singlePlayerAllGroupExchange">确认</v-btn>
@@ -381,7 +398,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useUserStore } from '../../stores/user';
-import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR } from '../../js/api/point_exchange';
+import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR, GET_PLAYER_EXCHANGE_POINTS } from '../../js/api/point_exchange';
 import { useToast } from 'vue-toastification';
 import { exportExcel, formattedDate } from '../../js/common';
 import moment from 'moment';
@@ -437,6 +454,8 @@ const summary = ref({
     total_points_change: 0,
     total_score_change: 0
 })
+const isLoadingPlayerScore = ref(false);
+const playerScore = ref(null);
 
 const obj = ref({
     player_name: null,
@@ -681,6 +700,20 @@ watch(
             fuzzyPlayer();
         } else {
             players.value = [];
+        }
+    }
+)
+
+watch(
+    () => obj.value.player_name,
+    async (newVal) => {
+        if (newVal) {
+            isLoadingPlayerScore.value = true;
+            const res = await GET_PLAYER_EXCHANGE_POINTS(newVal);
+            if (res && res.code == 200) {
+                playerScore.value = res.data;
+            }
+            isLoadingPlayerScore.value = false;
         }
     }
 )

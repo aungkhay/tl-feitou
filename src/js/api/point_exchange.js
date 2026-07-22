@@ -89,3 +89,14 @@ export const VIRTUAL_PLAYER_POINTS_CLEAR = async (group_nickname) => {
         group_nickname: group_nickname
     });
 }
+
+/**
+ * 
+ * @param {string} player_name 玩家名称
+ * @returns 
+ */
+export const GET_PLAYER_EXCHANGE_POINTS = async (player_name) => {
+    return await API.post(`${prefix}/points_exchange/get_player_exchange_points`, {
+        player_name: player_name
+    });
+}

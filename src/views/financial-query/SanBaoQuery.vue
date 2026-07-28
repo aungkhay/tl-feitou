@@ -188,14 +188,14 @@ const headers = ref([
     { title: '和', value: 'h', minWidth: 80 },
     { title: '幸运6(龙双)', value: 'l', minWidth: 120 },
     { title: '完美(虎双)', value: 'm', minWidth: 120 },
-    { title: '任意(对)', value: 'd', minWidth: 120 },
+    { title: '幸运7', value: 'd', minWidth: 120 },
     { title: '开奖结果', value: 'kj', minWidth: 150 },
     { title: '闲对(虎单)输赢', value: 'xd_yl', minWidth: 140 },
     { title: '庄对(龙单)输赢', value: 'zd_yl', minWidth: 140 },
     { title: '和输赢', value: 'h_yl', minWidth: 80 },
     { title: '幸运6(龙双)输赢', value: 'l_yl', minWidth: 140 },
     { title: '完美(虎双)输赢', value: 'm_yl', minWidth: 140 },
-    { title: '任意(对)输赢', value: 'd_yl', minWidth: 140 },
+    { title: '幸运7输赢', value: 'd_yl', minWidth: 140 },
     { title: '本局输赢', value: 'yl', minWidth: 120 },
     // { title: '备注', value: 'remark', minWidth: 150 }
 ]);
@@ -271,14 +271,14 @@ const exportTable = async () => {
                 '和': item.h,
                 '幸运6(龙双)': item.l,
                 '完美(虎双)': item.m,
-                '任意(对)': item.d,
+                '幸运7': item.d,
                 '开奖结果': item.kj,
                 '闲对(虎单)输赢': item.xd_yl,
                 '庄对(龙单)输赢': item.zd_yl,
                 '和输赢': item.h_yl,
                 '幸运6(龙双)输赢': item.l_yl,
                 '完美(虎双)输赢': item.m_yl,
-                '任意(对)输赢': item.d_yl,
+                '幸运7输赢': item.d_yl,
                 '本局输赢': item.yl
             }));
             exportExcel(data, `三宝查询-${formattedDate(new Date())}`);

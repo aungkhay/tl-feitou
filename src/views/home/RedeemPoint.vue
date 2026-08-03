@@ -356,7 +356,7 @@
                     </v-autocomplete>
 
                     <div class="d-flex justify-center">
-                        <v-btn color="primary" :disabled="isSaving || !obj.group_nickname || !obj.player_name" :loading="isSaving" @click="pointsClear">确认</v-btn>
+                        <v-btn color="primary" :disabled="isSaving || !obj.player_name" :loading="isSaving" @click="pointsClear">确认</v-btn>
                     </div>
                 </v-card-text>
             </v-card>
@@ -582,7 +582,7 @@ const cancelExchange = async () => {
 }
 
 const pointsClear = async () => {
-    if (obj.value.group_nickname.trim() === '' || obj.value.player_name.trim() === '') {
+    if (obj.value.player_name.trim() === '') {
         return;
     }
     isSaving.value = true;

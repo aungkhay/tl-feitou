@@ -72,7 +72,7 @@ export const CANCEL_EXCHANGE = async () => {
  * @param {string} player_name 玩家名称
  * @returns 
  */
-export const POINTS_CLEAR = async (group_nickname, player_name) => {
+export const POINTS_CLEAR = async (group_nickname = null, player_name) => {
     return await API.post(`${prefix}/points_exchange/points_clear`, {
         group_nickname: group_nickname,
         player_name: player_name

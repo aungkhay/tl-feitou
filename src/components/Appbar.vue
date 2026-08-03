@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, reactive, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, reactive, watch, onBeforeUnmount } from 'vue';
 import { useDrawerStore } from '../stores/drawer';
 import { useTabsStore } from '../stores/tabs';
 import { useRouter } from 'vue-router';
@@ -50,6 +50,7 @@ import { GET_PROFIT_SCORE } from '../js/api/player_option';
 
 const drawerStore = useDrawerStore();
 const tabsStore = useTabsStore();
+const scoreInterval = ref(null);
 const barTitle = computed(() => drawerStore.barTitle);
 const tabs = computed(() => tabsStore.tabs);
 const active = computed({
@@ -142,6 +143,18 @@ const getScore = async () => {
 onMounted(() => {
     window.addEventListener('resize', checkFullscreen);
     getScore(); // Initial fetch
-    setInterval(getScore, 10000); // Refresh score every 10 seconds
+    scoreInterval.value = setInterval(getScore, 10000); // Refresh score every 10 seconds
+});
+
+onBeforeUnmount(() => {
+    if (scoreInterval.value) {
+        clearInterval(scoreInterval.value);
+    }
+});
+
+onUnmounted(() => {
+    if (scoreInterval.value) {
+        clearInterval(scoreInterval.value);
+    }
 });
 </script>

@@ -179,10 +179,10 @@ const headers = ref([
     { title: '三宝选手赢亏分', value: 'sb_yl', minWidth: 150 },
     { title: '幸运6(单)总投注分', value: 'l', minWidth: 150 },
     { title: '完美(双)总投注分', value: 'm', minWidth: 150 },
-    { title: '幸运7总投注分', value: 'd', minWidth: 150 },
+    { title: '幸运7总投注分', value: 'q', minWidth: 150 },
     { title: '幸运6(单)选手赢亏总分', value: 'l_yl', minWidth: 180 },
     { title: '完美(双)选手赢亏总分', value: 'm_yl', minWidth: 170 },
-    { title: '幸运7嬴亏总分', value: 'd_yl', minWidth: 150 },
+    { title: '幸运7嬴亏总分', value: 'q_yl', minWidth: 150 },
     { title: '公司利润总分', value: 'company_yl', minWidth: 150 }
 ]);
 const summary = ref({
@@ -190,10 +190,10 @@ const summary = ref({
     sb_yl: 0,
     l: 0,
     m: 0,
-    d: 0,
+    q: 0,
     l_yl: 0,
     m_yl: 0,
-    d_yl: 0,
+    q_yl: 0,
     company_yl: 0
 })
 const isExporting = ref(false);
@@ -248,10 +248,10 @@ const exportTable = async () => {
                 '三宝选手赢亏分': item.sb_yl,
                 '幸运6(单)总投注分': item.l,
                 '完美(双)总投注分': item.m,
-                '幸运7总投注分': item.d,
+                '幸运7总投注分': item.q,
                 '幸运6(单)选手赢亏总分': item.l_yl,
                 '完美(双)选手赢亏总分': item.m_yl,
-                '幸运7赢亏总分': item.d_yl,
+                '幸运7赢亏总分': item.q_yl,
                 '公司利润总分': item.company_yl
             }));
             

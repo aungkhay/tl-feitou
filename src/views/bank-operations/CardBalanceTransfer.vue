@@ -117,7 +117,7 @@
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="2">
-                    <v-btn class="mr-2" color="primary" block :loading="loading" @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn class="mr-2" color="primary" block :loading="loading" @click="searchData"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>
@@ -128,6 +128,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -136,13 +137,15 @@
             :loading="loading"
             density="compact"
             class="table1"
+            hide-default-footer
             :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords"
             hover
+            fixed-header
+            :height="`calc(100vh - 250px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.option_amount="{ item }">
                 <span class="text-primary font-weight-bold">{{item.option_amount}}</span>
             </template>
@@ -276,13 +279,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, onBeforeUnmount, nextTick } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { DELETE_INTER_BANK_TRANSFER, EDIT_INTER_BANK_TRANSFER, GET_BANK_CARD, GET_INTERBANK_TRANSFER, INTER_BANK_TRANSFER } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
-import { exportExcel, formattedDate } from '../../js/common';
+import { exportExcel, formattedDate, isReachBottom } from '../../js/common';
 import moment from 'moment';
 
 const toast = useToast();
@@ -308,9 +311,14 @@ const filters = ref({
 const cards = ref([]);
 const loading = ref(false);
 const records = ref([]);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && records.value.length >= total.value
+})
 const selectedRecordId = ref(0);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const total = ref(0);
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
@@ -364,6 +372,13 @@ const getCards = async () => {
     }
 }
 
+const searchData = async () => {
+    page.value = 1;
+    total.value = 0;
+    records.value = [];
+    await getRecords();
+}
+
 const getRecords = async () => {
     loading.value = true;
     try {
@@ -378,10 +393,12 @@ const getRecords = async () => {
        );
 
        if (res && res.code == 200) {
-            records.value = res.data.rows.map((record, index) => ({
-                ...record,
-                index: (page.value - 1) * perPage.value + index + 1
-            }));
+            const resData = res.data.rows.map((record, index) => ({ ...record, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                records.value = resData;
+            } else {
+                records.value = [...records.value, ...resData];
+            }
             total.value = res.data.count;
        }
     } catch (error) {
@@ -429,7 +446,7 @@ const saveRecord = async () => {
 
         if (res && res.code === 200) {
             toast.success(res.msg || (selectedRecordId.value ? '转账记录编辑成功' : '转账记录添加成功'));
-            await getRecords();
+            await searchData();
             getCards();
         } else {
             toast.error(res.msg || (selectedRecordId.value ? '转账记录编辑失败' : '转账记录添加失败'));
@@ -457,7 +474,7 @@ const deleteRecord = async () => {
         const res = await DELETE_INTER_BANK_TRANSFER(selectedRecordId.value);
         if (res && res.code === 200) {
             toast.success(res.msg || '转账记录删除成功');
-            await getRecords();
+            await searchData();
             getCards();
         } else {
             toast.error(res.msg || '转账记录删除失败');
@@ -510,7 +527,45 @@ const exportTable = async () => {
     }
 }
 
-onMounted(() => {
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getRecords()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
     getCards();
+    getRecords();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
 })
 </script>

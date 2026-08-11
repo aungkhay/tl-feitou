@@ -2,7 +2,7 @@
     <div class="px-2 py-3">
 
         <div class="mb-2 text-h6">代理列表</div>
-        <div class="mb-2 border px-2 pt-3 pb-2 rounded">
+        <div class="mb-2 border px-2 pt-2 pb-1 rounded">
             <v-row dense>
                 <v-col cols="12" sm="2">
                     <v-btn color="primary" @click="dialog1 = true"><v-icon>mdi-plus</v-icon> 新增代理</v-btn>
@@ -13,18 +13,19 @@
                         label="代理商名称"
                         variant="outlined"
                         clearable
-                        @click:clear="filters.agent_name = null; getAgents()"
+                        @click:clear="filters.agent_name = null; searchAgents()"
                         density="compact"
                         hide-details
                     />
                 </v-col>
                 <v-col cols="12" sm="1">
-                    <v-btn color="primary" @click="getAgents" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn color="primary" @click="searchAgents()" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>
         
         <v-data-table-server
+            ref="table1Ref"
             v-model:page="page1"
             v-model:items-per-page="perPage1"
             :headers="headers1"
@@ -34,12 +35,14 @@
             density="compact"
             class="table1"
             :items-per-page-options="pageSizeOptions"
-            @update:options="getAgents"
             hover
+            hide-default-footer
+            fixed-header
+            :height="`calc(100vh - 650px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.Settlement="{ item }">
                 {{ $filters.formatFullDate(item.Settlement) }}
             </template>
@@ -67,6 +70,7 @@
         <v-divider class="my-4"></v-divider>
         <div class="mb-2 text-h6">会员列表 <span v-if="selectedAgent" class="text-error">代理：{{ selectedAgent.username }}</span></div>
         <v-data-table-server
+            ref="table2Ref"
             v-model:page="page2"
             v-model:items-per-page="perPage2"
             :headers="headers2"
@@ -76,8 +80,10 @@
             density="compact"
             class="table1"
             :items-per-page-options="pageSizeOptions"
-            @update:options="getMembers"
             hover
+            hide-default-footer
+            fixed-header
+            :height="`calc(100vh - 600px)`"
         >
             <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
@@ -163,13 +169,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, onBeforeUnmount, nextTick } from "vue";
 import { useToast } from 'vue-toastification';
 import { useUserStore } from '../../stores/user';
 import { GET_AGENT, GET_MEMBER, ADD_AGENT, ADD_MEMBER } from '../../js/api/agent_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { PLAYER_FUZZY_QUERY } from "../../js/api/player_option";
+import { isReachBottom } from "../../js/common";
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -181,10 +188,15 @@ const filters = ref({
 
 const dialog1 = ref(false);
 const page1 = ref(1);
-const perPage1 = ref(10);
+const perPage1 = ref(20);
 const total1 = ref(0);
 const loading1 = ref(false);
 const agents = ref([]);
+const table1Ref = ref(null);
+const scrollEl1 = ref(null);
+const noMoreData1 = computed(() => {
+    return total1.value > 0 && agents.value.length >= total1.value
+})
 const selectedAgent = ref(null);
 const headers1 = [
     // { title: '序列', value: 'index', minWidth: 100 },
@@ -219,10 +231,15 @@ const v1$ = useVuelidate(rules1.value, agentObj.value);
 
 const dialog2 = ref(false);
 const page2 = ref(1);
-const perPage2 = ref(10);
+const perPage2 = ref(20);
 const total2 = ref(0);
 const loading2 = ref(false);
 const members = ref([]);
+const table2Ref = ref(null);
+const scrollEl2 = ref(null);
+const noMoreData2 = computed(() => {
+    return total2.value > 0 && members.value.length >= total2.value
+})
 const players = ref([]);
 const searchPlayer = ref('');
 const headers2 = [
@@ -263,12 +280,24 @@ const closeMemberDialog = () => {
     v2$.value.$reset();
 }
 
+const searchAgents = () => {
+    agents.value = [];
+    total1.value = 0;
+    page1.value = 1;
+    getAgents();
+}
+
 const getAgents = async () => {
     loading1.value = true;
     try {
         const res = await GET_AGENT(filters.value.agent_name, page1.value, perPage1.value);
         if (res.code == 200) {
-            agents.value = res.data.list.map((item, index) => ({ ...item, index: (page1.value - 1) * perPage1.value + index + 1 }));
+            const resData = res.data.list.map((item, index) => ({ ...item, index: (page1.value - 1) * perPage1.value + index + 1 }));
+            if (page1.value === 1) {
+                agents.value = resData;
+            } else {
+                agents.value = [...agents.value, ...resData];
+            }
             total1.value = res.data.total;
             summary1.value = res.data.summary;
         } else {
@@ -289,6 +318,9 @@ const handleRowClick = (event, raw) => {
 
 const getSubOrdinates = async (agent) => {
     if (!agent) return;
+    page2.value = 1;
+    members.value = [];
+    total2.value = 0;
     selectedAgent.value = agent;
     getMembers();
 }
@@ -299,7 +331,12 @@ const getMembers = async () => {
     try {
         const res = await GET_MEMBER(selectedAgent.value.username, page2.value, perPage2.value);
         if (res.code == 200) {
-            members.value = res.data.list.map((item, index) => ({ ...item, index: (page2.value - 1) * perPage2.value + index + 1 }));
+            const resData = res.data.list.map((item, index) => ({ ...item, index: (page2.value - 1) * perPage2.value + index + 1 }));
+            if (page2.value === 1) {
+                members.value = resData;
+            } else {
+                members.value = [...members.value, ...resData];
+            }
             total2.value = res.data.total;
             summary2.value = res.data.summary;
         } else {
@@ -321,7 +358,7 @@ const addAgent = async () => {
             toast.success('新增代理成功');
             dialog1.value = false;
             agentObj.value.player_name = null;
-            getAgents();
+            searchAgents();
             closeAgentDialog();
         } else {
             toast.error(res.msg);
@@ -343,6 +380,10 @@ const addMember = async () => {
             dialog2.value = false;
             memberObj.value.agent_name = null;
             memberObj.value.player_name = null;
+            // reset members list and fetch again
+            page2.value = 1;
+            total2.value = 0;
+            members.value = [];
             await getMembers();
             closeMemberDialog();
         } else {
@@ -375,4 +416,78 @@ watch(
         }
     }
 )
+
+const onTableScroll1 = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading1.value || noMoreData1.value) return
+
+    if (loading1.value) {
+        return
+    }
+    page1.value += 1
+    await getRecords()
+}
+
+const onTableScroll2 = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading2.value || noMoreData2.value) return
+
+    if (loading2.value) {
+        return
+    }
+    page2.value += 1
+    await getMembers()
+}
+
+const bindTableBodyScroll1 = () => {
+    unbindTableBodyScroll1()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl1.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl1.value) return
+
+    scrollEl1.value.addEventListener('scroll', onTableScroll1, { passive: true })
+}
+
+const bindTableBodyScroll2 = () => {
+    unbindTableBodyScroll2()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl2.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl2.value) return
+
+    scrollEl2.value.addEventListener('scroll', onTableScroll2, { passive: true })
+}
+
+const unbindTableBodyScroll1 = () => {
+    if (scrollEl1.value) {
+        scrollEl1.value.removeEventListener('scroll', onTableScroll1)
+        scrollEl1.value = null
+    }
+}
+
+const unbindTableBodyScroll2 = () => {
+    if (scrollEl2.value) {
+        scrollEl2.value.removeEventListener('scroll', onTableScroll2)
+        scrollEl2.value = null
+    }
+}
+
+onMounted(async () => {
+    getAgents();
+    await nextTick()
+    bindTableBodyScroll1()
+    bindTableBodyScroll2()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll1()
+    unbindTableBodyScroll2()
+})
 </script>

@@ -129,6 +129,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -137,13 +138,15 @@
             :loading="loading"
             density="compact"
             class="table1"
+            hide-default-footer
             :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords"
+            fixed-header
             hover
+            :height="`calc(100vh - 250px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
@@ -276,8 +279,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { formattedDate, exportExcel } from '../js/common';
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { formattedDate, exportExcel, isReachBottom } from '../js/common';
 import { useUserStore } from '../stores/user';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
@@ -299,9 +302,15 @@ const userStore = useUserStore();
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const records = ref([]);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const total = ref(0);
 const loading = ref(false);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && records.value.length >= total.value
+})
+
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '项目名称', value: 'project_name', fixed: 'start', width: 120 },
@@ -354,6 +363,12 @@ const rules = ref({
 })
 const v$ = useVuelidate(rules.value, expenseObj.value);
 
+const searchRecords = () => {
+    records.value = [];
+    page.value = 1;
+    getRecords();
+}
+
 const getRecords = async () => {
     loading.value = true;
     try {
@@ -367,7 +382,12 @@ const getRecords = async () => {
             page.value,
         );
         if (res.code == 200) {
-            records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                records.value = resData;
+            } else {
+                records.value = [...records.value, ...resData];
+            }
             total.value = res.data.count;
             summary.value = res.data.summary;
         }
@@ -503,4 +523,45 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getRecords()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getRecords();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

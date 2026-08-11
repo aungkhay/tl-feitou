@@ -150,7 +150,7 @@
                         <v-checkbox v-model="filters.is_virtual" color="primary" label="是否包含虚拟" hide-details density="compact"></v-checkbox>
                     </div>
                     <div class="w-50 pl-1">
-                        <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                        <v-btn color="primary" @click="searchData" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                     </div>
                 </v-col>
             </v-row>
@@ -167,6 +167,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -175,13 +176,15 @@
             :loading="loading"
             density="compact"
             class="table1"
-            :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords"
+            fixed-header
             hover
+            :items-per-page-options="pageSizeOptions"
+            hide-default-footer
+            :height="`calc(100vh - 250px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
-            </template>
+            </template> -->
             <template #item.player_name="{ item }">
                 <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.player_name) }">{{ item.player_name }}</span>
             </template>
@@ -396,16 +399,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR, GET_PLAYER_EXCHANGE_POINTS } from '../../js/api/point_exchange';
 import { useToast } from 'vue-toastification';
-import { exportExcel, formattedDate } from '../../js/common';
+import { exportExcel, formattedDate, isReachBottom } from '../../js/common';
 import moment from 'moment';
 import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
-
 const allGroupDialog = ref(false);
 const singleGroupDialog = ref(false);
 const allGroupExchangeDialog = ref(false);
@@ -418,10 +420,16 @@ const isExporting = ref(false);
 const userStore = useUserStore();
 const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const total = ref(0);
 const records = ref([]);
 const loading = ref(false);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && records.value.length >= total.value
+})
+
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
@@ -430,7 +438,7 @@ const headers = ref([
     { title: '兑换比例', value: 'personal_points_redemption_ratio', minWidth: 150 },
     { title: '积分数量', value: 'redeem_points', minWidth: 150 },
     { title: '操作时间', value: 'option_time', minWidth: 180 },
-    { title: '备注', value: 'memo', minWidth: 200 },
+    { title: '备注', value: 'memo', minWidth: 120, maxWidth: 200 },
     { title: '兑换/返水类型', value: 'exchange_type', minWidth: 150 },
     { title: '返水金额', value: 'rebate_amount', minWidth: 150 },
     { title: '庄闲洗码/返水兑换日期', value: 'exchange_date', minWidth: 180 },
@@ -478,6 +486,13 @@ const resetForm = () => {
     clearVirtualPlayerDialog.value = false;
 }
 
+const searchData = () => {
+    records.value = [];
+    page.value = 1;
+    total.value = 0;
+    getRecords();
+}
+
 const getRecords = async () => {
     loading.value = true;
     try {
@@ -492,7 +507,12 @@ const getRecords = async () => {
             perPage.value
         );
         if (res.code == 200) {
-            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                records.value = resData;
+            } else {
+                records.value = [...records.value, ...resData];
+            }
             total.value = res.data.total;
             summary.value = res.data.summary || { total_points_change: 0, total_score_change: 0 };
         }
@@ -718,4 +738,44 @@ watch(
     }
 )
 
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getRecords()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getRecords();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

@@ -139,13 +139,16 @@
                     </v-menu>
                 </v-col>
                 <v-col cols="12" sm="1" class="d-flex">
-                    <v-btn class="mr-2" color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn class="mr-2" color="primary" block @click="searchData"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                     <v-btn color="success" block :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
                 </v-col>
             </v-row>
         </div>
 
         <v-data-table-server
+            ref="tableRef"
+            fixed-header
+            hide-default-footer
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -157,10 +160,11 @@
             :items-per-page-options="pageSizeOptions"
             @update:options="getRecords"
             hover
+            :height="`calc(100vh - 200px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.create_at="{ item }">
                 {{ $filters.formatFullDate(item.create_at) }}
             </template>
@@ -176,8 +180,8 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import { formattedDate, exportExcel } from '../../js/common';
+import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { formattedDate, exportExcel, isReachBottom } from '../../js/common';
 import { CARD_DETAILS_INQUIRY } from '../../js/api/bank_business';
 import { useUserStore } from '../../stores/user';
 import { useToast } from 'vue-toastification';
@@ -195,8 +199,13 @@ const isExporting = ref(false);
 const loading = ref(false);
 const records = ref([]);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const total = ref(0);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && records.value.length >= total.value
+})
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
     { title: '卡类型', value: 'card_type', fixed: 'start', width: 100 },
@@ -226,6 +235,13 @@ const filters = ref({
     end_time: '23:59:59',
 })
 
+const searchData = () => {
+    records.value = [];
+    total.value = 0;
+    page.value = 1;
+    getRecords();
+};
+
 const getRecords = async () => {
     try {
         loading.value = true;
@@ -240,7 +256,12 @@ const getRecords = async () => {
             perPage.value,
         );
         if (res && res.code == 200) {
-            records.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                records.value = resData;
+            } else {
+                records.value = [...records.value, ...resData];
+            }
             total.value = res.data.count || 0;
             summary.value = res.data.summary;
         }
@@ -289,4 +310,46 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getRecords()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getRecords();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

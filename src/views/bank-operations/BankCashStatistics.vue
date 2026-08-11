@@ -121,7 +121,7 @@
                 </v-col>
                 <v-col cols="12" sm="2" class="d-flex align-center">
                     <div class="w-50 mr-1">
-                        <v-btn color="primary" block @click="getCards">查询</v-btn>
+                        <v-btn color="primary" block @click="searchData">查询</v-btn>
                     </div>
                     <div class="w-50 ml-1">
                         <v-btn text color="success" :loading="isExporting" block @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出表格</v-btn>
@@ -131,6 +131,7 @@
         </div>
         
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -139,13 +140,15 @@
             :loading="loading"
             density="compact"
             class="table1"
+            hide-default-footer
+            fixed-header
             :items-per-page-options="pageSizeOptions"
-            @update:options="getCards"
             hover
+            :height="`calc(100vh - 200px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
@@ -154,8 +157,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { formattedDate, exportExcel } from '../../js/common';
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { formattedDate, exportExcel, isReachBottom } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 import { BANK_STATISTICS_BY_DAY, BANK_STATISTICS_BY_PERIOD } from '../../js/api/bank_business';
 import { useToast } from 'vue-toastification';
@@ -174,8 +177,13 @@ const userStore = useUserStore();
 const cards = ref([]);
 const total = ref(0);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const loading = ref(false);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && cards.value.length >= total.value
+})
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
@@ -203,6 +211,13 @@ const filters = ref({
     end_time: '23:59:59',
 });
 
+const searchData = () => {
+    cards.value = [];
+    total.value = 0;
+    page.value = 1;
+    getCards();
+};
+
 const getCards = async () => {
     loading.value = true;
 
@@ -226,7 +241,8 @@ const getCards = async () => {
             );
         }
         if (res.code === 200) {
-            cards.value = res.data.rows.map((item, index) => {
+            
+            const resData = res.data.rows.map((item, index) => {
                 return{
                     index: (page.value - 1) * perPage.value + index + 1,
                     deposit_amount: item.option_type === '上分' ? item.total_amount : 0,
@@ -239,6 +255,11 @@ const getCards = async () => {
                     option_time: item.option_time,
                 }
             });
+            if (page.value === 1) {
+                cards.value = resData;
+            } else {
+                cards.value = [...cards.value, ...resData];
+            }
             total.value = res.data.count;
         }
     } finally {
@@ -290,4 +311,45 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getCards()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getCards();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

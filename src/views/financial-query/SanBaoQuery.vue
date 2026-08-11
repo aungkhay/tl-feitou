@@ -107,7 +107,7 @@
                 <v-col cols="12" sm="2">
                     <div class="d-flex">
                         <div class="w-50 pr-1">
-                            <v-btn color="primary" @click="getRecords" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                            <v-btn color="primary" @click="searchData" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
                             <v-btn color="success" block @click="exportTable" :loading="isExporting"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
@@ -118,6 +118,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -126,13 +127,15 @@
             :loading="loading"
             density="compact"
             class="table1"
+            hide-default-footer
             :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords"
             hover
+            fixed-header
+            :height="`calc(100vh - 200px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
-            </template>
+            </template> -->
             <template #item.shoe_round="{ item }">
                 <span>{{ item.cc }} - {{ item.jc }}</span>
             </template>
@@ -163,10 +166,10 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { GET_SANBAO_DETAILS_QUERY } from '../../js/api/financial_inquiries';
-import { formattedDate, exportExcel, checkResult } from '../../js/common';
+import { formattedDate, exportExcel, checkResult, isReachBottom } from '../../js/common';
 import { useToast } from 'vue-toastification';
 import moment from 'moment';
 
@@ -175,8 +178,13 @@ const userStore = useUserStore();
 const records = ref([]);
 const total = ref(0);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const loading = ref(false);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && records.value.length >= total.value
+})
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
@@ -226,6 +234,13 @@ const summary = ref({
     total_zd_yl: 0
 })
 
+const searchData = () => {
+    records.value = [];
+    total.value = 0;
+    page.value = 1;
+    getRecords();
+}
+
 const getRecords = async () => {
     loading.value = true;
     try {
@@ -238,7 +253,12 @@ const getRecords = async () => {
         );
 
         if (res.code == 200) {
-            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                records.value = resData;
+            } else {
+                records.value = [...records.value, ...resData];
+            }
             total.value = res.data.total;
             summary.value = res.data.summary;
         }
@@ -292,4 +312,46 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getRecords()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getRecords();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

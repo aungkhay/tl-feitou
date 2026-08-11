@@ -85,7 +85,7 @@
                     ></v-select>
                 </v-col>
                 <v-col cols="12" sm="1">
-                    <v-btn class="mr-2" color="primary" block @click="getCards"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn class="mr-2" color="primary" block @click="searchCards"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </div>
@@ -96,6 +96,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -105,12 +106,14 @@
             density="compact"
             class="table1"
             :items-per-page-options="pageSizeOptions"
-            @update:options="getCards"
             hover
+            hide-default-footer
+            fixed-header
+            :height="`calc(100vh - 250px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.optioner="{ item }">
                 {{ item.optioner ? item.optioner : '-' }}
             </template>
@@ -245,12 +248,12 @@
 </template>
 
 <script setup>
-import { computed, ref,watch } from 'vue';
+import { computed, ref,watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { GET_BANK_CARD, ADD_BANK_CARD, EDIT_BANK_CARD } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
-import { exportExcel, formattedDate } from '../../js/common';
+import { exportExcel, formattedDate, isReachBottom } from '../../js/common';
 import { useUserStore } from '../../stores/user';
 
 const userStore = useUserStore();
@@ -261,11 +264,16 @@ const cardStatuses = ref(['正常', '冻结', '隐藏']);
 const sortOptions = ref(['姓名', '类型', '状态']);
 const groups = computed(() => userStore.groups);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const total = ref(0);
 const loading = ref(false);
 const cards = ref([]);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && cards.value.length >= total.value
+})
 const selectedCardId = ref(0);
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
@@ -322,6 +330,13 @@ const rules = ref({
 })
 const v$ = useVuelidate(rules.value, obj.value);
 
+const searchCards = () => {
+    total.value = 0;
+    cards.value = [];
+    page.value = 1;
+    getCards();
+}
+
 const getCards = async () => {
     loading.value = true;
 
@@ -336,7 +351,12 @@ const getCards = async () => {
             perPage.value
         );
         if (res.code === 200) {
-            cards.value = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.rows.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                cards.value = resData;
+            } else {
+                cards.value = [...cards.value, ...resData];
+            }
             total.value = res.data.count;
         }
     } finally {
@@ -396,6 +416,9 @@ const saveCard = async () => {
             );
         }
         if (res.code === 200) {
+            page.value = 1;
+            total.value = 0;
+            cards.value = [];
             await getCards();
             toast.success(res.msg);
         } else {
@@ -464,4 +487,45 @@ const editCard = async (card) => {
     obj.value.card_status = card.card_status;
     dialog.value = true;
 }
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getCards()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getCards();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

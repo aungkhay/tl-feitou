@@ -110,7 +110,7 @@
                 <v-col cols="12" sm="2">
                     <div class="d-flex">
                         <div class="w-50 pr-1">
-                            <v-btn color="primary" @click="getMembers" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                            <v-btn color="primary" @click="searchData" block><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                         </div>
                         <div class="w-50 pl-1">
                             <v-btn color="success" block @click="exportTable" :loading="isExporting" :disabled="!members.length"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
@@ -121,6 +121,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -129,13 +130,15 @@
             :loading="loading"
             density="compact"
             class="table1"
+            hide-default-footer
+            fixed-header
             :items-per-page-options="pageSizeOptions"
-            @update:options="getMembers"
             hover
+            :height="`calc(100vh - 300px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@3"/>
-            </template>
+            </template> -->
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
             </template>
@@ -157,12 +160,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, onBeforeUnmount, nextTick } from "vue";
 import { useToast } from 'vue-toastification';
 import { useUserStore } from '../../stores/user';
 import { GET_MEMBER_DETAILS } from '../../js/api/agent_business';
 import moment from 'moment';
-import { formattedDate, exportExcel } from '../../js/common';
+import { formattedDate, exportExcel, isReachBottom } from '../../js/common';
 import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 
 const toast = useToast();
@@ -171,10 +174,15 @@ const pageSizeOptions = computed(() => userStore.tablePageSize);
 const isExporting = ref(false);
 
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const total = ref(0);
 const members = ref([]);
 const loading = ref(false);
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && members.value.length >= total.value
+})
 const headers = [
     // { title: '序列', value: 'index', minWidth: 100 },
     { title: '代理', value: 'reference_name', minWidth: 150 },
@@ -211,6 +219,13 @@ const filters = ref({
     end_time: '23:59:59',
 });
 
+const searchData = () => {
+    members.value = [];
+    total.value = 0;
+    page.value = 1;
+    getMembers();
+};
+
 const getMembers = async () => {
     // if (!filters.value.agent_name) {
     //     return;
@@ -228,7 +243,12 @@ const getMembers = async () => {
             perPage.value
         );
         if (res.code == 200) {
-            members.value = res.data.list.map((member, index) => ({ ...member, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.list.map((member, index) => ({ ...member, index: (page.value - 1) * perPage.value + index + 1 }));
+            if (page.value === 1) {
+                members.value = resData;
+            } else {
+                members.value = [...members.value, ...resData];
+            }
             total.value = res.data.total;
             summary.value = res.data.summary;
         } else {
@@ -299,4 +319,45 @@ const exportTable = async () => {
         isExporting.value = false;
     }
 }
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getMembers()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getMembers();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

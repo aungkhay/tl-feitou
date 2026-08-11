@@ -160,7 +160,7 @@
                     <v-checkbox v-model="filters.is_virtual" color="primary" label="是否包含虚拟" hide-details density="compact"></v-checkbox>
                 </v-col>
                 <v-col cols="12" sm="6" md="2" class="d-flex align-center">
-                    <v-btn text color="primary" block @click="getRecords"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
+                    <v-btn text color="primary" block @click="searchData"><v-icon>mdi-magnify</v-icon> 查询</v-btn>
                 </v-col>
             </v-row>
         </v-card>
@@ -172,6 +172,7 @@
         </div>
 
         <v-data-table-server
+            ref="tableRef"
             v-model:page="page"
             v-model:items-per-page="perPage"
             :headers="headers"
@@ -180,13 +181,15 @@
             :loading="loading"
             density="compact"
             class="table1"
-            :items-per-page-options="pageSizeOptions"
-            @update:options="getRecords"
+            fixed-header
             hover
+            :items-per-page-options="pageSizeOptions"
+            hide-default-footer
+            :height="`calc(100vh - 300px)`"
         >
-            <template #loading>
+            <!-- <template #loading>
                 <v-skeleton-loader type="table-row@8"/>
-            </template>
+            </template> -->
             <template #item.playername="{ item }">
                 <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
             </template>
@@ -323,19 +326,23 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { GET_GROUP_PLAYERS, GET_SCORE_OPTION_RECORD, PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
 import { TRANS_SCORE, REVOKE_TRANS_SCORE, TRANS_ALL_SCORE } from '../../js/api/desk_option';
-import { formattedDate } from '../../js/common';
-import { exportExcel } from '../../js/common';
+import { formattedDate, isReachBottom, exportExcel } from '../../js/common';
 import moment from 'moment';
 
 const toast = useToast();
 const userStore = useUserStore();
+const tableRef = ref(null);
+const scrollEl = ref(null);
+const noMoreData = computed(() => {
+    return total.value > 0 && records.value.length >= total.value
+})
 
 const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const groups = computed(() => userStore.groups);
@@ -365,7 +372,7 @@ const summary = ref({
 const records = ref([]);
 const total = ref(0);
 const page = ref(1);
-const perPage = ref(15);
+const perPage = ref(50);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const loading = ref(false);
 const isExporting = ref(false);
@@ -447,6 +454,13 @@ const exportTable = async () => {
     }
 }
 
+const searchData = () => {
+    records.value = [];
+    page.value = 1;
+    total.value = 0;
+    getRecords();
+}
+
 const getRecords = async () => {
     loading.value = true;
     try {
@@ -463,7 +477,13 @@ const getRecords = async () => {
             perPage.value
         );
         if (res && res.code == 200) {
-            records.value = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));
+            const resData = res.data.list.map((item, index) => ({ ...item, index: (page.value - 1) * perPage.value + index + 1 }));;
+            if (page.value === 1) {
+                records.value = [];
+                records.value = resData;
+            } else {
+                records.value = [...records.value, ...resData];
+            }
             total.value = res.data.total;
             summary.value = res.data.summary;
         }
@@ -646,4 +666,45 @@ watch(
 watch(() => isTransAll.value, () => {
     v$.value.$reset();
 });
+
+const onTableScroll = async (e) => {
+    const isBottom = isReachBottom(e)
+    if (!isBottom) return
+    if (loading.value || noMoreData.value) return
+
+    if (loading.value) {
+        return
+    }
+    page.value += 1
+    await getRecords()
+}
+
+const bindTableBodyScroll = () => {
+    unbindTableBodyScroll()
+
+    const rootEl = tableRef.value?.$el
+    if (!rootEl) return
+
+    scrollEl.value = rootEl.querySelector('.v-table__wrapper')
+    if (!scrollEl.value) return
+
+    scrollEl.value.addEventListener('scroll', onTableScroll, { passive: true })
+}
+
+const unbindTableBodyScroll = () => {
+    if (scrollEl.value) {
+        scrollEl.value.removeEventListener('scroll', onTableScroll)
+        scrollEl.value = null
+    }
+}
+
+onMounted(async () => {
+    getRecords();
+    await nextTick()
+    bindTableBodyScroll()
+})
+
+onBeforeUnmount(() => {
+    unbindTableBodyScroll()
+})
 </script>

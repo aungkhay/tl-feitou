@@ -206,7 +206,8 @@
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="2">{{ summary.playername }}</td>
                     <td>{{ summary.score }}</td>
-                    <td colspan="7"></td>
+                    <td>{{ summary.before_score }}</td>
+                    <td colspan="6"></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -251,6 +252,11 @@
                             <v-list-item v-bind="props" density="compact" />
                         </template>
                     </v-autocomplete>
+
+                    <div class="d-flex justify-end mb-3" v-if="selectedSourcePlayer">
+                        <span class="mr-2">源玩家余额:</span>
+                        <span class="font-weight-bold">{{ selectedSourcePlayer.score }}</span>
+                    </div>
                 
                     <v-autocomplete
                         v-model="obj.target_desk"
@@ -289,6 +295,10 @@
                             <v-list-item v-bind="props" density="compact" />
                         </template>
                     </v-autocomplete>
+                    <div class="d-flex justify-end mb-3" v-if="selectedTargetPlayer">
+                        <span class="mr-2">目标玩家余额:</span>
+                        <span class="font-weight-bold">{{ selectedTargetPlayer.score }}</span>
+                    </div>
                     <v-text-field
                         v-if="!isTransAll"
                         v-model="obj.source_score"
@@ -352,6 +362,8 @@ const targetPlayers = ref([]);
 const searchPlayer = ref('');
 const searchSourcePlayer = ref('');
 const searchTargetPlayer = ref('');
+const selectedSourcePlayer = ref(null);
+const selectedTargetPlayer = ref(null);
 const headers = ref([
     // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
     { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
@@ -367,7 +379,8 @@ const headers = ref([
 ]);
 const summary = ref({
     playername: '合计',
-    score: 0
+    score: 0,
+    before_score: 0
 });
 const records = ref([]);
 const total = ref(0);
@@ -623,23 +636,28 @@ watch(
 )
 
 watch(
-    () => searchTargetPlayer.value,
-    (newVal) => {
-        if (newVal) {
-            targetFuzzyPlayer();
-        } else {
-            targetPlayers.value = [];
-        }
-    }
-)
-
-watch(
     () => searchPlayer.value,
     (newVal) => {
         if (newVal) {
             fuzzyPlayer();
         } else {
             players.value = [];
+        }
+    }
+)
+
+watch(
+    () => obj.value.source_player_name, async (newVal) => {
+        if (newVal) {
+            selectedSourcePlayer.value = sourcePlayers.value.find(player => player.playername === newVal) || null;
+        }
+    }
+)
+
+watch(
+    () => obj.value.target_player_name, async (newVal) => {
+        if (newVal) {
+            selectedTargetPlayer.value = targetPlayers.value.find(player => player.playername === newVal) || null;
         }
     }
 )

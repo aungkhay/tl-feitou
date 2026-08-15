@@ -141,11 +141,13 @@
                     <td>{{ summary.sb }}</td>
                     <td>{{ summary.sb_yl }}</td>
                     <td>{{ summary.l }}</td>
+                    <td>{{ summary.k }}</td>
                     <td>{{ summary.m }}</td>
-                    <td>{{ summary.d }}</td>
+                    <td>{{ summary.q }}</td>
                     <td>{{ summary.l_yl }}</td>
+                    <td>{{ summary.k_yl }}</td>
                     <td>{{ summary.m_yl }}</td>
-                    <td>{{ summary.d_yl }}</td>
+                    <td>{{ summary.q_yl }}</td>
                     <td>{{ summary.company_yl }}</td>
                 </tr>
             </template>
@@ -181,10 +183,12 @@ const headers = ref([
     { title: '工作日', value: 'stat_date', minWidth: 120 },
     { title: '三宝总投注分', value: 'sb', minWidth: 150 },
     { title: '三宝选手赢亏分', value: 'sb_yl', minWidth: 150 },
-    { title: '幸运6(单)总投注分', value: 'l', minWidth: 150 },
+    { title: '小老虎总投注分', value: 'l', minWidth: 150 },
+    { title: '大老虎总投注分', value: 'k', minWidth: 150 },
     { title: '完美(双)总投注分', value: 'm', minWidth: 150 },
     { title: '幸运7总投注分', value: 'q', minWidth: 150 },
-    { title: '幸运6(单)选手赢亏总分', value: 'l_yl', minWidth: 180 },
+    { title: '小老虎选手赢亏总分', value: 'l_yl', minWidth: 180 },
+    { title: '大老虎选手赢亏总分', value: 'k_yl', minWidth: 180 },
     { title: '完美(双)选手赢亏总分', value: 'm_yl', minWidth: 170 },
     { title: '幸运7嬴亏总分', value: 'q_yl', minWidth: 150 },
     { title: '公司利润总分', value: 'company_yl', minWidth: 150 }
@@ -193,11 +197,12 @@ const summary = ref({
     sb: 0,
     sb_yl: 0,
     l: 0,
-    m: 0,
+    k: 0,
+    k_yl: 0,
+    q_yl: 0,
     q: 0,
     l_yl: 0,
     m_yl: 0,
-    q_yl: 0,
     company_yl: 0
 })
 const isExporting = ref(false);

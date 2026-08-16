@@ -115,8 +115,8 @@
                     <td>{{ summary.total_g_xd }}</td>
                     <td>{{ summary.total_g_zd }}</td>
                     <td>{{ summary.total_g_h }}</td>
-                    <td>{{ summary.total_d }}</td>
-                    <td>{{ summary.total_g_d }}</td>
+                    <td>{{ summary.total_q }}</td>
+                    <td>{{ summary.total_g_q }}</td>
                     <td>{{ summary.total_zxdc }}</td>
                     <td>{{ summary.total_g_l }}</td>
                     <td>{{ summary.total_tzx }}</td>
@@ -179,8 +179,8 @@ const headers = ref([
     { title: '个闲对', value: 'g_xd', minWidth: 80 },
     { title: '个庄对', value: 'g_zd', minWidth: 80 },
     { title: '个和', value: 'g_h', minWidth: 80 },
-    { title: '幸运7', value: 'd', minWidth: 80 },
-    { title: '个人幸运7', value: 'g_d', minWidth: 100 },
+    { title: '幸运7', value: 'q', minWidth: 80 },
+    { title: '个人幸运7', value: 'g_q', minWidth: 100 },
     { title: '庄闲对冲', value: 'zxdc', minWidth: 100 },
     { title: '个人幸运6', value: 'g_l', minWidth: 110 },
     { title: '台庄闲', value: 'tzx', minWidth: 80 },
@@ -213,7 +213,7 @@ const summary = ref({
     total_xd: 0,
     total_l: 0,
     total_m: 0,
-    total_d: 0,
+    total_q: 0,
     total_g_z: 0,
     total_g_x: 0,
     total_g_zd: 0,
@@ -314,8 +314,8 @@ const exportTable = async () => {
                 '个闲对': item.g_xd,
                 '个庄对': item.g_zd,
                 '个和': item.g_h,
-                '幸运7': item.d,
-                '个人幸运7': item.g_d,
+                '幸运7': item.q,
+                '个人幸运7': item.g_q,
                 '庄闲对冲': item.zxdc,
                 '个人幸运6': item.g_l,
                 '台庄闲': item.tzx,

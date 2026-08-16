@@ -150,14 +150,14 @@
                     <td>{{ summary.total_h }}</td> 
                     <td>{{ summary.total_l }}</td> 
                     <td>{{ summary.total_m }}</td> 
-                    <td>{{ summary.total_d }}</td> 
+                    <td>{{ summary.total_q }}</td> 
                     <td></td>
                     <td>{{ summary.total_xd_yl }}</td> 
                     <td>{{ summary.total_zd_yl }}</td> 
                     <td>{{ summary.total_h_yl }}</td> 
                     <td>{{ summary.total_l_yl }}</td> 
                     <td>{{ summary.total_m_yl }}</td> 
-                    <td>{{ summary.total_d_yl }}</td> 
+                    <td>{{ summary.total_q_yl }}</td> 
                     <td>{{ summary.total_yl }}</td> 
                 </tr>
             </template>
@@ -196,14 +196,14 @@ const headers = ref([
     { title: '和', value: 'h', minWidth: 80 },
     { title: '幸运6(龙双)', value: 'l', minWidth: 120 },
     { title: '完美(虎双)', value: 'm', minWidth: 120 },
-    { title: '幸运7', value: 'd', minWidth: 120 },
+    { title: '幸运7', value: 'q', minWidth: 120 },
     { title: '开奖结果', value: 'kj', minWidth: 150 },
     { title: '闲对(虎单)输赢', value: 'xd_yl', minWidth: 140 },
     { title: '庄对(龙单)输赢', value: 'zd_yl', minWidth: 140 },
     { title: '和输赢', value: 'h_yl', minWidth: 80 },
     { title: '幸运6(龙双)输赢', value: 'l_yl', minWidth: 140 },
     { title: '完美(虎双)输赢', value: 'm_yl', minWidth: 140 },
-    { title: '幸运7输赢', value: 'd_yl', minWidth: 140 },
+    { title: '幸运7输赢', value: 'q_yl', minWidth: 140 },
     { title: '本局输赢', value: 'yl', minWidth: 120 },
     // { title: '备注', value: 'remark', minWidth: 150 }
 ]);
@@ -219,8 +219,8 @@ const filters = ref({
     group_nickname: null
 });
 const summary = ref({
-    total_d: 0,
-    total_d_yl: 0,
+    total_q: 0,
+    total_q_yl: 0,
     total_h: 0,
     total_h_yl: 0,
     total_l: 0,
@@ -291,14 +291,14 @@ const exportTable = async () => {
                 '和': item.h,
                 '幸运6(龙双)': item.l,
                 '完美(虎双)': item.m,
-                '幸运7': item.d,
+                '幸运7': item.q,
                 '开奖结果': item.kj,
                 '闲对(虎单)输赢': item.xd_yl,
                 '庄对(龙单)输赢': item.zd_yl,
                 '和输赢': item.h_yl,
                 '幸运6(龙双)输赢': item.l_yl,
                 '完美(虎双)输赢': item.m_yl,
-                '幸运7输赢': item.d_yl,
+                '幸运7输赢': item.q_yl,
                 '本局输赢': item.yl
             }));
             exportExcel(data, `三宝查询-${formattedDate(new Date())}`);

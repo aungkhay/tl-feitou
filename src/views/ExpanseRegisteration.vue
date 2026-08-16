@@ -188,19 +188,37 @@
                         @input="v$.project_name.$touch"
                         @blur="v$.project_name.$touch"
                     />
-                    <v-text-field
+                    <v-autocomplete
                         v-model="expenseObj.card_name"
+                        :items="bankCards"
                         label="收付卡"
                         density="compact"
+                        item-title="card_name"
+                        item-value="card_name"
                         variant="outlined"
-                        class="mb-2"
+                        color="primary"
+                        autocomplete="off"
                         :error-messages="v$.card_name.$errors.map(e => e.$message)"
                         @input="v$.card_name.$touch"
                         @blur="v$.card_name.$touch"
-                    />
+                    >
+                        <template #selection="{ item }">
+                            <span>{{ item.raw.card_name }} ({{ item.raw.card_code }})</span>
+                        </template>
+                        <template #item="{ props, item }">
+                            <v-list-item
+                                v-bind="props"
+                                :title="item.raw.card_name"
+                                :subtitle="item.raw.card_code"
+                                density="compact"
+                            />
+                        </template>
+                    </v-autocomplete>
+                    
                     <v-text-field
                         v-model="expenseObj.amount"
                         label="金额"
+                        type="number"
                         density="compact"
                         variant="outlined"
                         class="mb-2"
@@ -230,6 +248,7 @@
                                 variant="outlined"
                                 density="compact"
                                 readonly
+                                hide-details
                                 :model-value="formattedDate(expenseObj.workday)"
                                 :error-messages="v$.workday.$errors.map(e => e.$message)"
                                 @input="v$.workday.$touch"
@@ -285,6 +304,7 @@ import { useUserStore } from '../stores/user';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { ADD_OFFICE_EXPENSE, DELETE_OFFICE_EXPENSE, EDIT_OFFICE_EXPENSE, GET_OFFICE_EXPENSES } from '../js/api/office_business';
+import { GET_BANK_CARD } from '../js/api/bank_business';
 import { useToast } from 'vue-toastification';
 import { getCurrentInstance } from 'vue'
 import moment from 'moment';
@@ -300,6 +320,7 @@ const toDateMenu = ref(false);
 const toast = useToast();
 const userStore = useUserStore();
 const pageSizeOptions = computed(() => userStore.tablePageSize);
+const bankCards = ref([]);
 const records = ref([]);
 const page = ref(1);
 const perPage = ref(50);
@@ -555,7 +576,29 @@ const unbindTableBodyScroll = () => {
     }
 }
 
+const getCards = async () => {
+    loading.value = true;
+
+    try {
+        const res = await GET_BANK_CARD(
+            null,
+            null,
+            null,
+            null,
+            null,
+            1,
+            1000
+        );
+        if (res.code === 200) {
+            bankCards.value = res.data.rows;
+        }
+    } finally {
+        loading.value = false;
+    }
+}
+
 onMounted(async () => {
+    getCards();
     getRecords();
     await nextTick()
     bindTableBodyScroll()

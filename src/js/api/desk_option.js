@@ -29,7 +29,7 @@ export const TRANS_SCORE = async (source_desk, source_score, source_player_name,
  * @returns
  */
 export const TRANS_ALL_SCORE = async (source_desk, source_player_name, target_desk, target_player_name) => {
-    return await API.post(`${prefix}/desk_option/trans_score`, {
+    return await API.post(`${prefix}/desk_option/trans_all_score`, {
         source_desk: source_desk,
         source_player_name: source_player_name,
         target_desk: target_desk,

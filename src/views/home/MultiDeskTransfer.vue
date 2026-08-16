@@ -523,6 +523,8 @@ const closeDialog = () => {
     obj.value.target_player_name = '';
     isTransAll.value = false;
     selectedRecord.value = null;
+    selectedSourcePlayer.value = null;
+    selectedTargetPlayer.value = null;
     v$.value.$reset();
 }
 

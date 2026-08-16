@@ -286,7 +286,7 @@ const exportTable = async () => {
                 '序列': item.index,
                 '台号': item.group_nickname,
                 '日期': item.stat_date,
-                'userName': item.nickname,
+                '昵称': item.userName,
                 '闲庄/龙虎占成洗码': item.zxzcxm,
                 '闲庄/龙虎占成赢亏': item.zxyl,
                 '三宝占成洗码': item.xml_sb,

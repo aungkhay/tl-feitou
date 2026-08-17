@@ -153,3 +153,20 @@ export const GET_RECHARGE_DETAILS_INQUIRY = async (startTime, endTime, group_nic
         pageSize: pageSize
     });
 }
+
+/**
+ * 
+ * @param {string} startTime 开始时间
+ * @param {string} endTime 结束时间
+ * @param {integer} currentPage 当前页码
+ * @param {integer} pageSize 每页条数
+ * @returns 
+ */
+export const GET_BET_EDIT_LOG = async (startTime, endTime, currentPage, pageSize) => {
+    return await API.post(`${prefix}/bet_edit_log/get_bet_edit_log`, {
+        startTime: startTime,
+        endTime: endTime,
+        currentPage: currentPage,
+        pageSize: pageSize
+    });
+}

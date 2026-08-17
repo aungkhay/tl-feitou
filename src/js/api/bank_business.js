@@ -147,6 +147,17 @@ export const DELETE_INTER_BANK_TRANSFER = async (id) => {
 }
 
 /**
+ * 撤销某条银行卡转账记录
+ * @param {integer} id 记录id
+ * @returns 
+ */
+export const REVOKE_INTER_BANK_TRANSFER = async (id) => {
+    return await API.post(`${prefix}/bank_business/revoke_inter_bank_transfer`, {
+        id: id
+    });
+}
+
+/**
  * 银行卡明细查询
  * @param {string} card_type 卡类型
  * @param {string} optioner 操作员

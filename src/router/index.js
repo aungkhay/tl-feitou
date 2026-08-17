@@ -144,6 +144,12 @@ const routes = [
                 meta: { title: '现金充值明细' }
             },
             {
+                path: 'get-edit-bet-log',
+                name: 'GetEditBetLog',
+                component: () => import('../views/financial-query/BetEditLog.vue'),
+                meta: { title: '主持端修改下注明细' }
+            },
+            {
                 path: 'wash-hand-data-error-check',
                 name: 'WashHandDataErrorCheck',
                 component: () => import('../views/financial-query/WashHandDataErrorCheck.vue'),

@@ -194,6 +194,12 @@ const drawerItems = ref([
                 routeName: 'CashRechargeDetails',
                 isSelected: false,
             },
+            {
+                title: '主持端修改下注明细',
+                icon: 'mdi-file-document-outline',
+                routeName: 'GetEditBetLog',
+                isSelected: false,
+            },
             // { key: 'wash-hand-data-error-check', routeName: 'WashHandDataErrorCheck', title: '选手数据查错' },
             // { key: 'reconciliation-analysis-difference', routeName: 'ReconciliationAnalysisDifference', title: '对账分析差额' },
             // { key: 'wash-hand-flow-analysis', routeName: 'WashHandFlowAnalysis', title: '选手流水分析' },

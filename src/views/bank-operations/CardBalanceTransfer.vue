@@ -156,8 +156,9 @@
                 {{ $filters.formatDate(item.working_day) }}
             </template>
             <template #item.actions="{ item }">
-                <v-btn size="small" color="success" variant="tonal" @click="editRecord(item)" class="mr-2"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
-                <v-btn size="small" color="error" variant="tonal" @click="deleteDialog = true; selectedRecordId = item.Id"><v-icon>mdi-delete</v-icon> 删除</v-btn>
+                <v-btn size="small" color="success" variant="tonal" @click="editRecord(item)"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
+                <v-btn size="small" color="error" variant="tonal" @click="deleteDialog = true; selectedRecordId = item.Id" class="mx-2"><v-icon>mdi-delete</v-icon> 删除</v-btn>
+                <v-btn size="small" color="error" variant="tonal" :disabled="item.is_revoke" @click="revokeDialog = true; selectedRecordId = item.Id"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
         </v-data-table-server>
 
@@ -275,13 +276,29 @@
                     </v-card-text>
                 </v-card>
         </v-dialog>
+
+        <v-dialog
+            v-model="revokeDialog"
+            max-width="400"
+            persistent
+        >
+                <v-card title="删除转账记录">
+                    <v-card-text>
+                        <div class="mb-4">确定要撤销这条转账记录吗？</div>
+                        <div class="d-flex justify-end">
+                            <v-btn variant="tonal" color="primary" class="mr-2" :disabled="isRevoking" @click="revokeDialog = false">取消</v-btn>
+                            <v-btn variant="tonal" color="error" :loading="isRevoking" @click="revokeRecord">确定</v-btn>
+                        </div>
+                    </v-card-text>
+                </v-card>
+        </v-dialog>
     </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref, onBeforeUnmount, nextTick } from 'vue';
 import { useUserStore } from '../../stores/user';
-import { DELETE_INTER_BANK_TRANSFER, EDIT_INTER_BANK_TRANSFER, GET_BANK_CARD, GET_INTERBANK_TRANSFER, INTER_BANK_TRANSFER } from '../../js/api/bank_business';
+import { DELETE_INTER_BANK_TRANSFER, EDIT_INTER_BANK_TRANSFER, GET_BANK_CARD, GET_INTERBANK_TRANSFER, INTER_BANK_TRANSFER, REVOKE_INTER_BANK_TRANSFER } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
@@ -296,6 +313,7 @@ const fromDateMenu = ref(false);
 const toDateMenu = ref(false);
 const dialog = ref(false);
 const deleteDialog = ref(false);
+const revokeDialog = ref(false);
 const workdayMenu = ref(false);
 const isExporting = ref(false);
 
@@ -334,11 +352,12 @@ const headers = ref([
     { title: '转入前金额', value: 'transfer_in_amount', minWidth: 120 },
     { title: '转入卡当前金额', value: 'transfer_in_card_current_amount', minWidth: 150 },
     { title: '工作日', value: 'working_day', minWidth: 120 },
-    { title: '操作', value: 'actions', fixed: 'end', minWidth: 180 },
+    { title: '操作', value: 'actions', fixed: 'end', minWidth: 250 },
 ]);
 
 const isSaving = ref(false);
 const isDeleting = ref(false);
+const isRevoking = ref(false);
 const obj = ref({
     transfer_out_card_name: null,
     transfer_in_card_name: null,
@@ -485,6 +504,26 @@ const deleteRecord = async () => {
         selectedRecordId.value = 0;
         isDeleting.value = false;
         deleteDialog.value = false;
+    }
+}
+
+const revokeRecord = async () => {
+    isRevoking.value = true;
+    try {
+        const res = await REVOKE_INTER_BANK_TRANSFER(selectedRecordId.value);
+        if (res && res.code === 200) {
+            toast.success(res.msg || '转账记录撤销成功');
+            await searchData();
+            getCards();
+        } else {
+            toast.error(res.msg || '转账记录撤销失败');
+        }
+    } catch (error) {
+        console.error('撤销转账记录失败:', error);
+    } finally {
+        selectedRecordId.value = 0;
+        isRevoking.value = false;
+        revokeDialog.value = false;
     }
 }
 

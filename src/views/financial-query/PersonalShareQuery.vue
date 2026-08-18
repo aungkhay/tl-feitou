@@ -168,7 +168,7 @@
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
                     <td colspan="3">合计</td>
-                    <td>{{ summary.zxzcxm }}</td>
+                    <!-- <td>{{ summary.zxzcxm }}</td>
                     <td>{{ summary.zxyl }}</td>
                     <td>{{ summary.xml_sb }}</td>
                     <td>{{ summary.xd_xz }}</td>
@@ -177,7 +177,11 @@
                     <td>{{ summary.k_xz }}</td>
                     <td>{{ summary.m_xz }}</td>
                     <td>{{ summary.q_xz }}</td>
-                    <td>{{ summary.zd_yl }}</td>
+                    <td>{{ summary.zd_yl }}</td> -->
+                    <td>{{ summary.zxzcxm }}</td>
+                    <td>{{ summary.zxyl }}</td>
+                    <td>{{ summary.zxzcls }}</td>
+                    <td colspan="2"></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -214,14 +218,17 @@ const headers = ref([
     { title: '昵称', value: 'userName', minWidth: 100 },
     { title: '庄闲占成洗码', value: 'zxzcxm', minWidth: 150 },
     { title: '庄闲盈利', value: 'zxyl', minWidth: 150 },
-    { title: '三宝洗码', value: 'xml_sb', minWidth: 150 },
-    { title: '闲对下注', value: 'xd_xz', minWidth: 150 },
-    { title: '和下注', value: 'h_xz', minWidth: 150 },
-    { title: '小老虎下注', value: 'l_xz', minWidth: 150 },
-    { title: '大老虎下注', value: 'k_xz', minWidth: 150 },
-    { title: '完美下注', value: 'm_xz', minWidth: 150 },
-    { title: '幸运7下注', value: 'q_xz', minWidth: 150 },
-    { title: '庄对盈利', value: 'zd_yl', minWidth: 150 },
+    { title: '庄闲占成流水', value: 'zxzcls', minWidth: 150 },
+    { title: '庄闲占成比列', value: 'zxzcbl', minWidth: 150 },
+    { title: '庄闲占成上限', value: 'zxzcsx', minWidth: 150 },
+    // { title: '三宝洗码', value: 'xml_sb', minWidth: 150 },
+    // { title: '闲对下注', value: 'xd_xz', minWidth: 150 },
+    // { title: '和下注', value: 'h_xz', minWidth: 150 },
+    // { title: '小老虎下注', value: 'l_xz', minWidth: 150 },
+    // { title: '大老虎下注', value: 'k_xz', minWidth: 150 },
+    // { title: '完美下注', value: 'm_xz', minWidth: 150 },
+    // { title: '幸运7下注', value: 'q_xz', minWidth: 150 },
+    // { title: '庄对盈利', value: 'zd_yl', minWidth: 150 },
     // { title: '占成总流水', value: 'total_profit', minWidth: 150 },
 ]);
 const isExporting = ref(false);
@@ -237,17 +244,20 @@ const filters = ref({
     player_name: null,
 });
 const summary = ref({
-    sb_yl: 0,
-    xml_sb: 0,
+    // sb_yl: 0,
+    // xml_sb: 0,
+    // zxyl: 0,
+    // zxzcxm: 0,
+    // xd_xz: 0,
+    // h_xz: 0,
+    // l_xz: 0,
+    // k_xz: 0,
+    // m_xz: 0,
+    // q_xz: 0,
+    // zd_yl: 0,
     zxyl: 0,
-    zxzcxm: 0,
-    xd_xz: 0,
-    h_xz: 0,
-    l_xz: 0,
-    k_xz: 0,
-    m_xz: 0,
-    q_xz: 0,
-    zd_yl: 0,
+    zxzcls: 0,
+    zxzcxm: 0
 });
 
 const searchPlayer = ref(null);

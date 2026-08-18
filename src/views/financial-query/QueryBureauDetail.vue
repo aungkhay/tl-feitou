@@ -92,7 +92,7 @@
                 <v-skeleton-loader type="table-row@8"/>
             </template> -->
             <template #item.cc="{ item }">
-                <span>{{ item.cc + '-' + item.jc }}</span>
+                <span class="text-primary cursor-pointer" @click="showShoeRoundList = true; shoeRoundData = { shoe: item.cc, round: item.jc, group_nickname: item.group_nickname, date: filters.date }">{{ item.cc + '-' + item.jc }}</span>
             </template>
             <template #item.stime="{ item }">
                 {{ $filters.formatFullDate(item.stime) }}
@@ -140,10 +140,18 @@
                 </tr>
             </template>
         </v-data-table-server>
+
+        <ShoeRoundList 
+            v-if="showShoeRoundList"
+            v-model="showShoeRoundList" 
+            :data="shoeRoundData" 
+            @close="showShoeRoundList = false" 
+        />
     </div>
 </template>
 
 <script setup>
+import ShoeRoundList from '../../components/ShoeRoundList.vue';
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { formattedDate, exportExcel, checkResult, isReachBottom } from '../../js/common';
 import { useUserStore } from '../../stores/user';
@@ -163,6 +171,8 @@ const scrollEl = ref(null);
 const noMoreData = computed(() => {
     return total.value > 0 && records.value.length >= total.value
 })
+const showShoeRoundList = ref(false);
+const shoeRoundData = ref({});
 
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([

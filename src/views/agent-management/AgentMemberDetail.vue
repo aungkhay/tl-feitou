@@ -151,8 +151,6 @@
                     <td>{{ summary.sum_sb_yl }}</td>
                     <td>{{ summary.sum_yxxz }}</td>
                     <td>{{ summary.sum_daily_points }}</td>
-                    <td>{{ summary.sum_total_points }}</td>
-                    <td></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -193,8 +191,8 @@ const headers = [
     { title: 'N宝盈亏总分', value: 'total_sb_yl', minWidth: 150 },
     { title: '有效流水总分', value: 'total_yxxz', minWidth: 150 },
     { title: '日积分总分', value: 'daily_points', minWidth: 150 },
-    { title: '总积分总分', value: 'total_points', minWidth: 150 },
-    { title: '操作时间', value: 'option_time', minWidth: 180 },
+    // { title: '总积分总分', value: 'total_points', minWidth: 150 },
+    // { title: '操作时间', value: 'option_time', minWidth: 180 },
 ];
 const summary = ref({
     sum_daily_points: 0,
@@ -305,8 +303,8 @@ const exportTable = async () => {
                 '四宝赢亏': item.total_sb_yl,
                 '有效流水': item.valid_turnover,
                 '日积分总分': item.daily_points,
-                '总积分总分': item.total_points,
-                '操作时间': item.option_time,
+                // '总积分总分': item.total_points,
+                // '操作时间': item.option_time,
             }));
             exportExcel(data, `代理会员明细-${filters.value.agent_name}-${formattedDate(new Date())}`);
         } else {

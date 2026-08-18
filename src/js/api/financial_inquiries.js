@@ -170,3 +170,37 @@ export const GET_BET_EDIT_LOG = async (startTime, endTime, currentPage, pageSize
         pageSize: pageSize
     });
 }
+
+/**
+ * 
+    * @param {integer} shoe 靴
+    * @param {integer} round 局
+    * @param {string} group_nickname 操作台(群昵称)
+    * @param {string} date 查询时间
+ * @returns 
+ */
+export const GET_BET_DATA = async (shoe, round, group_nickname, date) => {
+    return await API.post(`${prefix}/financial_inquiries/ht_get_bet_data`, {
+        shoe: shoe,
+        round: round,
+        group_nickname: group_nickname,
+        date: moment(date).format('YYYY-MM-DD')
+    });
+}
+
+/**
+ * 
+ * @param {integer} shoe 靴
+ * @param {integer} round 局
+ * @param {string} group_nickname 操作台(群昵称)
+ * @param {string} date 查询时间
+ * @returns 
+ */
+export const GET_SCORE_DATA = async (shoe, round, group_nickname, date) => {
+    return await API.post(`${prefix}/financial_inquiries/ht_get_score_data`, {
+        shoe: shoe,
+        round: round,
+        group_nickname: group_nickname,
+        date: moment(date).format('YYYY-MM-DD')
+    });
+}

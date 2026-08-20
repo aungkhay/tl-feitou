@@ -100,3 +100,14 @@ export const GET_PLAYER_EXCHANGE_POINTS = async (player_name) => {
         player_name: player_name
     });
 }
+
+/**
+ * 
+ * @param {string} batch_id 批次号
+ * @returns 
+ */
+export const POINTS_CLEAR_REVOKE = async (batch_id) => {
+    return await API.post(`${prefix}/points_exchange/points_clear_revoke`, {
+        batch_id: batch_id
+    });
+}

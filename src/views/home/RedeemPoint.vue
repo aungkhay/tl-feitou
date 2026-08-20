@@ -160,7 +160,7 @@
             <v-btn size="small" color="primary" class="mr-2 mb-2" @click="allGroupDialog = true">单个玩家兑换(所有群)</v-btn>
             <v-btn size="small" color="primary" class="mr-2 mb-2" @click="singleGroupDialog = true">一键兑换(一个群玩家)</v-btn>
             <v-btn size="small" color="primary" class="mr-2 mb-2" @click="allGroupExchangeDialog = true">一键兑换(所有群玩家)</v-btn>
-            <v-btn size="small" color="error" class="mr-2 mb-2" @click="cancelExchangeDialog = true"><v-icon>mdi-undo</v-icon> 撤销兑换</v-btn>
+            <!-- <v-btn size="small" color="error" class="mr-2 mb-2" @click="cancelExchangeDialog = true"><v-icon>mdi-undo</v-icon> 撤销兑换</v-btn> -->
             <v-btn size="small" color="primary" class="mr-2 mb-2" @click="clearPointDialog = true">清零</v-btn>
             <v-btn size="small" color="primary" class="mr-2 mb-2" @click="clearVirtualPlayerDialog = true">虚拟选手整台清零</v-btn>
             <v-btn size="small" color="success" class="mb-2" :loading="isExporting" @click="exportTable"><v-icon>mdi-file-excel</v-icon> 导出报表</v-btn>
@@ -193,6 +193,9 @@
             </template>
             <template #item.exchange_date="{ item }">
                 {{ $filters.formatDate(item.exchange_date) }}
+            </template>
+            <template #item.actions="{ item }">
+                <v-btn v-if="item.player_name != '合计' && item.option_type == '清零'" color="error" variant="tonal" size="small" @click="selectedBatchId = item.batch_id; undoClearPointDialog = true"><v-icon>mdi-undo</v-icon> 撤销积分清零</v-btn>
             </template>
              <!-- <template #body.append>
                 <tr>
@@ -395,13 +398,29 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+
+        <v-dialog
+            v-model="undoClearPointDialog"
+            max-width="350"
+            persistent
+        >
+            <v-card title="撤销积分清零">
+                <v-card-text>
+                    <div class="mb-4">确定要撤销吗？</div>
+                    <div class="d-flex justify-end">
+                        <v-btn variant="tonal" color="primary" class="mr-2" :disabled="isSaving" @click="resetForm">取消</v-btn>
+                        <v-btn variant="tonal" color="error" :loading="isSaving" @click="pointsClearRevoke">确定</v-btn>
+                    </div>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useUserStore } from '../../stores/user';
-import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR, GET_PLAYER_EXCHANGE_POINTS } from '../../js/api/point_exchange';
+import { GET_POINTS_EXCHANGE_INFO, SINGLE_PLAYER_ALL_GROUP_EXCHANGE, SINGLE_GROUP_EXCHANGE, ALL_GROUP_EXCHANGE, CANCEL_EXCHANGE, POINTS_CLEAR, VIRTUAL_PLAYER_POINTS_CLEAR, GET_PLAYER_EXCHANGE_POINTS, POINTS_CLEAR_REVOKE } from '../../js/api/point_exchange';
 import { useToast } from 'vue-toastification';
 import { exportExcel, formattedDate, isReachBottom } from '../../js/common';
 import moment from 'moment';
@@ -416,6 +435,8 @@ const clearPointDialog = ref(false);
 const clearVirtualPlayerDialog = ref(false);
 const isSaving = ref(false);
 const isExporting = ref(false);
+const undoClearPointDialog = ref(false);
+const selectedBatchId = ref(null);
 
 const userStore = useUserStore();
 const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
@@ -443,6 +464,7 @@ const headers = ref([
     { title: '返水金额', value: 'rebate_amount', minWidth: 150 },
     { title: '庄闲洗码/返水兑换日期', value: 'exchange_date', minWidth: 180 },
     { title: '操作员', value: 'operator', minWidth: 120 },
+    { title: '操作', value: 'actions', minWidth: 120 },
 ]);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const groups = computed(() => userStore.groups);
@@ -484,6 +506,7 @@ const resetForm = () => {
     cancelExchangeDialog.value = false;
     clearPointDialog.value = false;
     clearVirtualPlayerDialog.value = false;
+    undoClearPointDialog.value = false;
 }
 
 const searchData = () => {
@@ -638,6 +661,27 @@ const virtualPlayerPointsClear = async () => {
         }
     } catch (error) {
         toast.error('清零失败');
+    } finally {
+        isSaving.value = false;
+    }
+}
+
+const pointsClearRevoke = async () => {
+    if (!selectedBatchId.value) {
+        return;
+    }
+    isSaving.value = true;
+    try {
+        const res = await POINTS_CLEAR_REVOKE(selectedBatchId.value);
+        if (res.code == 200) {
+            resetForm();
+            getRecords();
+            toast.success(res.msg || '撤销成功');
+        } else {
+            toast.error(res.msg || '撤销失败');
+        }
+    } catch (error) {
+        toast.error('撤销失败');
     } finally {
         isSaving.value = false;
     }

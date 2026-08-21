@@ -138,12 +138,13 @@ export const GET_SCORE_OPTION_RECORD = async (group_nickname, option_type, optio
  * @param {string} bank_card 银行卡(可选）
  * @returns 
  */
-export const SCORE_ALL_DOWN = async (group_nickname, player_name, option_type, bank_card) => {
+export const SCORE_ALL_DOWN = async (group_nickname, player_name, option_type, bank_card, card_name) => {
     return await API.post(`${prefix}/player_option/score_all_down`, {
         group_nickname: group_nickname ,
         player_name: player_name,
         option_type: option_type,
-        bank_card: bank_card
+        bank_card: bank_card,
+        card_name: card_name
     });
 }
 

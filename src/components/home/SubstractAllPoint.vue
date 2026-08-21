@@ -198,6 +198,7 @@ const save = async () => {
             obj.value.player_name,
             obj.value.option_type,
             card ? card.card_code : '',
+            card ? card.card_name : '',
         );
         if (res.code == 200) {
             toast.success(res.msg);

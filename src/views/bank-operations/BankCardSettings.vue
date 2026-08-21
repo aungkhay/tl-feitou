@@ -181,6 +181,15 @@
                             @blur="v$.initial_amount.$touch"
                         ></v-text-field>
                         <v-text-field
+                            v-model="obj.initial_office_amount"
+                            label="初始办公金额"
+                            density="compact"
+                            variant="outlined"
+                            :error-messages="v$.initial_office_amount.$errors.map(e => e.$message)"
+                            @input="v$.initial_office_amount.$touch"
+                            @blur="v$.initial_office_amount.$touch"
+                        ></v-text-field>
+                        <v-text-field
                             v-model="obj.bonus_amount"
                             label="上分金额"
                             density="compact"
@@ -281,6 +290,7 @@ const headers = ref([
     { title: '姓名', value: 'card_name', fixed: 'start', minWidth: 100 },
     { title: '卡号', value: 'card_code', minWidth: 150 },
     { title: '初始金额', value: 'initial_amount', minWidth: 120 },
+    { title: '初始办公金额', value: 'initial_office_amount', minWidth: 120 },
     { title: '上分金额', value: 'bonus_amount', minWidth: 120 },
     { title: '下分金额', value: 'deduction_amount', minWidth: 120 },
     { title: '转入金额', value: 'transfer_in_amount', minWidth: 120 },
@@ -315,12 +325,14 @@ const obj = ref({
     transfer_out_amount: 0,
     card_status: null,
     handling_fee: 0,
+    initial_office_amount: 0,
 });
 const rules = ref({
     card_type: { required: helpers.withMessage('卡类型不能为空', required) },
     card_name: { required: helpers.withMessage('姓名不能为空', required) },
     card_code: { required: helpers.withMessage('卡号不能为空', required) },
     initial_amount: { required: helpers.withMessage('初始金额不能为空', required) },
+    initial_office_amount: { required: helpers.withMessage('初始办公金额不能为空', required) },
     bonus_amount: { required: helpers.withMessage('上分金额不能为空', required) },
     deduction_amount: { required: helpers.withMessage('下分金额不能为空', required) },  
     transfer_in_amount: { required: helpers.withMessage('转入金额不能为空', required) },
@@ -399,7 +411,8 @@ const saveCard = async () => {
                 obj.value.transfer_in_amount,
                 obj.value.transfer_out_amount,
                 obj.value.handling_fee,
-                obj.value.card_status
+                obj.value.card_status,
+                obj.value.initial_office_amount
             );
         } else {
             res = await ADD_BANK_CARD(
@@ -412,7 +425,8 @@ const saveCard = async () => {
                 obj.value.transfer_in_amount,
                 obj.value.transfer_out_amount,
                 obj.value.handling_fee,
-                obj.value.card_status
+                obj.value.card_status,
+                obj.value.initial_office_amount
             );
         }
         if (res.code === 200) {

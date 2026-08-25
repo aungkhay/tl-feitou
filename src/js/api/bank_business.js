@@ -36,12 +36,12 @@ export const GET_BANK_CARD = async (card_type, card_status, optioner, card_name,
  * @param {integer} deduction_amount 下分金额
  * @param {integer} transfer_in_amount 转入金额
  * @param {integer} transfer_out_amount 转出金额
- * @param {integer} handling_fee 手续费
+ * @param {integer} office_amount 办公金额
  * @param {integer} card_status 卡状态（1正常 2冻结 3隐藏）
  * @param {integer} initial_office_amount 初始办公金额
  * @returns 
  */
-export const ADD_BANK_CARD = async (card_type, card_name, card_code, initial_amount, bonus_amount, deduction_amount, transfer_in_amount, transfer_out_amount, handling_fee, card_status, initial_office_amount) => {
+export const ADD_BANK_CARD = async (card_type, card_name, card_code, initial_amount, bonus_amount, deduction_amount, transfer_in_amount, transfer_out_amount, office_amount, card_status, initial_office_amount) => {
     return await API.post(`${prefix}/bank_business/add_bank_card`, {
         card_type: card_type,
         card_name: card_name,
@@ -51,7 +51,7 @@ export const ADD_BANK_CARD = async (card_type, card_name, card_code, initial_amo
         deduction_amount: Number(deduction_amount),
         transfer_in_amount: Number(transfer_in_amount),
         transfer_out_amount: Number(transfer_out_amount),
-        handling_fee: Number(handling_fee),
+        office_amount: Number(office_amount),
         card_status: card_status,
         initial_office_amount: Number(initial_office_amount)
     });
@@ -68,12 +68,12 @@ export const ADD_BANK_CARD = async (card_type, card_name, card_code, initial_amo
  * @param {string} deduction_amount 下分金额
  * @param {string} transfer_in_amount 转入金额
  * @param {string} transfer_out_amount 转出金额
- * @param {string} handling_fee 手续费
+ * @param {string} office_amount 办公金额
  * @param {string } card_status 正常 | 冻结 | 隐藏
  * @param {string} initial_office_amount 初始办公金额
  * @returns 
  */
-export const EDIT_BANK_CARD = async (id, card_type, card_name, card_code, initial_amount, bonus_amount, deduction_amount, transfer_in_amount, transfer_out_amount, handling_fee, card_status, initial_office_amount) => {
+export const EDIT_BANK_CARD = async (id, card_type, card_name, card_code, initial_amount, bonus_amount, deduction_amount, transfer_in_amount, transfer_out_amount, office_amount, card_status, initial_office_amount) => {
     return await API.post(`${prefix}/bank_business/edit_bank_card`, {
         id: id,
         card_type: card_type,
@@ -84,7 +84,7 @@ export const EDIT_BANK_CARD = async (id, card_type, card_name, card_code, initia
         deduction_amount: Number(deduction_amount),
         transfer_in_amount: Number(transfer_in_amount),
         transfer_out_amount: Number(transfer_out_amount),
-        handling_fee: Number(handling_fee),
+        office_amount: Number(office_amount),
         card_status: card_status,
         initial_office_amount: Number(initial_office_amount)
     });

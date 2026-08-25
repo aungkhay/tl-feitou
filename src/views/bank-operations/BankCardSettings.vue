@@ -226,13 +226,13 @@
                             @blur="v$.transfer_out_amount.$touch"
                         ></v-text-field>
                         <v-text-field
-                            v-model="obj.handling_fee"
-                            label="手续费"
+                            v-model="obj.office_amount"
+                            label="办公金额"
                             density="compact"
                             variant="outlined"
-                            :error-messages="v$.handling_fee.$errors.map(e => e.$message)"
-                            @input="v$.handling_fee.$touch"
-                            @blur="v$.handling_fee.$touch"
+                            :error-messages="v$.office_amount.$errors.map(e => e.$message)"
+                            @input="v$.office_amount.$touch"
+                            @blur="v$.office_amount.$touch"
                         />
                         <v-select
                             v-model="obj.card_status"
@@ -324,7 +324,7 @@ const obj = ref({
     transfer_in_amount: 0,
     transfer_out_amount: 0,
     card_status: null,
-    handling_fee: 0,
+    office_amount: 0,
     initial_office_amount: 0,
 });
 const rules = ref({
@@ -338,7 +338,7 @@ const rules = ref({
     transfer_in_amount: { required: helpers.withMessage('转入金额不能为空', required) },
     transfer_out_amount: { required: helpers.withMessage('转出金额不能为空', required) },
     card_status: { required: helpers.withMessage('卡状态不能为空', required) },
-    handling_fee: { required: helpers.withMessage('手续费不能为空', required) },
+    office_amount: { required: helpers.withMessage('办公金额不能为空', required) },
 })
 const v$ = useVuelidate(rules.value, obj.value);
 
@@ -387,7 +387,7 @@ const closeDialog = () => {
     obj.value.deduction_amount = 0;
     obj.value.transfer_in_amount = 0;
     obj.value.transfer_out_amount = 0;
-    obj.value.handling_fee = 0;
+    obj.value.office_amount = 0;
     obj.value.card_status = null;
     v$.value.$reset();
 }
@@ -410,7 +410,7 @@ const saveCard = async () => {
                 obj.value.deduction_amount,
                 obj.value.transfer_in_amount,
                 obj.value.transfer_out_amount,
-                obj.value.handling_fee,
+                obj.value.office_amount,
                 obj.value.card_status,
                 obj.value.initial_office_amount
             );
@@ -424,7 +424,7 @@ const saveCard = async () => {
                 obj.value.deduction_amount,
                 obj.value.transfer_in_amount,
                 obj.value.transfer_out_amount,
-                obj.value.handling_fee,
+                obj.value.office_amount,
                 obj.value.card_status,
                 obj.value.initial_office_amount
             );
@@ -497,7 +497,7 @@ const editCard = async (card) => {
     obj.value.deduction_amount = card.deduction_amount;
     obj.value.transfer_in_amount = card.transfer_in_amount;
     obj.value.transfer_out_amount = card.transfer_out_amount;
-    obj.value.handling_fee = card.handling_fee;
+    obj.value.office_amount = card.office_amount;
     obj.value.card_status = card.card_status;
     dialog.value = true;
 }

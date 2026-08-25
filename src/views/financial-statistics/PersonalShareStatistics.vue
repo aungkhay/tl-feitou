@@ -145,6 +145,8 @@
                     <td>{{ summary.g_xz }}</td>
                     <td>{{ summary.g_yl }}</td>
                     <td>{{ summary.g_lyzf }}</td> 
+                    <td>{{ summary.g_yl }}</td>
+                    <td>{{ summary.g_xm }}</td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -179,6 +181,8 @@ const headers = ref([
     { title: '个人占成总投注分', value: 'g_xz', minWidth: 150 },
     { title: '个人占成选手赢亏总分', value: 'g_yl', minWidth: 180 },
     { title: '个人占成利润总分', value: 'g_lyzf', minWidth: 150 },
+    { title: '个人占成有效流水', value: 'g_yl', minWidth: 150 },
+    { title: '个人占成洗码总分', value: 'g_xm', minWidth: 150 },
 ]);
 const summary = ref({
     g_lyzf: 0,
@@ -247,7 +251,9 @@ const exportTable = async () => {
                 '工作日': formattedDate(item.stat_date),
                 '个人占成总投注分': item.g_xz,
                 '个人占成选手赢亏总分': item.g_yl,
-                '个人占成利润总分': item.g_lyzf
+                '个人占成利润总分': item.g_lyzf,
+                '个人占成有效流水': item.g_yl,
+                '个人占成洗码总分': item.g_xm
             }));
             
             exportExcel(data, `个人占成统计-${formattedDate(new Date())}`);

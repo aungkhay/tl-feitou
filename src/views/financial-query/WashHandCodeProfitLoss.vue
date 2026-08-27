@@ -198,20 +198,21 @@
                     </template>
                 </v-tooltip>
             </template>
-             <template #body.append>
+            <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td :colspan="2">合计</td>
+                    <td>合计</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 
                     <td>{{ summary.total_sb_yl }}</td> 
                     <td>{{ summary.total_yxxz }}</td> 
                     <td>{{ summary.total_points }}</td>
+                    <td></td>
                 </tr>
             </template>
             <template #item="{ item, columns, toggleExpand, isExpanded }">
                 <tr @dblclick="onRowDblClick(item)">
-                    <td v-for="column in columns" :key="column.key" style="font-size: 12px;">
+                    <td v-for="column in columns" :key="column.key" style="font-size: 12px; border-right: 1px solid #e0e0e0;">
                         {{ item[column.key] }}
                     </td>
                 </tr>
@@ -230,27 +231,27 @@
                         ></v-text-field>
                         <v-text-field
                             v-model="selectedRow.xml_zx"
-                            label="庄闲洗码总分"
+                            label="庄闲洗码"
                         />
                         <v-text-field
                             v-model="selectedRow.xml_sb"
-                            label="三宝+幸运6+对子洗码总分"
+                            label="三宝+幸运6+对子洗码"
                         />
                         <v-text-field
                             v-model="selectedRow.zx_yl"
-                            label="庄闲赢亏总分"
+                            label="庄闲赢亏"
                         />
                         <v-text-field
                             v-model="selectedRow.sb_yl"
-                            label="三宝+幸运6+对子总分"
+                            label="三宝+幸运6+对子"
                         />
                         <v-text-field
                             v-model="selectedRow.yxxz"
-                            label="有效流水总分"
+                            label="有效流水"
                         />
                         <v-text-field
                             v-model="selectedRow.total_points"
-                            label="日积分总分"
+                            label="日积分"
                             hide-details
                         />
                     </div>
@@ -305,15 +306,15 @@ const filters = ref({
 
 const allHeaders = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 70, copyable: false },
-    { title: '选手', value: 'username', fixed: 'start', minWidth: 120, copyable: false },
+    { title: '选手', value: 'username', fixed: 'start', minWidth: 100, copyable: false },
     // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120, copyable: false },
+    { title: '庄闲洗码', value: 'xml_zx', minWidth: 60, copyable: true },
+    { title: 'N宝洗码', value: 'xml_sb', minWidth: 60, copyable: true },
+    { title: '庄闲赢亏', value: 'zx_yl', minWidth: 60, copyable: true },
+    { title: 'N宝盈亏', value: 'sb_yl', minWidth: 60, copyable: true },
+    { title: '有效流水', value: 'yxxz', minWidth: 60, copyable: true },
+    { title: '日积分', value: 'total_points', minWidth: 60, copyable: true },
     { title: '日期', value: 'stat_date', minWidth: 120, copyable: false },
-    { title: '庄闲洗码总分', value: 'xml_zx', minWidth: 120, copyable: true },
-    { title: 'N宝洗码总分', value: 'xml_sb', minWidth: 200, copyable: true },
-    { title: '庄闲赢亏总分', value: 'zx_yl', minWidth: 120, copyable: true },
-    { title: 'N宝盈亏总分', value: 'sb_yl', minWidth: 200, copyable: true },
-    { title: '有效流水总分', value: 'yxxz', minWidth: 120, copyable: true },
-    { title: '日积分总分', value: 'total_points', minWidth: 110, copyable: true },
     // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
     // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
 ]);
@@ -404,12 +405,12 @@ const exportTable = async () => {
                 '序列': item.index,
                 '选手': item.username,
                 // '代理号': item.reference_name,
-                '庄闲洗码总分': item.xml_zx,
-                'N宝洗码总分': item.xml_sb,
-                '庄闲盈亏总分': item.zx_yl,
-                'N宝盈亏总分': item.sb_yl,
-                '有效流水总分': item.yxxz,
-                '日积分总分': item.daily_points
+                '庄闲洗码': item.xml_zx,
+                'N宝洗码': item.xml_sb,
+                '庄闲盈亏': item.zx_yl,
+                'N宝盈亏': item.sb_yl,
+                '有效流水': item.yxxz,
+                '日积分': item.daily_points
             }));
             exportExcel(data, `选手洗码盈亏-${formattedDate(new Date())}`);
         } else {

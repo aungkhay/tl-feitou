@@ -145,14 +145,14 @@ const noMoreData = computed(() => {
     return total.value > 0 && records.value.length >= total.value
 })
 const headers = ref([
-    { title: '台号', value: 'group_nickname', fixed: 'start', width: 120 },
-    { title: '玩家', value: 'player_name', fixed: 'start', minWidth: 120 },
-    { title: '局号', value: 'round_no', minWidth: 120 },
-    { title: '靴号', value: 'shoe_no', minWidth: 120 },
-    { title: '修改前', value: 'before_bet_data', minWidth: 200 },
-    { title: '修改后', value: 'after_bet_data', minWidth: 200 },
-    { title: '操作员', value: 'operator_name', minWidth: 120 },
-    { title: '操作时间', value: 'created_at', minWidth: 170 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', width: 100 },
+    { title: '玩家', value: 'player_name', fixed: 'start', minWidth: 100 },
+    { title: '局号', value: 'round_no', minWidth: 60 },
+    { title: '靴号', value: 'shoe_no', minWidth: 60 },
+    { title: '修改前', value: 'before_bet_data', minWidth: 130 },
+    { title: '修改后', value: 'after_bet_data', minWidth: 130 },
+    { title: '操作员', value: 'operator_name', minWidth: 100 },
+    { title: '操作时间', value: 'created_at', minWidth: 150 },
 ]);
 const isExporting = ref(false);
 const fromDateMenu = ref(false);

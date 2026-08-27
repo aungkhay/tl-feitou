@@ -181,15 +181,15 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
-    { title: '工作日', value: 'stat_date', minWidth: 120 },
-    { title: '局', value: 'shoe_round', minWidth: 150 },
-    { title: '庄闲(龙虎)对冲', value: 'zxdc', minWidth: 150 },
-    { title: '零头', value: 'lt', minWidth: 100 },
-    { title: '上盘买', value: 'sp', minWidth: 100 },
-    { title: '结果', value: 'kj', minWidth: 150 },
-    { title: '对冲赢亏', value: 'dcyk', minWidth: 120 },
-    { title: '零头赢亏', value: 'ltyk', minWidth: 120 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
+    { title: '工作日', value: 'stat_date', minWidth: 100 },
+    { title: '局', value: 'shoe_round', minWidth: 80 },
+    { title: '庄闲(龙虎)对冲', value: 'zxdc', minWidth: 80 },
+    { title: '零头', value: 'lt', minWidth: 80 },
+    { title: '上盘买', value: 'sp', minWidth: 80 },
+    { title: '结果', value: 'kj', minWidth: 100 },
+    { title: '对冲赢亏', value: 'dcyk', minWidth: 60 },
+    { title: '零头赢亏', value: 'ltyk', minWidth: 60 },
 ]);
 const isExporting = ref(false);
 const groups = computed(() => userStore.groups);

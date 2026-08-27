@@ -158,7 +158,7 @@
             <template #item.actions="{ item }">
                 <v-btn size="small" color="success" variant="tonal" @click="editRecord(item)"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
                 <v-btn size="small" color="error" variant="tonal" @click="deleteDialog = true; selectedRecordId = item.Id" class="mx-2"><v-icon>mdi-delete</v-icon> 删除</v-btn>
-                <v-btn size="small" color="error" variant="tonal" :disabled="item.is_revoke" @click="revokeDialog = true; selectedRecordId = item.Id"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
+                <v-btn size="small" color="error" variant="tonal" :disabled="item.is_revoke == 1" @click="revokeDialog = true; selectedRecordId = item.Id"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
         </v-data-table-server>
 
@@ -340,19 +340,19 @@ const perPage = ref(50);
 const total = ref(0);
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
-    { title: '操作人', value: 'optioner', fixed: 'start', minWidth: 100 },
-    { title: '操作时间', value: 'option_time', minWidth: 170 },
-    { title: '操作金额', value: 'option_amount', minWidth: 120 },
-    { title: '转出卡姓名', value: 'transfer_out_card_name', minWidth: 120 },
-    { title: '转出卡类型', value: 'transfer_out_card_type', minWidth: 120 },
-    { title: '转出前金额', value: 'before_transfer_out_amount', minWidth: 120 },
-    { title: '转出卡当前金额', value: 'transfer_out_card_current_amount', minWidth: 150 },
-    { title: '转入卡姓名', value: 'transfer_in_card_name', minWidth: 120 },
-    { title: '转入卡类型', value: 'transfer_in_card_type', minWidth: 120 },
-    { title: '转入前金额', value: 'transfer_in_amount', minWidth: 120 },
-    { title: '转入卡当前金额', value: 'transfer_in_card_current_amount', minWidth: 150 },
-    { title: '工作日', value: 'working_day', minWidth: 120 },
-    { title: '操作', value: 'actions', fixed: 'end', minWidth: 250 },
+    { title: '操作人', value: 'optioner', fixed: 'start', minWidth: 80 },
+    { title: '操作时间', value: 'option_time', minWidth: 150 },
+    { title: '操作金额', value: 'option_amount', minWidth: 60 },
+    { title: '转出卡姓名', value: 'transfer_out_card_name', minWidth: 80 },
+    { title: '转出卡类型', value: 'transfer_out_card_type', minWidth: 80 },
+    { title: '转出前金额', value: 'before_transfer_out_amount', minWidth: 80 },
+    { title: '转出卡当前金额', value: 'transfer_out_card_current_amount', minWidth: 80 },
+    { title: '转入卡姓名', value: 'transfer_in_card_name', minWidth: 80 },
+    { title: '转入卡类型', value: 'transfer_in_card_type', minWidth: 80 },
+    { title: '转入前金额', value: 'transfer_in_amount', minWidth: 80 },
+    { title: '转入卡当前金额', value: 'transfer_in_card_current_amount', minWidth: 80 },
+    { title: '工作日', value: 'working_day', minWidth: 100 },
+    { title: '操作', value: 'actions', minWidth: 250 },
 ]);
 
 const isSaving = ref(false);

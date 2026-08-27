@@ -208,15 +208,15 @@ const noMoreData = computed(() => {
 })
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
-    { title: '卡类型', value: 'card_type', fixed: 'start', width: 100 },
-    { title: '卡姓名', value: 'card_name', fixed: 'start', minWidth: 120 },
-    { title: '卡号', value: 'card_code', minWidth: 150 },
-    { title: '操作类型', value: 'option_type', minWidth: 120 },
-    { title: '操作金额', value: 'option_amount', minWidth: 120 },
-    { title: '操作前金额', value: 'before_option_amount', minWidth: 150 },
-    { title: '操作人', value: 'optioner', minWidth: 120 },
-    { title: '操作时间', value: 'create_at', minWidth: 170 },
-    { title: '台号', value: 'desk_number', minWidth: 120 },
+    { title: '卡类型', value: 'card_type', fixed: 'start', width: 70 },
+    { title: '卡姓名', value: 'card_name', fixed: 'start', minWidth: 70 },
+    { title: '卡号', value: 'card_code', minWidth: 100 },
+    { title: '操作类型', value: 'option_type', minWidth: 60 },
+    { title: '操作金额', value: 'option_amount', minWidth: 60 },
+    { title: '操作前金额', value: 'before_option_amount', minWidth: 60 },
+    { title: '操作人', value: 'optioner', minWidth: 80 },
+    { title: '操作时间', value: 'create_at', minWidth: 150 },
+    { title: '台号', value: 'desk_number', minWidth: 100 },
     // { title: '备注', value: 'remark', minWidth: 200 },
 ]);
 const summary = ref({

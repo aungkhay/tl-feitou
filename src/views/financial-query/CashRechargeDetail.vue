@@ -194,16 +194,16 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
-    { title: '会员昵称', value: 'playername', minWidth: 120 },
-    { title: '操作金额', value: 'score', minWidth: 120 },
-    { title: '操作前金额', value: 'before_option_score', minWidth: 120 },
-    { title: '操作类型', value: 'option_type', minWidth: 120 },
-    { title: '工作日', value: 'working_date', minWidth: 120 },
-    { title: '操作时间', value: 'option_time', minWidth: 170 },
-    { title: '操作员', value: 'optioner', minWidth: 120 },
-    { title: '操作说明', value: 'memo', minWidth: 200 },
-    { title: '银行卡', value: 'bank_card', minWidth: 150 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
+    { title: '会员昵称', value: 'playername', minWidth: 100 },
+    { title: '操作金额', value: 'score', minWidth: 60 },
+    { title: '操作前金额', value: 'before_option_score', minWidth: 80 },
+    { title: '操作类型', value: 'option_type', minWidth: 90 },
+    { title: '工作日', value: 'working_date', minWidth: 100 },
+    { title: '操作时间', value: 'option_time', minWidth: 150 },
+    { title: '操作员', value: 'optioner', minWidth: 100 },
+    { title: '操作说明', value: 'memo', minWidth: 100 },
+    { title: '银行卡', value: 'bank_card', minWidth: 100 },
 ]);
 const summary = ref({
     net_total: 0,

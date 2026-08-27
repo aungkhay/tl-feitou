@@ -183,15 +183,15 @@ const noMoreData = computed(() => {
 })
 const headers = [
     // { title: '序列', value: 'index', minWidth: 100 },
-    { title: '代理', value: 'reference_name', minWidth: 150 },
-    { title: '选手', value: 'username', minWidth: 150 },
-    { title: '庄闲洗码总分', value: 'total_xml_zx', minWidth: 150 },
-    { title: '庄闲盈亏总分', value: 'total_zx_yl', minWidth: 150 },
-    { title: 'N宝洗码总分', value: 'total_xml_sb', minWidth: 150 },
-    { title: 'N宝盈亏总分', value: 'total_sb_yl', minWidth: 150 },
-    { title: '有效流水总分', value: 'total_yxxz', minWidth: 150 },
-    { title: '日积分总分', value: 'daily_points', minWidth: 150 },
-    // { title: '总积分总分', value: 'total_points', minWidth: 150 },
+    { title: '代理', value: 'reference_name', minWidth: 100 },
+    { title: '选手', value: 'username', minWidth: 100 },
+    { title: '庄闲洗码', value: 'total_xml_zx', minWidth: 80 },
+    { title: '庄闲盈亏', value: 'total_zx_yl', minWidth: 80 },
+    { title: 'N宝洗码', value: 'total_xml_sb', minWidth: 80 },
+    { title: 'N宝盈亏', value: 'total_sb_yl', minWidth: 80 },
+    { title: '有效流水', value: 'total_yxxz', minWidth: 80 },
+    { title: '日积分', value: 'daily_points', minWidth: 80 },
+    // { title: '总积分', value: 'total_points', minWidth: 150 },
     // { title: '操作时间', value: 'option_time', minWidth: 180 },
 ];
 const summary = ref({
@@ -235,8 +235,9 @@ const getMembers = async () => {
 
         const res = await GET_MEMBER_DETAILS(
             filters.value.agent_name,
-            start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
-            end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
+            // start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
+            // end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
+            null,null,
             page.value,
             perPage.value
         );
@@ -302,8 +303,8 @@ const exportTable = async () => {
                 '四宝洗码': item.total_xml_sb,
                 '四宝赢亏': item.total_sb_yl,
                 '有效流水': item.valid_turnover,
-                '日积分总分': item.daily_points,
-                // '总积分总分': item.total_points,
+                '日积分': item.daily_points,
+                // '总积分': item.total_points,
                 // '操作时间': item.option_time,
             }));
             exportExcel(data, `代理会员明细-${filters.value.agent_name}-${formattedDate(new Date())}`);

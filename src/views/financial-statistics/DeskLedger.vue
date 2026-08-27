@@ -175,15 +175,15 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '日期', value: 'stat_date', fixed: 'start', minWidth: 120 },
-    { title: '庄闲/龙虎上盘输赢', value: 'xzspyk', minWidth: 150 },
-    { title: '上盘洗码汇总', value: 'spxm', minWidth: 150 },
-    { title: '上盘抽水赢亏', value: 'spzsyk', minWidth: 150 },
-    { title: '零钱利润', value: 'lxly', minWidth: 120 },
-    { title: '对冲总利润', value: 'dcly', minWidth: 120 },
-    { title: '庄闲/龙虎台面占成输赢', value: 'zxtmzcsy', minWidth: 180 },
-    { title: '庄闲/龙虎台面占成洗码', value: 'zxtmzcxm', minWidth: 180 },
-    { title: '利润汇总', value: 'lyhs', minWidth: 120 }
+    { title: '日期', value: 'stat_date', fixed: 'start', minWidth: 100 },
+    { title: '庄闲/龙虎上盘输赢', value: 'xzspyk', minWidth: 80 },
+    { title: '上盘洗码汇总', value: 'spxm', minWidth: 80 },
+    { title: '上盘抽水赢亏', value: 'spzsyk', minWidth: 80 },
+    { title: '零钱利润', value: 'lxly', minWidth: 80 },
+    { title: '对冲总利润', value: 'dcly', minWidth: 80 },
+    { title: '庄闲/龙虎台面占成输赢', value: 'zxtmzcsy', minWidth: 80 },
+    { title: '庄闲/龙虎台面占成洗码', value: 'zxtmzcxm', minWidth: 80 },
+    { title: '利润汇总', value: 'lyhs', minWidth: 80 }
 ]);
 const summary = ref({
     xzspyk: 0,
@@ -217,7 +217,6 @@ const searchData = () => {
 const getRecords = async () => {
     loading.value = true;
     try {
-        console.log(filters.value)
         const res = await GET_DAILY_QUERY_SUMMARY(
             filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
             filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,

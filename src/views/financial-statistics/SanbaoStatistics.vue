@@ -179,19 +179,19 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
-    { title: '工作日', value: 'stat_date', minWidth: 120 },
-    { title: '三宝总投注分', value: 'sb', minWidth: 150 },
-    { title: '三宝选手赢亏分', value: 'sb_yl', minWidth: 150 },
-    { title: '小老虎总投注分', value: 'l', minWidth: 150 },
-    { title: '大老虎总投注分', value: 'k', minWidth: 150 },
-    { title: '完美(双)总投注分', value: 'm', minWidth: 150 },
-    { title: '幸运7总投注分', value: 'q', minWidth: 150 },
-    { title: '小老虎选手赢亏总分', value: 'l_yl', minWidth: 180 },
-    { title: '大老虎选手赢亏总分', value: 'k_yl', minWidth: 180 },
-    { title: '完美(双)选手赢亏总分', value: 'm_yl', minWidth: 170 },
-    { title: '幸运7嬴亏总分', value: 'q_yl', minWidth: 150 },
-    { title: '公司利润总分', value: 'company_yl', minWidth: 150 }
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
+    { title: '工作日', value: 'stat_date', minWidth: 100 },
+    { title: '三宝总投注分', value: 'sb', minWidth: 80 },
+    { title: '三宝选手赢亏分', value: 'sb_yl', minWidth: 80 },
+    { title: '小老虎总投注分', value: 'l', minWidth: 80 },
+    { title: '大老虎总投注分', value: 'k', minWidth: 80 },
+    { title: '完美(双)总投注分', value: 'm', minWidth: 80 },
+    { title: '幸运7总投注分', value: 'q', minWidth: 80 },
+    { title: '小老虎选手赢亏', value: 'l_yl', minWidth: 80 },
+    { title: '大老虎选手赢亏', value: 'k_yl', minWidth: 80 },
+    { title: '完美(双)选手赢亏', value: 'm_yl', minWidth: 80 },
+    { title: '幸运7嬴亏', value: 'q_yl', minWidth: 80 },
+    { title: '公司利润', value: 'company_yl', minWidth: 80 }
 ]);
 const summary = ref({
     sb: 0,
@@ -270,10 +270,10 @@ const exportTable = async () => {
                 '幸运6(单)总投注分': item.l,
                 '完美(双)总投注分': item.m,
                 '幸运7总投注分': item.q,
-                '幸运6(单)选手赢亏总分': item.l_yl,
-                '完美(双)选手赢亏总分': item.m_yl,
-                '幸运7赢亏总分': item.q_yl,
-                '公司利润总分': item.company_yl
+                '幸运6(单)选手赢亏': item.l_yl,
+                '完美(双)选手赢亏': item.m_yl,
+                '幸运7赢亏': item.q_yl,
+                '公司利润': item.company_yl
             }));
             
             exportExcel(data, `三宝统计-${formattedDate(new Date())}`);

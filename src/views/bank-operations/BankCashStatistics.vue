@@ -187,13 +187,13 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '列', value: 'index', fixed: 'start', width: 60 },
-    { title: '上分', value: 'deposit_amount', width: 100 },
-    { title: '下分', value: 'withdraw_amount', width: 100 },
-    { title: '转入', value: 'transfer_in_amount', width: 100 },
-    { title: '转出', value: 'transfer_out_amount', width: 100 },
-    { title: '手续费', value: 'fee_amount', width: 100 },
-    { title: '办公费用', value: 'office_fee_amount', width: 120 },
-    { title: '小计', value: 'net_amount', width: 100 },
+    { title: '上分', value: 'deposit_amount', width: 80 },
+    { title: '下分', value: 'withdraw_amount', width: 80 },
+    { title: '转入', value: 'transfer_in_amount', width: 80 },
+    { title: '转出', value: 'transfer_out_amount', width: 80 },
+    { title: '手续费', value: 'fee_amount', width: 80 },
+    { title: '办公费用', value: 'office_fee_amount', width: 90 },
+    { title: '小计', value: 'net_amount', width: 80 },
     { title: '时间', value: 'option_time' },
 ]);
 const isExporting = ref(false);

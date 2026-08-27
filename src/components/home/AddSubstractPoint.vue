@@ -101,7 +101,7 @@
                     </template>
                 </v-select>
                 <v-autocomplete
-                    v-if="obj.option_type === '现金'"
+                    v-if="['现金', '存款下分'].includes(obj.option_type)"
                     v-model="obj.bank_card"
                     :items="bankCards"
                     item-title="card_name"
@@ -135,7 +135,7 @@
                     <div>存款金额：<span class="font-weight-bold">{{ selectedPlayer.deposit }}</span></div>
                 </div>
                 <div class="d-flex justify-end">
-                    <v-btn color="primary" variant="tonal" :disabled="isSaving || (obj.option_type === '现金' && !obj.bank_card) || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
+                    <v-btn color="primary" variant="tonal" :disabled="isSaving || (['现金', '存款下分'].includes(obj.option_type) && !obj.bank_card) || v$.$invalid" :loading="isSaving" @click="save">确定</v-btn>
                 </div>
             </v-card-text>
         </v-card>
@@ -175,7 +175,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'complete']);
 const dialog = ref(props.modelValue);
 const toast = useToast();
-const options = computed(() => userStore.option1);
+const options = computed(() => {
+    return props.mode === 'add' ? userStore.option1 : [...userStore.option1, '存款下分'];
+});
 
 const isSaving = ref(false);
 const players = ref([]);

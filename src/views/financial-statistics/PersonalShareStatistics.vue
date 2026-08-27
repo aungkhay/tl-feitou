@@ -141,12 +141,11 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计</td>
-                    <td>{{ summary.g_xz }}</td>
+                    <td>合计</td>
                     <td>{{ summary.g_yl }}</td>
-                    <td>{{ summary.g_lyzf }}</td> 
-                    <td>{{ summary.g_yl }}</td>
+                    <td>{{ summary.g_yxxz }}</td> 
                     <td>{{ summary.g_xm }}</td>
+                    <td></td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -176,18 +175,16 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 120 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', width: 100 },
+    { title: '个人占成赢亏', value: 'g_yl', width: 120 },
+    { title: '个人占成流水', value: 'g_yxxz', width: 120 },
+    { title: '个人占成洗码', value: 'g_xm', width: 120 },
     { title: '工作日', value: 'stat_date', minWidth: 150 },
-    { title: '个人占成总投注分', value: 'g_xz', minWidth: 150 },
-    { title: '个人占成选手赢亏总分', value: 'g_yl', minWidth: 180 },
-    { title: '个人占成利润总分', value: 'g_lyzf', minWidth: 150 },
-    { title: '个人占成有效流水', value: 'g_yl', minWidth: 150 },
-    { title: '个人占成洗码总分', value: 'g_xm', minWidth: 150 },
 ]);
 const summary = ref({
-    g_lyzf: 0,
+    g_yxxz: 0,
     g_yl: 0,
-    g_xz: 0
+    g_xm: 0
 });
 const isExporting = ref(false);
 const groups = computed(() => userStore.groups);
@@ -249,11 +246,9 @@ const exportTable = async () => {
             const data = res.data.list.map(item => ({
                 '台号': item.group_nickname,
                 '工作日': formattedDate(item.stat_date),
-                '个人占成总投注分': item.g_xz,
-                '个人占成选手赢亏总分': item.g_yl,
-                '个人占成利润总分': item.g_lyzf,
+                '个人占成利润': item.g_yxxz,
                 '个人占成有效流水': item.g_yl,
-                '个人占成洗码总分': item.g_xm
+                '个人占成洗码': item.g_xm
             }));
             
             exportExcel(data, `个人占成统计-${formattedDate(new Date())}`);

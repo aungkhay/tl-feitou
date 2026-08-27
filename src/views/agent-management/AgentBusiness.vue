@@ -200,16 +200,16 @@ const noMoreData1 = computed(() => {
 const selectedAgent = ref(null);
 const headers1 = [
     // { title: '序列', value: 'index', minWidth: 100 },
-    { title: '用户名', value: 'username', fixed: 'start', minWidth: 120 },
-    { title: '代理人数', value: 'member_count', minWidth: 100 },
-    { title: '总积分', value: 'total_points', minWidth: 100 },
-    { title: '总盈亏', value: 'total_yl', minWidth: 100 },
-    { title: '返佣金额', value: 'fyje', minWidth: 100 },
-    { title: '当前积分', value: 'score', minWidth: 100 },
-    { title: '初始积分', value: 'raw_score', minWidth: 100 },
-    { title: '结算时间', value: 'Settlement', minWidth: 170 },
+    { title: '用户名', value: 'username', fixed: 'start', minWidth: 100 },
+    { title: '代理人数', value: 'member_count', minWidth: 60 },
+    { title: '总积分', value: 'total_points', minWidth: 80 },
+    { title: '总盈亏', value: 'total_yl', minWidth: 80 },
+    { title: '返佣金额', value: 'fyje', minWidth: 80 },
+    { title: '当前积分', value: 'score', minWidth: 80 },
+    { title: '初始积分', value: 'raw_score', minWidth: 80 },
+    { title: '结算时间', value: 'Settlement', minWidth: 150 },
     { title: '操作人', value: 'optioner', minWidth: 100 },
-    { title: '操作时间', value: 'option_time', minWidth: 170 },
+    { title: '操作时间', value: 'option_time', minWidth: 150 },
     { title: '操作', value: 'actions', minWidth: 200, fixed: 'end' },
 ];
 const summary1 = ref({
@@ -244,12 +244,12 @@ const players = ref([]);
 const searchPlayer = ref('');
 const headers2 = [
     // { title: '序列', value: 'index' },
-    { title: '代理名称', value: 'reference_name' },
-    { title: '会员名称', value: 'username' },
-    { title: '返佣金额', value: 'fyje' },
-    { title: '总积分', value: 'total_points' },
-    { title: '总盈亏', value: 'total_yl' },
-    { title: '操作时间', value: 'option_time' },
+    { title: '代理名称', value: 'reference_name', width: 120 },
+    { title: '会员名称', value: 'username', width: 120 },
+    { title: '返佣金额', value: 'fyje', width: 100 },
+    { title: '总积分', value: 'total_points', width: 100 },
+    { title: '总盈亏', value: 'total_yl', width: 100 },
+    { title: '操作时间', value: 'option_time', minWidth: 150 },
 ];
 const summary2 = ref({
     sum_fyje: 0,
@@ -444,7 +444,7 @@ const onTableScroll2 = async (e) => {
 const bindTableBodyScroll1 = () => {
     unbindTableBodyScroll1()
 
-    const rootEl = tableRef.value?.$el
+    const rootEl = table1Ref.value?.$el
     if (!rootEl) return
 
     scrollEl1.value = rootEl.querySelector('.v-table__wrapper')
@@ -456,7 +456,7 @@ const bindTableBodyScroll1 = () => {
 const bindTableBodyScroll2 = () => {
     unbindTableBodyScroll2()
 
-    const rootEl = tableRef.value?.$el
+    const rootEl = table2Ref.value?.$el
     if (!rootEl) return
 
     scrollEl2.value = rootEl.querySelector('.v-table__wrapper')

@@ -454,17 +454,17 @@ const noMoreData = computed(() => {
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
-    { title: '会员昵称', value: 'player_name', minWidth: 150 },
-    { title: '兑换积分/庄闲洗码/返水', value: 'option_type', minWidth: 200 },
-    { title: '兑换比例', value: 'personal_points_redemption_ratio', minWidth: 150 },
-    { title: '积分数量', value: 'redeem_points', minWidth: 150 },
-    { title: '操作时间', value: 'option_time', minWidth: 180 },
-    { title: '备注', value: 'memo', minWidth: 120, maxWidth: 200 },
-    { title: '兑换/返水类型', value: 'exchange_type', minWidth: 150 },
-    { title: '返水金额', value: 'rebate_amount', minWidth: 150 },
-    { title: '庄闲洗码/返水兑换日期', value: 'exchange_date', minWidth: 180 },
-    { title: '操作员', value: 'operator', minWidth: 120 },
-    { title: '操作', value: 'actions', minWidth: 120 },
+    { title: '会员昵称', value: 'player_name', minWidth: 100 },
+    { title: '兑换积分/庄闲洗码/返水', value: 'option_type', minWidth: 100 },
+    { title: '兑换比例', value: 'personal_points_redemption_ratio', minWidth: 60 },
+    { title: '积分数量', value: 'redeem_points', minWidth: 60 },
+    { title: '操作时间', value: 'option_time', minWidth: 150 },
+    { title: '兑换/返水类型', value: 'exchange_type', minWidth: 100 },
+    { title: '返水金额', value: 'rebate_amount', minWidth: 60 },
+    { title: '庄闲洗码/返水兑换日期', value: 'exchange_date', minWidth: 100 },
+    { title: '操作员', value: 'operator', minWidth: 100 },
+    { title: '备注', value: 'memo', minWidth: 60, maxWidth: 200 },
+    { title: '操作', value: 'actions', minWidth: 60 },
 ]);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const groups = computed(() => userStore.groups);

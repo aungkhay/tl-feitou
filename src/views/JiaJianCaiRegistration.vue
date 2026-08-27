@@ -288,15 +288,15 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 70 },
-    { title: '拉取端', value: 'pull_end', fixed: 'start', minWidth: 120 },
-    { title: '当前金额', value: 'money', minWidth: 120 },
-    { title: '操作金额', value: 'option_money', minWidth: 120 },
-    { title: '操作前金额', value: 'befor_opton_money', minWidth: 150 },
-    { title: '操作类型', value: 'option_type', minWidth: 120 },
-    { title: '操作时间', value: 'option_time', minWidth: 170 },
-    { title: '操作人', value: 'optioner', minWidth: 120 },
-    { title: '备注', value: 'memo', minWidth: 200 },
-    { title: '操作', value: 'actions', fixed: 'end', minWidth: 180 }
+    { title: '拉取端', value: 'pull_end', fixed: 'start', minWidth: 100 },
+    { title: '当前金额', value: 'money', minWidth: 60 },
+    { title: '操作金额', value: 'option_money', minWidth: 60 },
+    { title: '操作前金额', value: 'befor_opton_money', minWidth: 60 },
+    { title: '操作类型', value: 'option_type', minWidth: 60 },
+    { title: '操作时间', value: 'option_time', minWidth: 150 },
+    { title: '操作人', value: 'optioner', minWidth: 80 },
+    { title: '备注', value: 'memo', minWidth: 100 },
+    { title: '操作', value: 'actions', minWidth: 180 }
 ]);
 const summary = ref({
     net_total: 0,

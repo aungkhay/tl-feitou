@@ -41,7 +41,8 @@
       "!{test,tests,__tests__}/**"
     ],
     "directories": {
-      "buildResources": "build"
+      "buildResources": "build",
+      "output": "electron-dist"
     },
     "icon": "build/icon",
     "win": {

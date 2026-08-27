@@ -462,7 +462,7 @@ const headers1 = ref([
     { title: '存款', key: 'deposit', sortable: false, minWidth: 70 },
     { title: '欠积分', key: 'owe_points', sortable: false, minWidth: 70 },
     { title: '状态', key: 'is_hide', sortable: false, minWidth: 70 },
-    { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
+    { title: '操作时间', key: 'option_time', sortable: false, minWidth: 150 },
 ])
 const currentPage1 = ref(1);
 const itemsPerPage1 = ref(15);
@@ -480,7 +480,7 @@ const headers2 = ref([
     { title: '操作前金额', key: 'before_option_score', sortable: false, minWidth: 110 },
     { title: '操作类型', key: 'option_type', sortable: false, minWidth: 100 },
     { title: '工作日', key: 'working_date', sortable: false, minWidth: 140 },
-    { title: '操作时间', key: 'option_time', sortable: false, minWidth: 170 },
+    { title: '操作时间', key: 'option_time', sortable: false, minWidth: 150 },
     { title: '操作员', key: 'optioner', sortable: false, minWidth: 100 },
     { title: '操作说明', key: 'memo', sortable: false, minWidth: 100 },
     { title: '银行卡', key: 'bank_card', sortable: false, minWidth: 100 },

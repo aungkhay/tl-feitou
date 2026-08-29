@@ -93,7 +93,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计</td>
+                    <td colspan="2">合计({{ members.length }})</td>
                     <td>{{ summary2.sum_fyje }}</td>
                     <td>{{ summary2.sum_points }}</td>
                     <td>{{ summary2.sum_yl }}</td>

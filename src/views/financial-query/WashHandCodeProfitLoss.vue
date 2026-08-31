@@ -200,7 +200,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td>合计</td>
+                    <td>合计({{ records.length }})</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 

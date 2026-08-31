@@ -235,9 +235,8 @@ const getMembers = async () => {
 
         const res = await GET_MEMBER_DETAILS(
             filters.value.agent_name,
-            // start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
-            // end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
-            null,null,
+            start_date && start_time ? moment(start_date).format('YYYY-MM-DD') + ' ' + start_time : null,
+            end_date && end_time ? moment(end_date).format('YYYY-MM-DD') + ' ' + end_time : null,
             page.value,
             perPage.value
         );

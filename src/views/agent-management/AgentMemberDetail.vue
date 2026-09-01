@@ -153,7 +153,59 @@
                     <td>{{ summary.sum_daily_points }}</td>
                 </tr>
             </template>
+            <template #item="{ item, columns }">
+                <tr @dblclick="onRowDblClick(item)">
+                    <td v-for="column in columns" :key="column.key" style="font-size: 12px; border-right: 1px solid #e0e0e0;">
+                        {{ item[column.key] }}
+                    </td>
+                </tr>
+            </template>
         </v-data-table-server>
+
+        <v-dialog v-model="editDialog" max-width="450" persistent>
+            <v-card>
+                <v-card-title class="headline">代理会员详情</v-card-title>
+                <v-card-text>
+                    <div v-if="selectedRow">
+                        <v-text-field
+                            v-model="selectedRow.username"
+                            label="选手"
+                            readonly
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.total_xml_zx"
+                            label="庄闲盈亏"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.total_zx_yl"
+                            label="庄闲盈亏"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.total_xml_sb"
+                            label="N宝洗码"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.total_sb_yl"
+                            label="N宝盈亏"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.total_yxxz"
+                            label="有效流水"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="selectedRow.daily_points"
+                            label="日积分"
+                            hide-details
+                        ></v-text-field>
+                    </div>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="editRow">关闭</v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
     </div>
 </template>
 
@@ -216,6 +268,8 @@ const filters = ref({
     end_date: moment().startOf('day').toDate(),
     end_time: '23:59:59',
 });
+const selectedRow = ref(null);
+const editDialog = ref(false);
 
 const searchData = () => {
     members.value = [];
@@ -315,6 +369,28 @@ const exportTable = async () => {
         toast.error('导出失败，请稍后再试');
     } finally {
         isExporting.value = false;
+    }
+}
+
+const onRowDblClick = (item) => {
+    selectedRow.value = item;
+    editDialog.value = true;
+}
+
+const editRow = () => {
+    const index = members.value.findIndex(record => record.index === selectedRow.value.index);
+    if (index !== -1) {
+        members.value[index] = { ...selectedRow.value };
+        editDialog.value = false;
+
+        summary.value.sum_daily_points = members.value.reduce((sum, record) => sum + (parseFloat(record.daily_points) || 0), 0);
+        summary.value.sum_sb_yl = members.value.reduce((sum, record) => sum + (parseFloat(record.total_sb_yl) || 0), 0);
+        summary.value.sum_xml_sb = members.value.reduce((sum, record) => sum + (parseFloat(record.total_xml_sb) || 0), 0);
+        summary.value.sum_xml_zx = members.value.reduce((sum, record) => sum + (parseFloat(record.total_xml_zx) || 0), 0);
+        summary.value.sum_yxxz = members.value.reduce((sum, record) => sum + (parseFloat(record.total_yxxz) || 0), 0);
+        summary.value.sum_zx_yl = members.value.reduce((sum, record) => sum + (parseFloat(record.total_zx_yl) || 0), 0);
+    } else {
+        toast.error('修改失败，未找到对应记录');
     }
 }
 

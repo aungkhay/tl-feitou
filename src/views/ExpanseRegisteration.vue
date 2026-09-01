@@ -395,8 +395,8 @@ const getRecords = async () => {
     try {
         const res = await GET_OFFICE_EXPENSES(
             filters.value.expense_type,
-            filters.value.optioner,
             filters.value.card_name,
+            filters.value.optioner,
             filters.value.start_date && filters.value.start_time ? moment(filters.value.start_date).format('YYYY-MM-DD') + ' ' + filters.value.start_time : null,
             filters.value.end_date && filters.value.end_time ? moment(filters.value.end_date).format('YYYY-MM-DD') + ' ' + filters.value.end_time : null,
             perPage.value,

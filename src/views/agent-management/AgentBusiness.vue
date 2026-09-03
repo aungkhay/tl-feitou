@@ -187,7 +187,7 @@ const filters = ref({
 
 const dialog1 = ref(false);
 const page1 = ref(1);
-const perPage1 = ref(20);
+const perPage1 = ref(50);
 const total1 = ref(0);
 const loading1 = ref(false);
 const agents = ref([]);
@@ -230,7 +230,7 @@ const v1$ = useVuelidate(rules1.value, agentObj.value);
 
 const dialog2 = ref(false);
 const page2 = ref(1);
-const perPage2 = ref(20);
+const perPage2 = ref(50);
 const total2 = ref(0);
 const loading2 = ref(false);
 const members = ref([]);

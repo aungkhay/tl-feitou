@@ -200,7 +200,7 @@
                 {{ $filters.formatDate(item.working_date) }}
             </template>
             <template #item.actions="{ item }">
-                <v-btn color="error" size="small" variant="tonal" v-if="item.trans_id" :disabled="item.is_revoke == 1" @click="selectedRecord = item; revokeDialog = true"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
+                <v-btn color="error" size="x-small" variant="tonal" v-if="item.trans_id" :disabled="item.is_revoke == 1" @click="selectedRecord = item; revokeDialog = true"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">

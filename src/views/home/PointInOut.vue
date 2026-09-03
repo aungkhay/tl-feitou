@@ -465,7 +465,7 @@ const headers1 = ref([
     { title: '操作时间', key: 'option_time', sortable: false, minWidth: 150 },
 ])
 const currentPage1 = ref(1);
-const itemsPerPage1 = ref(15);
+const itemsPerPage1 = ref(50);
 const totalItems1 = ref(0);
 const isReady1 = ref(false);
 const loading1 = ref(false);
@@ -487,7 +487,7 @@ const headers2 = ref([
     { title: '操作', key: 'actions', sortable: false, fixed: 'end', minWidth: 100 },
 ]);
 const currentPage2 = ref(1);
-const itemsPerPage2 = ref(15);
+const itemsPerPage2 = ref(50);
 const totalItems2 = ref(0);
 const loading2 = ref(false);
 const isReady2 = ref(false);

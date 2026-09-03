@@ -55,8 +55,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td>合计</td>
-                    <td>{{ summary1.total_agent }}</td>
+                    <td colspan="2">合计({{ summary1.total_agent }})</td>
                     <td>{{ summary1.total_points }}</td>
                     <td>{{ summary1.total_yl }}</td>
                     <td>{{ summary1.total_fyje }}</td>
@@ -367,6 +366,8 @@ const addAgent = async () => {
         toast.error('新增代理失败');
     } finally {
         savingAgent.value = false;
+        page1.value = 1;
+        perPage1.value = 20;
     }
 }
 
@@ -426,7 +427,7 @@ const onTableScroll1 = async (e) => {
         return
     }
     page1.value += 1
-    await getRecords()
+    await getAgents()
 }
 
 const onTableScroll2 = async (e) => {

@@ -4,11 +4,15 @@ const prefix = '/api';
 /**
  * 
  * @param {string} agent_name 代理名称
+ * @param {number} currentPage 当前页码
+ * @param {number} pageSize 每页条数
  * @returns 
  */
-export const GET_AGENT = async (agent_name) => {
+export const GET_AGENT = async (agent_name, currentPage, pageSize) => {
     return await API.post(`${prefix}/ht/agent_business/get_agent`, {
-        agent_name: agent_name
+        agent_name: agent_name,
+        currentPage: currentPage,
+        pageSize: pageSize
     });
 }
 

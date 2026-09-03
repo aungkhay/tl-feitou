@@ -39,3 +39,31 @@
     padding-bottom: 0 !important;
     min-height: 32px !important;
 } */
+
+@font-face {
+    font-family: 'NotoSerifSC';
+    src: url('./assets/fonts/NotoSerifSC/Black.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'NotoSansTC';
+    src: url('./assets/fonts/NotoSansTC/Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'NotoSansSC';
+    src: url('./assets/fonts/NotoSansSC/Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+#app {
+    font-family: 'NotoSansTC', sans-serif !important;
+}

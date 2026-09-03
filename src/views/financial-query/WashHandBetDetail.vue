@@ -218,7 +218,7 @@ const toDateMenu = ref(false);
 const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);
 const records = ref([]);
 const page = ref(1);
-const perPage = ref(25);
+const perPage = ref(50);
 const total = ref(0);
 const loading = ref(false);
 const tableRef = ref(null);

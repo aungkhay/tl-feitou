@@ -101,7 +101,7 @@
             </template> -->
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2 rounded-b-lg">
-                    <td colspan="2">{{ playerSummary.playername }}:</td>
+                    <td colspan="2">{{ playerSummary.playername }} ({{ totalItems1 }})</td>
                     <td>{{ playerSummary.score }}</td>
                     <td>{{ playerSummary.freeze_score }}</td>
                     <td>{{ playerSummary.raw_score }}</td>
@@ -344,7 +344,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2 rounded-b-lg">
-                    <td colspan="2">{{ scoreSummary.playername }}</td>
+                    <td colspan="2">{{ scoreSummary.playername }} ({{ totalItems2 }})</td>
                     <td>{{ scoreSummary.score }}</td>
                     <td colspan="8">{{ scoreSummary.before_score }}</td>
                 </tr>

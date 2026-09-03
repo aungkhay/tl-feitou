@@ -204,7 +204,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">{{ summary.playername }}</td>
+                    <td colspan="2">{{ summary.playername }} ({{ total }})</td>
                     <td>{{ summary.score }}</td>
                     <td>{{ summary.before_score }}</td>
                     <td colspan="6"></td>

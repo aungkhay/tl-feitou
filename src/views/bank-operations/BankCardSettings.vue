@@ -127,6 +127,21 @@
             <template #item.actions="{ item }">
                 <v-btn size="small" color="success" variant="tonal" @click="editCard(item)"><v-icon>mdi-pencil</v-icon> 编辑</v-btn>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="3">合计({{ total }})</td>
+                    <td>{{ summary?.initial_amount }}</td>
+                    <td>{{ summary?.initial_office_amount }}</td>
+                    <td>{{ summary?.bonus_amount }}</td>
+                    <td>{{ summary?.deduction_amount }}</td>
+                    <td>{{ summary?.transfer_in_amount }}</td>
+                    <td>{{ summary?.transfer_out_amount }}</td>
+                    <td></td>
+                    <td>{{ summary?.remaining_amount }}</td>
+                    <td>{{ summary?.office_amount }}</td>
+                    <td colspan="3"></td>
+                </tr>
+            </template>
         </v-data-table-server>
 
         <v-dialog
@@ -257,7 +272,7 @@
 </template>
 
 <script setup>
-import { computed, ref,watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { computed, ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { GET_BANK_CARD, ADD_BANK_CARD, EDIT_BANK_CARD } from '../../js/api/bank_business';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
@@ -311,6 +326,17 @@ const filters = ref({
     card_name: null,
     sort_name: null,
 })
+const summary = ref({
+    bonus_amount: 0,
+    card_name: '合计',
+    deduction_amount: 0,
+    initial_amount: 0,
+    initial_office_amount: 0,
+    office_amount: 0,
+    remaining_amount: 0,
+    transfer_in_amount: 0,
+    transfer_out_amount: 0,
+});
 
 const isSaving = ref(false);
 const isExporting = ref(false);
@@ -370,6 +396,7 @@ const getCards = async () => {
                 cards.value = [...cards.value, ...resData];
             }
             total.value = res.data.count;
+            summary.value = res.data.summary;
         }
     } finally {
         loading.value = false;

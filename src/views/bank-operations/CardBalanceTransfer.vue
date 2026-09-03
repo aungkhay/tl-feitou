@@ -160,6 +160,13 @@
                 <v-btn size="small" color="error" variant="tonal" @click="deleteDialog = true; selectedRecordId = item.Id" class="mx-2"><v-icon>mdi-delete</v-icon> 删除</v-btn>
                 <v-btn size="small" color="error" variant="tonal" :disabled="item.is_revoke == 1" @click="revokeDialog = true; selectedRecordId = item.Id"><v-icon>mdi-undo</v-icon> 撤销</v-btn>
             </template>
+            <template #body.append>
+                <tr class="font-weight-bold bg-grey-lighten-2">
+                    <td colspan="2">合计({{ total }})</td>
+                    <td>{{ summary?.option_amount }}</td>
+                    <td colspan="10"></td>
+                </tr>
+            </template>
         </v-data-table-server>
 
         <v-dialog
@@ -354,6 +361,10 @@ const headers = ref([
     { title: '工作日', value: 'working_day', minWidth: 100 },
     { title: '操作', value: 'actions', minWidth: 250 },
 ]);
+const summary = ref({
+    transfer_out_card_name: '合计',
+    option_amount: 0,
+});
 
 const isSaving = ref(false);
 const isDeleting = ref(false);
@@ -379,7 +390,7 @@ const rules = ref({
 const v$ = useVuelidate(rules.value, obj.value);
 
 const getCards = async () => {
-    const res = await GET_BANK_CARD(null, '正常 ', null, null, null, 1, 100);
+    const res = await GET_BANK_CARD(null, '正常 ', null, null, null, 1, 1000);
     if (res.code === 200) {
         cards.value = res.data.rows.map((item) => ({ 
             card_type: item.card_type,
@@ -419,6 +430,7 @@ const getRecords = async () => {
                 records.value = [...records.value, ...resData];
             }
             total.value = res.data.count;
+            summary.value = res.data.summary;
        }
     } catch (error) {
         console.error('获取转账记录失败:', error);

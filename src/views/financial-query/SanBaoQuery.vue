@@ -144,7 +144,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="3">合计</td>
+                    <td colspan="3">合计 ({{ total }})</td>
                     <td>{{ summary.total_xd }}</td> 
                     <td>{{ summary.total_zd }}</td> 
                     <td>{{ summary.total_h }}</td> 

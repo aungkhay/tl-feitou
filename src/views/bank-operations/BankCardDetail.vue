@@ -170,7 +170,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="4">{{ summary.card_type }}</td>
+                    <td colspan="4">{{ summary.card_type }} ({{ total }})</td>
                     <td>{{ summary.option_amount }}</td>
                     <td colspan="4"></td>
                 </tr>

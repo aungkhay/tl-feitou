@@ -167,7 +167,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td :colspan="filters.group_nickname && filters.player_name ? 3 : (filters.group_nickname ? 2 : (filters.player_name ? 2 : 1))">合计({{ records.length }})</td>
+                    <td :colspan="filters.group_nickname && filters.player_name ? 3 : (filters.group_nickname ? 2 : (filters.player_name ? 2 : 1))">合计({{ total }})</td>
                     <td>{{ summary.zxzcxm }}</td>
                     <td>{{ summary.zxyl }}</td>
                     <td>{{ summary.zxzcls }}</td>

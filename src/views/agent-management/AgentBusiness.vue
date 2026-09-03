@@ -55,7 +55,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计({{ summary1.total_agent }})</td>
+                    <td colspan="2">合计({{ total1 }})</td>
                     <td>{{ summary1.total_points }}</td>
                     <td>{{ summary1.total_yl }}</td>
                     <td>{{ summary1.total_fyje }}</td>
@@ -92,7 +92,7 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计({{ members.length }})</td>
+                    <td colspan="2">合计({{ total2 }})</td>
                     <td>{{ summary2.sum_fyje }}</td>
                     <td>{{ summary2.sum_points }}</td>
                     <td>{{ summary2.sum_yl }}</td>

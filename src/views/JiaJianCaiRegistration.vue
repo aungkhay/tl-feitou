@@ -288,7 +288,7 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 70 },
-    { title: '拉取端', value: 'pull_end', fixed: 'start', minWidth: 100 },
+    { title: '拉取端', value: 'pull_end', fixed: 'start', minWidth: 170 },
     { title: '当前金额', value: 'money', minWidth: 60 },
     { title: '操作金额', value: 'option_money', minWidth: 60 },
     { title: '操作前金额', value: 'befor_opton_money', minWidth: 60 },

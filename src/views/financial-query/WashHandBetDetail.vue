@@ -231,7 +231,7 @@ const isExporting = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', minWidth: 70 },
-    { title: '会员昵称', value: 'palyer_nickname', minWidth: 100 },
+    { title: '会员昵称', value: 'palyer_nickname', minWidth: 120 },
     { title: '靴局', value: 'round', minWidth: 90 },
     { title: '下注金额', value: 'bet', minWidth: 60 },
     { title: '下注输赢', value: 'win', minWidth: 60 },
@@ -244,7 +244,7 @@ const headers = ref([
     { title: '原始字符串', value: 'raw_string', minWidth: 100 },
     { title: '下注前金额', value: 'before_bet_money', minWidth: 80 },
     { title: '初始金额', value: 'init_money', minWidth: 60 },
-    { title: '台号', value: 'table_number', minWidth: 80 },
+    { title: '台号', value: 'table_number', minWidth: 170 },
 ])
 
 const groups = computed(() => userStore.groups);

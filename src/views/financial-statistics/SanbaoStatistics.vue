@@ -179,7 +179,7 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 170 },
     { title: '工作日', value: 'stat_date', minWidth: 100 },
     { title: '三宝总投注分', value: 'sb', minWidth: 80 },
     { title: '三宝选手赢亏分', value: 'sb_yl', minWidth: 80 },

@@ -366,8 +366,8 @@ const selectedSourcePlayer = ref(null);
 const selectedTargetPlayer = ref(null);
 const headers = ref([
     // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
-    { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
-    { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 80 },
+    { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 170 },
+    { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 120 },
     { title: '操作金额', key: 'score', sortable: false, minWidth: 80 },
     { title: '操作前余额', key: 'before_option_score', sortable: false, minWidth: 80 },
     { title: '操作类型', key: 'option_type', sortable: false, minWidth: 80 },

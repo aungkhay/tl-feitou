@@ -445,8 +445,8 @@ const endDateMenu = ref(false);
 const records1 = ref([]);
 const headers1 = ref([
     // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
-    { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
-    { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 100 },
+    { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 170 },
+    { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 120 },
     { title: '剩余积分', key: 'score', sortable: false, minWidth: 70 },
     { title: '冻结积分', key: 'freeze_score', sortable: false, minWidth: 70 },
     { title: '初始积分', key: 'raw_score', sortable: false, minWidth: 70 },
@@ -474,8 +474,8 @@ const loadingMore1 = ref(false)
 const records2 = ref([]);
 const headers2 = ref([
     // { title: '序列', key: 'index', sortable: false, fixed: 'start', width: 60 },
-    { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 100 },
-    { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 100 },
+    { title: '台号', key: 'group_nickname', sortable: false, fixed: 'start', width: 170 },
+    { title: '会员昵称', key: 'playername', sortable: false, fixed: 'start', minWidth: 120 },
     { title: '操作金额', key: 'score', sortable: false, minWidth: 100 },
     { title: '操作前金额', key: 'before_option_score', sortable: false, minWidth: 110 },
     { title: '操作类型', key: 'option_type', sortable: false, minWidth: 100 },

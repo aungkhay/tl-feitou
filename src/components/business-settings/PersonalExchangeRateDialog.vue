@@ -30,6 +30,9 @@
                         </v-autocomplete>
                         <v-progress-linear v-if="loadingPlayerData" color="primary" indeterminate></v-progress-linear>
                     </v-col>
+                    <v-col cols="12" sm="3">
+                        <v-btn @click="copyDialog = true" color="primary">复制群设置</v-btn>
+                    </v-col>
                 </v-row>
                 
                 <div class="mt-4 font-weight-bold text-red">没有<v-icon size="20">mdi-star-outline</v-icon>号为隐藏选择</div>
@@ -257,6 +260,45 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+
+    <v-dialog
+        v-model="copyDialog"
+        max-width="400"
+        persistent
+    >
+        <v-card>
+            <v-card-title>复制群设置</v-card-title>
+            <v-card-text>
+                <v-autocomplete
+                    v-model="copyData.source_desk"
+                    :items="groups"
+                    item-title="group_nickname"
+                    item-value="group_nickname"
+                    label="源台"
+                    variant="outlined"
+                    :error-messages="copyV$.source_desk.$errors.map(e => e.$message)"
+                    @input="copyV$.source_desk.$touch"
+                    @blur="copyV$.source_desk.$touch"
+                />
+                <v-autocomplete
+                    v-model="copyData.target_desk"
+                    :items="groups"
+                    item-title="group_nickname"
+                    item-value="group_nickname"
+                    label="目标台"
+                    variant="outlined"
+                    :error-messages="copyV$.target_desk.$errors.map(e => e.$message)"
+                    @input="copyV$.target_desk.$touch"
+                    @blur="copyV$.target_desk.$touch"
+                    class="mt-3"
+                />
+            </v-card-text>
+            <v-card-actions class="px-5 pb-5">
+                <v-btn color="grey" variant="elevated" :disabled="copyLoading" @click="closeCopyDialog">取消</v-btn>
+                <v-btn color="primary" variant="elevated" :loading="copyLoading" @click="copySettings">复制</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script setup>
@@ -267,7 +309,7 @@ import { GET_GROUP_PLAYERS } from '../../js/api/player_option';
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useToast } from 'vue-toastification';
-import { PERSONAL_EXCHANGE_RATIO, GET_PERSONAL_EXCHANGE_RATIO } from '../../js/api/business_settings';
+import { PERSONAL_EXCHANGE_RATIO, GET_PERSONAL_EXCHANGE_RATIO, COPY_GROUP_PERSONAL_SETUP } from '../../js/api/business_settings';
 import { PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 import moment from 'moment';
 
@@ -320,6 +362,19 @@ const rules = ref({
     start_exchange: { required: helpers.withMessage('是否启动兑换不能为空', required) },
 })
 const v$ = useVuelidate(rules.value, obj.value);
+
+const copyDialog = ref(false);
+const copyLoading = ref(false);
+const copyData = ref({
+    source_desk: null,
+    target_desk: null,
+    scope: 'all'
+});
+const copyRules = ref({
+    source_desk: { required: helpers.withMessage('源台不能为空', required) },
+    target_desk: { required: helpers.withMessage('目的台不能为空', required) },
+});
+const copyV$ = useVuelidate(copyRules.value, copyData.value);
 
 const getPlayers = async () => {
     loadingPlayerData.value = true;
@@ -471,6 +526,35 @@ const saveIndividualExchange = async () => {
         toast.error('个人兑换设置保存失败');
     } finally {
         isSavingIndividualExchange.value = false;
+    }
+};
+
+const closeCopyDialog = () => {
+    copyDialog.value = false;
+    copyData.value.source_desk = null;
+    copyData.value.target_desk = null;
+    copyData.value.scope = 'all';
+    copyV$.value.$reset();
+};
+
+const copySettings = async () => {
+    copyV$.value.$touch();
+    if (copyV$.value.$invalid) return;
+
+    copyLoading.value = true;
+    try {
+        const res = await COPY_GROUP_PERSONAL_SETUP(copyData.value.source_desk, copyData.value.target_desk, copyData.value.scope);
+        if (res && res.code === 200) {
+            toast.success(res.msg || '复制群设置成功');
+            closeCopyDialog();
+        } else {
+            toast.error(res.msg || '复制群设置失败');
+        }
+    } catch (error) {
+        toast.error('复制群设置失败');
+    } finally {
+        closeCopyDialog();
+        copyLoading.value = false;
     }
 };
 

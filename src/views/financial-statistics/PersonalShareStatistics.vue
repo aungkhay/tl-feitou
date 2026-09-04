@@ -175,7 +175,7 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', width: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', width: 170 },
     { title: '个人占成赢亏', value: 'g_yl', width: 120 },
     { title: '个人占成流水', value: 'g_yxxz', width: 120 },
     { title: '个人占成洗码', value: 'g_xm', width: 120 },

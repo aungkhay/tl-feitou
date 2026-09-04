@@ -453,8 +453,8 @@ const noMoreData = computed(() => {
 
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
-    { title: '会员昵称', value: 'player_name', minWidth: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 170 },
+    { title: '会员昵称', value: 'player_name', minWidth: 120 },
     { title: '兑换积分/庄闲洗码/返水', value: 'option_type', minWidth: 100 },
     { title: '兑换比例', value: 'personal_points_redemption_ratio', minWidth: 60 },
     { title: '积分数量', value: 'redeem_points', minWidth: 60 },

@@ -191,7 +191,7 @@ const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
     { title: '日期', value: 'stat_date', fixed: 'start', width: 100 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 170 },
     { title: '靴局', value: 'shoe_round', minWidth: 90 },
     { title: '闲对(虎单)', value: 'xd', minWidth: 60 },
     { title: '庄对(龙单)', value: 'zd', minWidth: 60 },

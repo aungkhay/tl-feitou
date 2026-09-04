@@ -119,3 +119,18 @@ export const DELETE_DATA = async (group_nickname, last_time) => {
         last_time: last_time
     });
 }
+
+/**
+ * 
+ * @param {string} source_desk 源台
+ * @param {string} target_desk 目的台
+ * @param {string} scope 范围
+ * @returns {Promise<import("axios").AxiosResponse<any>>}
+ */
+export const COPY_GROUP_PERSONAL_SETUP = async (source_desk, target_desk, scope) => {
+    return await API.post(`${prefix}/bussioness_setup/copy_group_personal_setup`, {
+        source_desk: source_desk,
+        target_desk: target_desk,
+        scope: scope
+    });
+}

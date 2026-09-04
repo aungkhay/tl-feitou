@@ -145,7 +145,7 @@ const noMoreData = computed(() => {
     return total.value > 0 && records.value.length >= total.value
 })
 const headers = ref([
-    { title: '台号', value: 'group_nickname', fixed: 'start', width: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', width: 170 },
     { title: '玩家', value: 'player_name', fixed: 'start', minWidth: 100 },
     { title: '局号', value: 'round_no', minWidth: 60 },
     { title: '靴号', value: 'shoe_no', minWidth: 60 },

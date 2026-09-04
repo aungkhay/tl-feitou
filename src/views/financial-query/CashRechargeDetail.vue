@@ -194,7 +194,7 @@ const noMoreData = computed(() => {
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', minWidth: 170 },
     { title: '会员昵称', value: 'playername', minWidth: 100 },
     { title: '操作金额', value: 'score', minWidth: 60 },
     { title: '操作前金额', value: 'before_option_score', minWidth: 80 },

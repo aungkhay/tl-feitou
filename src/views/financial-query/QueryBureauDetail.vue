@@ -177,7 +177,7 @@ const shoeRoundData = ref({});
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 60 },
-    { title: '台号', value: 'group_nickname', fixed: 'start', width: 100 },
+    { title: '台号', value: 'group_nickname', fixed: 'start', width: 170 },
     { title: '局', value: 'cc', fixed: 'start', minWidth: 60 },
     { title: '闲', value: 'x', minWidth: 60 },
     { title: '庄', value: 'z', minWidth: 60 },

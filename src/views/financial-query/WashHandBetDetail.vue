@@ -183,15 +183,10 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td colspan="2">合计 ({{ total }})</td>
-                    <td>{{ summary.total_xz }}</td>
-                    <td colspan="8">{{ summary.total_yl }}</td>
-                    <td colspan="3">{{ summary.total_before_bet_ye }}</td>
-                    <!-- <td colspan="3">下注前金额: {{ summary.total_before_bet_ye }}</td>
-                    <td colspan="2">总数: {{ summary.total_count }}</td>
-                    <td colspan="2">总下注: {{ summary.total_xz }}</td>
-                    <td colspan="2">总盈亏: {{ summary.total_yl }}</td>
-                    <td colspan="5"></td> -->
+                    <td colspan="4">合计 ({{ total }})</td>
+                    <td colspan="4">{{ summary.total_xz }}</td>
+                    <td colspan="4">{{ summary.total_yl }}</td>
+                    <td colspan="2">{{ summary.total_before_bet_ye }}</td>
                 </tr>
             </template>
         </v-data-table-server>
@@ -231,20 +226,20 @@ const isExporting = ref(false);
 const pageSizeOptions = computed(() => userStore.tablePageSize);
 const headers = ref([
     // { title: '序列', value: 'index', fixed: 'start', minWidth: 70 },
-    { title: '会员昵称', value: 'palyer_nickname', minWidth: 120 },
+    { title: '台号', value: 'table_number', minWidth: 170 },
+    { title: '用户名', value: 'palyer_nickname', minWidth: 120 },
     { title: '靴局', value: 'round', minWidth: 90 },
+    { title: '下注时间', value: 'bet_time', minWidth: 150 },
     { title: '下注金额', value: 'bet', minWidth: 60 },
-    { title: '下注输赢', value: 'win', minWidth: 60 },
     { title: '下注命令', value: 'bet_command', minWidth: 100 },
     { title: '命令格式', value: 'command_format', minWidth: 100 },
-    { title: '下注时间', value: 'bet_time', minWidth: 150 },
     { title: '开奖结果', value: 'result', minWidth: 100 },
+    { title: '下注输赢', value: 'win', minWidth: 60 },
     { title: '开奖时间', value: 'result_time', minWidth: 150 },
     { title: '结算状态', value: 'settlement_status', minWidth: 80 },
     { title: '原始字符串', value: 'raw_string', minWidth: 100 },
     { title: '下注前金额', value: 'before_bet_money', minWidth: 80 },
     { title: '初始金额', value: 'init_money', minWidth: 60 },
-    { title: '台号', value: 'table_number', minWidth: 170 },
 ])
 
 const groups = computed(() => userStore.groups);
@@ -263,10 +258,10 @@ const betTypes = ref([
     { title: "有效流水", value: "yxxz" },
 ]);
 const summary = ref({
-    total_before_bet_ye: 0,
+    total_before_bet_ye: 0, // 下注前总金额
     total_count: 0,
-    total_xz: 0,
-    total_yl: 0
+    total_xz: 0, // 总下注
+    total_yl: 0 // 总盈亏
 });
 
 const filters = ref({

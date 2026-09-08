@@ -200,14 +200,13 @@
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">
-                    <td>合计({{ total }})</td>
+                    <td colspan="2">合计({{ total }})</td>
                     <td>{{ summary.total_xml_zx }}</td>
                     <td>{{ summary.total_xml_sb }}</td>
                     <td>{{ summary.total_zx_yl }}</td> 
                     <td>{{ summary.total_sb_yl }}</td> 
                     <td>{{ summary.total_yxxz }}</td> 
                     <td>{{ summary.total_points }}</td>
-                    <td></td>
                 </tr>
             </template>
             <template #item="{ item, columns, toggleExpand, isExpanded }">
@@ -306,6 +305,7 @@ const filters = ref({
 
 const allHeaders = ref([
     // { title: '序列', value: 'index', fixed: 'start', width: 70, copyable: false },
+    { title: '日期', value: 'stat_date', width: 230, copyable: false },
     { title: '选手', value: 'username', fixed: 'start', minWidth: 100, copyable: false },
     // { title: '代理号', value: 'reference_name', fixed: 'start', minWidth: 120, copyable: false },
     { title: '庄闲洗码', value: 'xml_zx', minWidth: 60, copyable: true },
@@ -314,7 +314,6 @@ const allHeaders = ref([
     { title: 'N宝盈亏', value: 'sb_yl', minWidth: 60, copyable: true },
     { title: '有效流水', value: 'yxxz', minWidth: 60, copyable: true },
     { title: '日积分', value: 'total_points', minWidth: 60, copyable: true },
-    { title: '日期', value: 'stat_date', minWidth: 120, copyable: false },
     // { title: 'DayAddUpEffectiveMoney', value: 'g_m', minWidth: 100 },
     // { title: 'AllAddUpEffectiveMoney', value: 'g_xd', minWidth: 80 }
 ]);

@@ -295,6 +295,12 @@ const drawerItems = ref([
         routeName: 'IPWhiteList',
         isSelected: false,
     },
+    // {
+    //     title: '联系程序员',
+    //     icon: 'mdi-account-question',
+    //     routeName: 'ContactProgrammer',
+    //     isSelected: false,
+    // },
 ]);
 
 function setDrawerActive(parentIndex, childIndex) {
@@ -336,7 +342,11 @@ function changeRoute(parentIndex, childIndex) {
     if (childIndex >= 0) {
         router.push({ name: drawerItems.value[parentIndex].children[childIndex].routeName })
     } else {
-        router.push({ name: drawerItems.value[parentIndex].routeName })
+        if (drawerItems.value[parentIndex].routeName == 'ContactProgrammer') {
+            window.open('https://t.me/+6A6DdaVaNpBmNWRl');
+        } else {
+            router.push({ name: drawerItems.value[parentIndex].routeName })
+        }
     }
     setDrawerActive(parentIndex, childIndex);
 }

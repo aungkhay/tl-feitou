@@ -211,7 +211,7 @@
             </template>
             <template #item="{ item, columns, toggleExpand, isExpanded }">
                 <tr @dblclick="onRowDblClick(item)">
-                    <td v-for="column in columns" :key="column.key" style="font-size: 12px; border-right: 1px solid #e0e0e0;">
+                    <td v-for="column in columns" :key="column.key" style="font-size: 12px; border-right: 1px solid #e0e0e0; height: 26px;">
                         {{ item[column.key] }}
                     </td>
                 </tr>
@@ -401,15 +401,14 @@ const exportTable = async () => {
         );
         if (res.code == 200) {
             const data = res.data.list.map(item => ({
-                '序列': item.index,
+                '日期': item.stat_date,
                 '选手': item.username,
-                // '代理号': item.reference_name,
                 '庄闲洗码': item.xml_zx,
                 'N宝洗码': item.xml_sb,
                 '庄闲盈亏': item.zx_yl,
                 'N宝盈亏': item.sb_yl,
                 '有效流水': item.yxxz,
-                '日积分': item.daily_points
+                '日积分': item.total_points
             }));
             exportExcel(data, `选手洗码盈亏-${formattedDate(new Date())}`);
         } else {

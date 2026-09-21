@@ -108,7 +108,6 @@
                     <td>{{ summary.total_xd }}</td>
                     <td>{{ summary.total_zd }}</td>
                     <td>{{ summary.total_l }}</td>
-                    <td>{{ summary.total_k }}</td>
                     <td>{{ summary.total_m }}</td>
                     <td>{{ summary.total_g_m }}</td>
                     <td>{{ summary.total_g_x }}</td>
@@ -116,11 +115,8 @@
                     <td>{{ summary.total_g_xd }}</td>
                     <td>{{ summary.total_g_zd }}</td>
                     <td>{{ summary.total_g_h }}</td>
-                    <td>{{ summary.total_q }}</td>
-                    <td>{{ summary.total_g_q }}</td>
                     <td>{{ summary.total_zxdc }}</td>
                     <td>{{ summary.total_g_l }}</td>
-                    <td>{{ summary.total_g_k }}</td>
                     <td>{{ summary.total_tzx }}</td>
                     <td>{{ summary.total_tsbl }}</td>
                     <td>{{ summary.total_lt }}</td>
@@ -183,8 +179,7 @@ const headers = ref([
     { title: '庄', value: 'z', minWidth: 60 },
     { title: '闲对', value: 'xd', minWidth: 60 },
     { title: '庄对', value: 'zd', minWidth: 60 },
-    { title: '小老虎', value: 'l', minWidth: 60 },
-    { title: '大老虎', value: 'k', minWidth: 60 },
+    { title: '幸运6', value: 'l', minWidth: 60 },
     { title: '完美', value: 'm', minWidth: 60 },
     { title: '个人完美', value: 'g_m', minWidth: 60 },
     { title: '个闲', value: 'g_x', minWidth: 60 },
@@ -192,11 +187,8 @@ const headers = ref([
     { title: '个闲对', value: 'g_xd', minWidth: 60 },
     { title: '个庄对', value: 'g_zd', minWidth: 60 },
     { title: '个和', value: 'g_h', minWidth: 60 },
-    { title: '幸运7', value: 'q', minWidth: 60 },
-    { title: '个人幸运7', value: 'g_q', minWidth: 80 },
     { title: '庄闲对冲', value: 'zxdc', minWidth: 60 },
-    { title: '个人小老虎', value: 'g_l', minWidth: 70 },
-    { title: '个人大老虎', value: 'g_k', minWidth: 70 },
+    { title: '个人幸运6', value: 'g_l', minWidth: 70 },
     { title: '台庄闲', value: 'tzx', minWidth: 60 },
     { title: '台三宝+幸运6', value: 'tsbl', minWidth: 80 },
     { title: '零头', value: 'lt', minWidth: 60 },
@@ -213,9 +205,6 @@ const headers = ref([
     { title: 'n宝上盘盈亏', value: 'sblspyk', minWidth: 80 },
     { title: '闲庄上盘赢亏', value: 'xzspyk', minWidth: 80 },
     { title: '零头赢亏', value: 'ltyk', minWidth: 60 },
-    // { title: '飞牌金额', value: 'fly_card_amount', minWidth: 100 },
-    // { title: '飞牌闲庄', value: 'fly_card_banker_player', minWidth: 100 },
-    // { title: '飞牌输赢', value: 'fly_card_win_loss', minWidth: 100 },
     { title: '上盘抽水赢亏', value: 'spzsyk', minWidth: 80 },
 ]);
 const summary = ref({
@@ -236,7 +225,6 @@ const summary = ref({
     total_g_h: 0,
     total_g_m: 0,
     total_g_l: 0,
-    total_g_k: 0,
     total_g_q: 0,
     total_zxdc: 0,
     total_tzx: 0,
@@ -322,8 +310,7 @@ const exportTable = async () => {
                 '庄': item.z,
                 '闲对': item.xd,
                 '庄对': item.zd,
-                '小老虎': item.l,
-                '大老虎': item.k,
+                '幸运6': item.l,
                 '完美': item.m,
                 '个人完美': item.g_m,
                 '个闲': item.g_x,
@@ -331,8 +318,6 @@ const exportTable = async () => {
                 '个闲对': item.g_xd,
                 '个庄对': item.g_zd,
                 '个和': item.g_h,
-                '幸运7': item.d,
-                '个人幸运7': item.g_d,
                 '庄闲对冲': item.zxdc,
                 '个人幸运6': item.g_l,
                 '台庄闲': item.tzx,

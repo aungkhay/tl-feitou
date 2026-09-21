@@ -149,17 +149,13 @@
                     <td>{{ summary.total_zd }}</td> 
                     <td>{{ summary.total_h }}</td> 
                     <td>{{ summary.total_l }}</td> 
-                    <td>{{ summary.total_k ?? 0 }}</td> 
                     <td>{{ summary.total_m }}</td> 
-                    <td>{{ summary.total_q }}</td> 
                     <td></td>
                     <td>{{ summary.total_xd_yl }}</td> 
                     <td>{{ summary.total_zd_yl }}</td> 
                     <td>{{ summary.total_h_yl }}</td> 
                     <td>{{ summary.total_l_yl }}</td> 
-                    <td>{{ summary.total_k_yl }}</td> 
                     <td>{{ summary.total_m_yl }}</td> 
-                    <td>{{ summary.total_q_yl }}</td> 
                     <td>{{ summary.total_yl }}</td> 
                 </tr>
             </template>
@@ -196,18 +192,14 @@ const headers = ref([
     { title: '闲对(虎单)', value: 'xd', minWidth: 60 },
     { title: '庄对(龙单)', value: 'zd', minWidth: 60 },
     { title: '和', value: 'h', minWidth: 60 },
-    { title: '小老虎', value: 'l', minWidth: 60 },
-    { title: '大老虎', value: 'k', minWidth: 60 },
+    { title: '幸运6', value: 'l', minWidth: 60 },
     { title: '完美(虎双)', value: 'm', minWidth: 60 },
-    { title: '幸运7', value: 'q', minWidth: 60 },
     { title: '开奖结果', value: 'kj', minWidth: 100 },
     { title: '闲对(虎单)输赢', value: 'xd_yl', minWidth: 80 },
     { title: '庄对(龙单)输赢', value: 'zd_yl', minWidth: 80 },
     { title: '和输赢', value: 'h_yl', minWidth: 80 },
-    { title: '小老虎输赢', value: 'l_yl', minWidth: 80 },
-    { title: '大老虎输赢', value: 'k_yl', minWidth: 80 },
+    { title: '幸运6输赢', value: 'l_yl', minWidth: 80 },
     { title: '完美(虎双)输赢', value: 'm_yl', minWidth: 80 },
-    { title: '幸运7输赢', value: 'q_yl', minWidth: 80 },
     { title: '本局输赢', value: 'yl', minWidth: 80 },
     // { title: '备注', value: 'remark', minWidth: 150 }
 ]);
@@ -294,16 +286,13 @@ const exportTable = async () => {
                 '闲对(虎单)': item.xd,
                 '庄对(龙单)': item.zd,
                 '和': item.h,
-                '小老虎': item.l,
-                '大老虎': item.k,
+                '幸运6': item.l,
                 '完美(虎双)': item.m,
-                '幸运7': item.q,
                 '开奖结果': item.kj,
                 '闲对(虎单)输赢': item.xd_yl,
                 '庄对(龙单)输赢': item.zd_yl,
                 '和输赢': item.h_yl,
-                '小老虎输赢': item.l_yl,
-                '大老虎输赢': item.k_yl,
+                '幸运6输赢': item.l_yl,
                 '完美(虎双)输赢': item.m_yl,
                 '幸运7输赢': item.q_yl,
                 '本局输赢': item.yl

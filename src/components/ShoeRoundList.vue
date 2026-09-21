@@ -23,9 +23,7 @@
                                         <th style="min-width: 70px;">闲对</th>
                                         <th style="min-width: 70px;">庄对</th>
                                         <th>和</th>
-                                        <th style="min-width: 80px;">小龙虎</th>
-                                        <th style="min-width: 80px;">大龙虎</th>
-                                        <th style="min-width: 80px;">幸运7</th>
+                                        <th style="min-width: 80px;">幸运6</th>
                                         <th style="min-width: 70px;">完美</th>
                                     </tr>
                                 </thead>
@@ -38,8 +36,6 @@
                                         <td>{{ item.bet_detail.zd }}</td>
                                         <td>{{ item.bet_detail.h }}</td>
                                         <td>{{ item.bet_detail.l }}</td>
-                                        <td>{{ item.bet_detail.k }}</td>
-                                        <td>{{ item.bet_detail.q }}</td>
                                         <td>{{ item.bet_detail.m }}</td>
                                     </tr>
                                 </thead>

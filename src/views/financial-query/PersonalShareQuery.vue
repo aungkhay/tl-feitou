@@ -330,10 +330,8 @@ const exportTable = async () => {
                 '三宝洗码': item.xml_sb,
                 '闲对下注': item.xd_xz,
                 '和下注': item.h_xz,
-                '小老虎下注': item.l_xz,
-                '大老虎下注': item.k_xz,
+                '幸运6下注': item.l_xz,
                 '完美下注': item.m_xz,
-                '幸运7下注': item.q_xz,
                 '庄对盈利': item.zd_yl
             }));
             exportExcel(data, `个人占成明细-${formattedDate(new Date())}`);

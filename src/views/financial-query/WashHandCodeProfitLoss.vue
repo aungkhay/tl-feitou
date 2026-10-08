@@ -40,7 +40,7 @@
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact" title="" subtitle="">
-                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw.playername)}">{{ item.raw.playername }}</v-list-item-title>
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
                             </v-list-item>
                         </template>
                     </v-autocomplete>
@@ -211,7 +211,11 @@
             </template>
             <template #item="{ item, columns, toggleExpand, isExpanded }">
                 <tr @dblclick="onRowDblClick(item)">
-                    <td v-for="column in columns" :key="column.key" style="font-size: 12px; border-right: 1px solid #e0e0e0; height: 26px;">
+                    <td 
+                        v-for="column in columns" :key="column.key" 
+                        style="font-size: 12px; border-right: 1px solid #e0e0e0; height: 26px;"
+                        :class="{ 'text-error font-weight-bold': column.key === 'username' && isVirtualPlayer(item) }"
+                    >
                         {{ item[column.key] }}
                     </td>
                 </tr>

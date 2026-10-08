@@ -26,6 +26,6 @@ const fetchAllPlayers = async () => {
 };
 
 onMounted(() => {
-    fetchAllPlayers();
+    // fetchAllPlayers();
 });
 </script>

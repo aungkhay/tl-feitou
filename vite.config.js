@@ -35,6 +35,7 @@ export default ({ mode }) => {
         https: false,
         hot: true,
         host: false, // ************  npm run dev -- --host ************
+        port: 7000,
         proxy: {
           '/api': {
               target: env.VITE_BASE_URL,

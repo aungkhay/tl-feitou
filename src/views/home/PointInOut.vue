@@ -85,7 +85,7 @@
                 {{ $filters.formatFullDate(item.registTime) }}
             </template>
             <template #item.playername="{ item }">
-                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item) }">{{ item.playername }}</span>
             </template>
             <template #item.is_hide="{ item }">
                 <span v-if="item.is_hide" class="text-red">隐藏</span>
@@ -328,7 +328,7 @@
                 <v-skeleton-loader type="table-row@3"/>
             </template> -->
             <template #item.playername="{ item }">
-                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item) }">{{ item.playername }}</span>
             </template>
             <template #item.working_date="{ item }">
                 {{ $filters.formatDate(item.working_date) }}

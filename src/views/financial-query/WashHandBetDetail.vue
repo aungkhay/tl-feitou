@@ -57,7 +57,7 @@
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact" title="" subtitle="">
-                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw.playername)}">{{ item.raw.playername }}</v-list-item-title>
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
                             </v-list-item>
                         </template>
                     </v-autocomplete>
@@ -176,7 +176,7 @@
                 {{ $filters.formatFullDate(item.bet_time) }}
             </template>
             <template #item.palyer_nickname="{ item }">
-                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.palyer_nickname) }">{{ item.palyer_nickname }}</span>
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item) }">{{ item.palyer_nickname }}</span>
             </template>
             <template #item.result_time="{ item }">
                 {{ $filters.formatFullDate(item.result_time) }}

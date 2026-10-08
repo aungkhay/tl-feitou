@@ -65,7 +65,7 @@
                 >
                     <template #item="{ props, item }">
                         <v-list-item v-bind="props" density="compact" title="" subtitle="">
-                            <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw.playername)}">{{ item.raw.playername }}</v-list-item-title>
+                            <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
                             <template #append>
                                 <span class="text-caption" :class="item.raw.is_hide ? 'text-red' : 'text-green'">
                                     {{ item.raw.is_hide ? '隐藏' : '显示' }}

@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', {
             child: '上下分',
             key: ''
         },
-        virtualPlayer: []
+        virtualPlayer: localStorage.getItem('_virtualPlayer_') ? JSON.parse(localStorage.getItem('_virtualPlayer_')) : [],
     }),
     actions: {
         setToken(token) {
@@ -49,6 +49,8 @@ export const useUserStore = defineStore('user', {
         },
         setPlayerDetail(player_detail) {
             this.player_detail = player_detail;
+            this.virtualPlayer = player_detail.list.filter(p => p.is_virtual == 1);
+            localStorage.setItem('_virtualPlayer_', JSON.stringify(this.virtualPlayer));
         },
         setGroups(groups) {
             this.groups = groups;
@@ -68,9 +70,30 @@ export const useUserStore = defineStore('user', {
     },
     getters: {
         isVirtualPlayer: (state) => {
-            return (playername) => {
-                return state.virtualPlayer.some(v => v.playername === playername);
-            }
+            return (item) => {
+                if (!item) return false;
+                if (item.is_virtual === true || item.is_virtual === 1) {
+                    return true;
+                }
+
+                const itemNames = [
+                    item.username,
+                    item.playername,
+                    item.palyer_nickname,
+                    item.nickname
+                ].filter(Boolean);
+
+                return state.virtualPlayer.some(v => {
+                    const virtualNames = [
+                        v.username,
+                        v.playername,
+                        v.palyer_nickname,
+                        v.nickname
+                    ].filter(Boolean);
+
+                    return itemNames.some(name => virtualNames.includes(name));
+                });
+            };
         }
     }
 });

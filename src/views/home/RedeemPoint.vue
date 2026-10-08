@@ -58,7 +58,7 @@
                     >
                         <template #item="{ props, item }">
                             <v-list-item v-bind="props" density="compact" title="" subtitle="">
-                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw.playername)}">{{ item.raw.playername }}</v-list-item-title>
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
                             </v-list-item>
                         </template>
                     </v-autocomplete>
@@ -186,7 +186,7 @@
                 <v-skeleton-loader type="table-row@8"/>
             </template> -->
             <template #item.player_name="{ item }">
-                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.player_name) }">{{ item.player_name }}</span>
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item) }">{{ item.player_name }}</span>
             </template>
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}

@@ -156,7 +156,7 @@
                 <span>{{ item.cc }} - {{ item.jc }}</span>
             </template>
             <template #item.playername="{ item }">
-                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item) }">{{ item.playername }}</span>
             </template>
             <template #body.append>
                 <tr class="font-weight-bold bg-grey-lighten-2">

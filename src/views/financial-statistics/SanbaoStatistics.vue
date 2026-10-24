@@ -144,10 +144,12 @@
                     <td>{{ summary.k }}</td>
                     <td>{{ summary.m }}</td>
                     <td>{{ summary.q }}</td>
+                    <td>{{ summary.a }}</td>
                     <td>{{ summary.l_yl }}</td>
                     <td>{{ summary.k_yl }}</td>
                     <td>{{ summary.m_yl }}</td>
                     <td>{{ summary.q_yl }}</td>
+                    <td>{{ summary.a_yl }}</td>
                     <td>{{ summary.company_yl }}</td>
                 </tr>
             </template>
@@ -187,10 +189,12 @@ const headers = ref([
     { title: '大老虎总投注分', value: 'k', minWidth: 80 },
     { title: '完美(双)总投注分', value: 'm', minWidth: 80 },
     { title: '幸运7总投注分', value: 'q', minWidth: 80 },
+    { title: '幸运7A总投注分', value: 'a', minWidth: 80 },
     { title: '小老虎选手赢亏', value: 'l_yl', minWidth: 80 },
     { title: '大老虎选手赢亏', value: 'k_yl', minWidth: 80 },
     { title: '完美(双)选手赢亏', value: 'm_yl', minWidth: 80 },
-    { title: '幸运7嬴亏', value: 'q_yl', minWidth: 80 },
+    { title: '幸运7赢亏', value: 'q_yl', minWidth: 80 },
+    { title: '幸运7A赢亏', value: 'a_yl', minWidth: 80 },
     { title: '公司利润', value: 'company_yl', minWidth: 80 }
 ]);
 const summary = ref({
@@ -201,6 +205,8 @@ const summary = ref({
     k_yl: 0,
     q_yl: 0,
     q: 0,
+    a_yl: 0,
+    a: 0,
     l_yl: 0,
     m_yl: 0,
     company_yl: 0
@@ -267,12 +273,16 @@ const exportTable = async () => {
                 '工作日': appContext.config.globalProperties.$filters.formatDate(item.stat_date),
                 '三宝总投注分': item.sb,
                 '三宝选手赢亏分': item.sb_yl,
-                '幸运6(单)总投注分': item.l,
+                '小老虎总投注分': item.l,
+                '大老虎总投注分': item.k,
                 '完美(双)总投注分': item.m,
                 '幸运7总投注分': item.q,
-                '幸运6(单)选手赢亏': item.l_yl,
+                '幸运7A总投注分': item.a,
+                '小老虎选手赢亏': item.l_yl,
+                '大老虎选手赢亏': item.k_yl,
                 '完美(双)选手赢亏': item.m_yl,
                 '幸运7赢亏': item.q_yl,
+                '幸运7A赢亏': item.a_yl,
                 '公司利润': item.company_yl
             }));
             

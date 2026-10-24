@@ -234,7 +234,7 @@
                         />
                         <v-text-field
                             v-model="selectedRow.xml_sb"
-                            label="三宝+幸运6+对子洗码"
+                            label="三宝+小老虎+对子洗码"
                         />
                         <v-text-field
                             v-model="selectedRow.zx_yl"
@@ -242,7 +242,7 @@
                         />
                         <v-text-field
                             v-model="selectedRow.sb_yl"
-                            label="三宝+幸运6+对子"
+                            label="三宝+小老虎+对子"
                         />
                         <v-text-field
                             v-model="selectedRow.yxxz"

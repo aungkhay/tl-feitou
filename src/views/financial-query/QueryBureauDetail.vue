@@ -118,6 +118,8 @@
                     <td>{{ summary.total_g_h }}</td>
                     <td>{{ summary.total_q }}</td>
                     <td>{{ summary.total_g_q }}</td>
+                    <td>{{ summary.total_a }}</td>
+                    <td>{{ summary.total_g_a }}</td>
                     <td>{{ summary.total_zxdc }}</td>
                     <td>{{ summary.total_g_l }}</td>
                     <td>{{ summary.total_g_k }}</td>
@@ -194,11 +196,13 @@ const headers = ref([
     { title: '个和', value: 'g_h', minWidth: 60 },
     { title: '幸运7', value: 'q', minWidth: 60 },
     { title: '个人幸运7', value: 'g_q', minWidth: 80 },
+    { title: '幸运7A', value: 'a', minWidth: 60 },
+    { title: '个人幸运7A', value: 'g_a', minWidth: 80 },
     { title: '庄闲对冲', value: 'zxdc', minWidth: 60 },
     { title: '个人小老虎', value: 'g_l', minWidth: 70 },
     { title: '个人大老虎', value: 'g_k', minWidth: 70 },
     { title: '台庄闲', value: 'tzx', minWidth: 60 },
-    { title: '台三宝+幸运6', value: 'tsbl', minWidth: 80 },
+    { title: '台三宝+小老虎', value: 'tsbl', minWidth: 80 },
     { title: '零头', value: 'lt', minWidth: 60 },
     { title: '上盘', value: 'sp', minWidth: 60 },
     { title: '上盘买', value: 'spm', minWidth: 60 },
@@ -229,6 +233,7 @@ const summary = ref({
     total_k: 0,
     total_m: 0,
     total_q: 0,
+    total_a: 0,
     total_g_z: 0,
     total_g_x: 0,
     total_g_zd: 0,
@@ -238,6 +243,7 @@ const summary = ref({
     total_g_l: 0,
     total_g_k: 0,
     total_g_q: 0,
+    total_g_a: 0,
     total_zxdc: 0,
     total_tzx: 0,
     total_tsbl: 0,
@@ -253,6 +259,7 @@ const summary = ref({
     total_xzspyk: 0,
     total_ltyk: 0,
     total_spzsyk: 0,
+    total_spm: 0,
 })
 
 const isExporting = ref(false);
@@ -333,10 +340,12 @@ const exportTable = async () => {
                 '个和': item.g_h,
                 '幸运7': item.d,
                 '个人幸运7': item.g_d,
+                '幸运7A': item.a,
+                '个人幸运7A': item.g_a,
                 '庄闲对冲': item.zxdc,
-                '个人幸运6': item.g_l,
+                '个人小老虎': item.g_l,
                 '台庄闲': item.tzx,
-                '台三宝+幸运6': item.tsbl,
+                '台三宝+小老虎': item.tsbl,
                 '零头': item.lt,
                 '上盘': item.sp,
                 '上盘买': item.spm,

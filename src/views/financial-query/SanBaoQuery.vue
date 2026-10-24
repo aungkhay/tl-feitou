@@ -152,6 +152,7 @@
                     <td>{{ summary.total_k ?? 0 }}</td> 
                     <td>{{ summary.total_m }}</td> 
                     <td>{{ summary.total_q }}</td> 
+                    <td>{{ summary.total_a }}</td> 
                     <td></td>
                     <td>{{ summary.total_xd_yl }}</td> 
                     <td>{{ summary.total_zd_yl }}</td> 
@@ -160,6 +161,7 @@
                     <td>{{ summary.total_k_yl }}</td> 
                     <td>{{ summary.total_m_yl }}</td> 
                     <td>{{ summary.total_q_yl }}</td> 
+                    <td>{{ summary.total_a_yl }}</td> 
                     <td>{{ summary.total_yl }}</td> 
                 </tr>
             </template>
@@ -200,6 +202,7 @@ const headers = ref([
     { title: '大老虎', value: 'k', minWidth: 60 },
     { title: '完美(虎双)', value: 'm', minWidth: 60 },
     { title: '幸运7', value: 'q', minWidth: 60 },
+    { title: '幸运7A', value: 'a', minWidth: 60 },
     { title: '开奖结果', value: 'kj', minWidth: 100 },
     { title: '闲对(虎单)输赢', value: 'xd_yl', minWidth: 80 },
     { title: '庄对(龙单)输赢', value: 'zd_yl', minWidth: 80 },
@@ -208,6 +211,7 @@ const headers = ref([
     { title: '大老虎输赢', value: 'k_yl', minWidth: 80 },
     { title: '完美(虎双)输赢', value: 'm_yl', minWidth: 80 },
     { title: '幸运7输赢', value: 'q_yl', minWidth: 80 },
+    { title: '幸运7A输赢', value: 'a_yl', minWidth: 80 },
     { title: '本局输赢', value: 'yl', minWidth: 80 },
     // { title: '备注', value: 'remark', minWidth: 150 }
 ]);
@@ -224,6 +228,7 @@ const filters = ref({
 });
 const summary = ref({
     total_h: 0,
+    total_k: 0,
     total_h_yl: 0,
     total_k_yl: 0,
     total_l: 0,
@@ -232,6 +237,8 @@ const summary = ref({
     total_m_yl: 0,
     total_q: 0,
     total_q_yl: 0,
+    total_a: 0,
+    total_a_yl: 0,
     total_xd: 0,
     total_xd_yl: 0,
     total_yl: 0,
@@ -298,6 +305,7 @@ const exportTable = async () => {
                 '大老虎': item.k,
                 '完美(虎双)': item.m,
                 '幸运7': item.q,
+                '幸运7A': item.a,
                 '开奖结果': item.kj,
                 '闲对(虎单)输赢': item.xd_yl,
                 '庄对(龙单)输赢': item.zd_yl,
@@ -306,6 +314,7 @@ const exportTable = async () => {
                 '大老虎输赢': item.k_yl,
                 '完美(虎双)输赢': item.m_yl,
                 '幸运7输赢': item.q_yl,
+                '幸运7A输赢': item.a_yl,
                 '本局输赢': item.yl
             }));
             exportExcel(data, `三宝查询-${formattedDate(new Date())}`);

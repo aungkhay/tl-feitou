@@ -69,7 +69,7 @@ export const checkResult_ = (result) => {
         case 256:
             return '任意对';
             break;
-    
+
         default:
             return '';
             break;
@@ -101,4 +101,64 @@ export const isReachBottom = (event) => {
 
     const isBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
     return isBottom;
+}
+
+export const numberToChinese = (amount) => {
+    const digits = '零一二三四五六七八九';
+    const units = ['', '十', '百', '千'];
+    const bigUnits = ['', '万', '亿', '万亿'];
+
+    const num = BigInt(amount);
+
+    if (num === 0n) return '零';
+    if (num < 0n) return '负' + numberToChinese(-num);
+
+    function convertGroup(n) {
+        let result = '';
+        let zero = false;
+        
+        for (let i = 3; i >= 0; i--) {
+            const divisor = 10 ** i;
+            const digit = Math.floor(n / divisor) % 10;
+
+            if (digit === 0) {
+                if (result) zero = true;
+            } else {
+                if (zero) result += '零';
+                result += digits[digit] + units[i];
+                zero = false;
+            }
+        }
+
+        return result;
+    }
+
+    let groups = [];
+    let value = num;
+
+    while (value > 0n) {
+        groups.push(Number(value % 10000n));
+        value /= 10000n;
+    }
+
+    let result = '';
+    let needZero = false;
+
+    for (let i = groups.length - 1; i >= 0; i--) {
+        const group = groups[i];
+
+        if (group === 0) {
+            if (result) needZero = true;
+            continue;
+        }
+
+        if (result && (needZero || group < 1000)) {
+            result += '零';
+        }
+
+        result += convertGroup(group) + bigUnits[i];
+        needZero = false;
+    }
+
+    return result;
 }

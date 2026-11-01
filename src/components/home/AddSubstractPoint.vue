@@ -83,6 +83,7 @@
                     :error-messages="v$.option_score.$errors.map(e => e.$message)"
                     @input="v$.option_score.$touch"
                     @blur="v$.option_score.$touch"
+                    :suffix="obj.option_score ? numberToChinese(obj.option_score) : ''"
                 />
                 <v-select
                     v-model="obj.option_type"
@@ -149,6 +150,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { ADD_SCORE, GET_BANKCARD, GET_GROUP_PLAYERS, SUBSTRACT_SCORE, PLAYER_FUZZY_QUERY } from '../../js/api/player_option';
 import { useToast } from 'vue-toastification';
+import { numberToChinese } from '../../js/common';
 
 const userStore = useUserStore();
 const isVirtualPlayer = computed(() => userStore.isVirtualPlayer);

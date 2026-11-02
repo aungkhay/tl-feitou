@@ -49,7 +49,16 @@ export const useUserStore = defineStore('user', {
         },
         setPlayerDetail(player_detail) {
             this.player_detail = player_detail;
-            this.virtualPlayer = player_detail.list.filter(p => p.is_virtual == 1);
+
+            const existing = this.virtualPlayer || [];
+            const newPlayers = player_detail.list.filter(p => p.is_virtual == 1);
+
+            this.virtualPlayer = [
+                ...new Map(
+                    [...existing, ...newPlayers].map(p => [p.playername, p])
+                ).values()
+            ];
+
             localStorage.setItem('_virtualPlayer_', JSON.stringify(this.virtualPlayer));
         },
         setGroups(groups) {
@@ -77,6 +86,7 @@ export const useUserStore = defineStore('user', {
                 }
 
                 const itemNames = [
+                    item.player_name,
                     item.username,
                     item.playername,
                     item.palyer_nickname,

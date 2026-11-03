@@ -229,8 +229,10 @@
                         color="primary"
                         autocomplete="off"
                     >
-                        <template #item="{ props }">
-                            <v-list-item v-bind="props" density="compact" />
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact" title="" subtitle="">
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
+                            </v-list-item>
                         </template>
                     </v-autocomplete>
 
@@ -356,8 +358,10 @@
                         color="primary"
                         autocomplete="off"
                     >
-                        <template #item="{ props }">
-                            <v-list-item v-bind="props" density="compact" />
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact" title="" subtitle="">
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
+                            </v-list-item>
                         </template>
                     </v-autocomplete>
 

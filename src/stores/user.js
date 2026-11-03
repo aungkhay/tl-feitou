@@ -90,15 +90,22 @@ export const useUserStore = defineStore('user', {
                     item.username,
                     item.playername,
                     item.palyer_nickname,
-                    item.nickname
+                    item.nickname,
+                    item.source_player_name,
+                    item.target_player_name
                 ].filter(Boolean);
+
+                console.log('itemNames:', itemNames);
 
                 return state.virtualPlayer.some(v => {
                     const virtualNames = [
+                        v.player_name,
                         v.username,
                         v.playername,
                         v.palyer_nickname,
-                        v.nickname
+                        v.nickname,
+                        v.source_player_name,
+                        v.target_player_name
                     ].filter(Boolean);
 
                     return itemNames.some(name => virtualNames.includes(name));

@@ -191,7 +191,7 @@
                 <v-skeleton-loader type="table-row@8"/>
             </template> -->
             <template #item.playername="{ item }">
-                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item.playername) }">{{ item.playername }}</span>
+                <span :class="{ 'text-error font-weight-bold': isVirtualPlayer(item) }">{{ item.playername }}</span>
             </template>
             <template #item.option_time="{ item }">
                 {{ $filters.formatFullDate(item.option_time) }}
@@ -248,8 +248,10 @@
                         @blur="v$.source_player_name.$touch"
                         autocomplete="off"
                     >
-                        <template #item="{ props }">
-                            <v-list-item v-bind="props" density="compact" />
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact" title="" subtitle="">
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
+                            </v-list-item>
                         </template>
                     </v-autocomplete>
 
@@ -291,8 +293,10 @@
                         @blur="v$.target_player_name.$touch"
                         autocomplete="off"
                     >
-                        <template #item="{ props }">
-                            <v-list-item v-bind="props" density="compact" />
+                        <template #item="{ props, item }">
+                            <v-list-item v-bind="props" density="compact" title="" subtitle="">
+                                <v-list-item-title :class="{'text-error': isVirtualPlayer(item.raw)}">{{ item.raw.playername }}</v-list-item-title>
+                            </v-list-item>
                         </template>
                     </v-autocomplete>
                     <div class="d-flex justify-end mb-3" v-if="selectedTargetPlayer">
